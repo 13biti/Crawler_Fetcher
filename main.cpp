@@ -59,9 +59,15 @@ void Readingfile(string filePath){
       smatch result;
       regex pattern ("(?:https?://)([^/]+)");
        if (std::regex_search(target, result, pattern)) {
-          std::cout << "Website: " << result.str(1) << std::endl;
+          //now we have website name so lets find out if its file exist or not !!
+          string UrlFilePath = result.str(1)+".csv";
+          CreateNewFile(UrlFilePath);
+          fstream UrlFile (UrlFilePath , ios::app);
+          // here add url to file 
+          UrlFile << target << endl;
+          UrlFile.close();
         } else {
-          std::cout << "Website not found in the URL." << std::endl;
+          std::cout << "Website not found in the URL. its not correct!!" << std::endl;
         }
     }
   }

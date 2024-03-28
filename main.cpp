@@ -2,24 +2,22 @@
 #include <fstream>
 #include <string>
 #include <cstring>
-#include <cerrno> 
+#include <cerrno>
+#include <regex>
 using namespace std;
-
 inline bool fileExist (const string& fileName){
-  string compliteFileName = fileName+".csv";
-  ifstream myfile(compliteFileName);
+  //string compliteFileName = fileName+".csv";
+  ifstream myfile(fileName);
   return myfile.good();
 }
-
-bool CreateNewFile(const string& filename){
-  string compliteFileName = filename+".csv";
-  
-  if (fileExist(compliteFileName))
+//filePath should be something like that : /something/.../filename.filetype
+bool CreateNewFile(const string& filePath){
+  if (fileExist(filePath))
     return true;
   
   try {
     ofstream myfile;
-    myfile.open(compliteFileName , ios::ate);
+    myfile.open(filePath , ios::ate);
     myfile.exceptions(ofstream::failbit | ofstream::badbit);
     
     if (!myfile.is_open()){
@@ -51,7 +49,23 @@ bool CreateNewFile(const string& filename){
     exit(0);
   }
 }
-
+//should include regex 
+void Readingfile(string filePath){
+  if (fileExist(filePath)){
+    fstream file (filePath , ios::in);
+    string tmp , line;
+    while (getline(file , tmp)){
+      string target = tmp ;
+      smatch result;
+      regex pattern ("(?:https?://)([^/]+)");
+       if (std::regex_search(target, result, pattern)) {
+          std::cout << "Website: " << result.str(1) << std::endl;
+        } else {
+          std::cout << "Website not found in the URL." << std::endl;
+        }
+    }
+  }
+}
 int main () {
-
+  Readingfile("./test.txt");
 }

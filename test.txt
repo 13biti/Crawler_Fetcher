@@ -1,0 +1,5 @@
+hello
+https://chat.openai.com/c/06b76729-8681-40f1-bd05-44e856af0529
+https://codereview.stackexchange.com/questions/212867/regex-generator-in-Copyright (c) 2024 Author. All Rights Reserved.
+https://cplusplus.com/reference/string/string/find/
+

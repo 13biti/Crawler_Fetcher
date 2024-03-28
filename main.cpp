@@ -10,6 +10,7 @@
 using namespace std;
 string getReadyUrl(string ReadyUrl);
 void removeLine(string ReadyUrl);
+bool haveUrl(string websiteName);
 class Politeness 
 {
   private :
@@ -19,20 +20,39 @@ class Politeness
     void addToPolitnessList(string websiteName){
       pair<string , int>p1 (websiteName , DefaultTimer);
       politenessMap.insert(p1);
-      cout<<"something add to list1 !!"<<endl;
+    }
+    void updatePoliteList(){
+      fstream myfile("./WebsiteRecorder.csv" , ios::in);
+      string line;
+      while (getline(myfile , line)){
+        if (politenessMap.find(line) != politenessMap.end())
+          continue;
+        pair<string , int> p1 (line , DefaultTimer);
+        politenessMap.insert(p1);
+        //for (auto itr = politenessMap.begin() ; itr != politenessMap.end() ; ++itr){
+      }
     }
     void Timer(){
       for (auto itr = politenessMap.begin() ; itr != politenessMap.end() ; ++itr){
-        itr->second -= 60;
-        cout<<itr->second<<endl;
-        if (itr->second == 0){
-          cout<<"some one reached zero !" << endl;
-          usleep(1000000);
-          cout<< getReadyUrl(itr->first)<<endl;
-          itr->second = DefaultTimer;
+        if(itr->second > 0){
+          itr->second -= 60;
+          if (itr->second == 0){
+            usleep(1000000);
+            itr->second = DefaultTimer;
+            cout<< getReadyUrl(itr->first)<<endl;
+          }
         }
       }
-      cout<<"reduction happend"<<endl;
+    }
+    void setkeyValue(string key , int value){
+      switch (value){
+        case -1:
+          politenessMap[key] = -1;
+          break;
+        default:
+          politenessMap[key] = DefaultTimer;
+          break;
+      }
     }
 };
 Politeness list1;
@@ -68,12 +88,17 @@ bool CreateNewFile(const string& filePath){
                     // Handle other states if needead
                     std::cerr << "Unknown error occurred. ";
                     break;
-            }		
+            }
       std::cerr << "Error code: " << errno << 
         ", Error message: " << strerror(errno) << std::endl;
       throw std::ios_base::failure("Failed to open file.");  
     }
     else{
+      myfile.close();
+      myfile.open("./WebsiteRecorder.csv" , ios::app);
+      cout<<filePath<<endl;
+      myfile << filePath << endl;
+      myfile.close();
       list1.addToPolitnessList(filePath);
       return true;
     }
@@ -103,6 +128,7 @@ void SortingAllUrls(string filePath){
             if (UrlFile.is_open()){
               UrlFile << target << endl;
               UrlFile.close();
+              list1.setkeyValue(UrlFilePath , 0);
             }else {
               throw std::ios_base::failure("faild to open file in inserting url !");
             }
@@ -115,25 +141,29 @@ void SortingAllUrls(string filePath){
     }
   }
 }
+
+
 string getReadyUrl(string ReadyUrl){
   string filePath = ReadyUrl;
-  fstream file (filePath , ios::in);
+  ifstream file (filePath , ios::in);
   string tmp ;
-  if (file.peek() == std::ifstream::traits_type::eof())
-    return "";
   getline(file , tmp);
+  if (file.eof()){
+    list1.setkeyValue(ReadyUrl , -1);
+    return "";
+  }
   removeLine(ReadyUrl);
   return tmp;
 }
 void removeLine(string ReadyUrl){
   string command = " ex -sc '1d | x' " + ReadyUrl;
-  cout<<command<<endl;
   std::system(command.c_str());
 }
 int main () {
+  list1.updatePoliteList();
   SortingAllUrls("./test.txt");
   while (1){
-    usleep(3000000);
+    usleep(1000000);
     list1.Timer();
   }
 }

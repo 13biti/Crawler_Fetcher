@@ -1,52 +1,61 @@
-#include <regex>
-#include <fstream>
-#include <string>
-#include <iostream>
+#include "UrlManager.h"
 #include "FileOperations.h"
-#include "UrlManagement.h"
+#include <iostream>
+#include <fstream>
+#include <regex>
 
-using namespace std;
-void SortingUrls(string filePath){
-  if (fileExist(filePath)){
-    fstream file (filePath , ios::in);
-    string tmp , line;
-    while (getline(file , tmp)){
-      string target = tmp ;
-      smatch result;
-      regex pattern ("(?:https?://)([^/]+)");
-       if (std::regex_search(target, result, pattern)) {
-          //now we have website name so lets find out if its file exist or not !!
-          string UrlFilePath = result.str(1)+".csv";
-          CreateNewFile(UrlFilePath);
-          try{
-            fstream UrlFile (UrlFilePath , ios::app);
-            // here add url to file 
-            if (UrlFile.is_open()){
-              UrlFile << target << endl;
-              UrlFile.close();
-       //       list1.setkeyValue(UrlFilePath , 0);
-            }else {
-              throw std::ios_base::failure("faild to open file in inserting url !");
+// Define fileOperator as a static member of UrlManager
+
+UrlManager::UrlManager(FileOperations& obj) : fileOperator(obj){}
+
+void UrlManager::sortingUrls(const std::string &filePath) {
+    if (!fileOperator.fileExist(filePath)) {
+        std::cerr << "Error: File does not exist: " << filePath << std::endl;
+        return;
+    }
+
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Error: Failed to open file: " << filePath << std::endl;
+        return;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::smatch result;
+        std::regex pattern("(?:https?://)([^/]+)");
+        if (std::regex_search(line, result, pattern)) {
+            std::string target = result.str(1);
+            std::string UrlFilePath = target + ".csv";
+            if (!fileOperator.createNewFile(UrlFilePath)) {
+                std::cerr << "Error: Failed to create file: " << UrlFilePath << std::endl;
+                continue;
             }
-          }catch(...){
-            std::cout<<"cannot open file to insert url !"<<endl;
-          }
+            std::ofstream UrlFile(UrlFilePath, std::ios::app);
+            if (!UrlFile.is_open()) {
+                std::cerr << "Error: Failed to open file for writing: " << UrlFilePath << std::endl;
+                continue;
+            }
+            UrlFile << line << std::endl;
+            UrlFile.close();
         } else {
-          std::cout << "Website not found in the URL. its not correct!!" << std::endl;
+            std::cerr << "Warning: Website not found in the URL. It is not correct!" << std::endl;
         }
     }
-  }
 }
 
-string getUrl(string Url){
-  string filePath = Url;
-  ifstream file (filePath , ios::in);
-  string tmp ;
-  getline(file , tmp);
-  if (file.eof()){
-    //list1.setkeyValue(Url , -1);
-    return "";
-  }
-  removeLine(Url);
-  return tmp;
+std::string UrlManager::getUrl(const std::string &Url) {
+    std::ifstream file(Url);
+    if (!file.is_open()) {
+        std::cerr << "Error: Failed to open file: " << Url << std::endl;
+        return "";
+    }
+    std::string tmp;
+    std::getline(file, tmp);
+    if (file.eof()) {
+        std::cerr << "Warning: File is empty: " << Url << std::endl;
+        return "";
+    }
+    fileOperator.removeLine(Url);
+    return tmp;
 }

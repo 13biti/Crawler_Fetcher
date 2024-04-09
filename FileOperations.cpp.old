@@ -1,0 +1,95 @@
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <cerrno>
+#include <cstdlib>
+#include <iostream>
+#include <map>
+#include <unordered_set>
+#include "FileOperations.h"
+
+using namespace std;
+class FileOperations {
+    //std::map<std::string , int> politenessMap;
+    //pair<string , int>p1 (websiteName , DefaultTimer);
+    //politenessMap.insert(p1);
+
+public:
+    std::unordered_set<std::string> FilesList;
+
+    bool fileExist(const string &fileName) {
+        //string compliteFileName = fileName+".csv";
+        ifstream myfile(fileName);
+        return myfile.good();
+    }
+//filePath should be something like that : /something/.../filename.scv
+    bool CreateNewFile(const string &filePath) {
+        if (fileExist(filePath))
+            // may need to add this file to list too
+            return true;
+        try {
+            ofstream myfile;
+            myfile.open(filePath, ios::in);
+            myfile.exceptions(ofstream::failbit | ofstream::badbit);
+
+            if (!myfile.is_open()) {
+                ios_base::iostate state = myfile.rdstate();
+                switch (state) {
+                    case std::ios_base::failbit:
+                        std::cerr << "Failed to open file. check permissions or ... ";
+                        break;
+                    case std::ios_base::badbit:
+                        std::cerr << "Stream is in a bad state. check the memory or ... ";
+                        break;
+                    case std::ios_base::eofbit:
+                        std::cerr << "End of file reached unexpectedly. ";
+                        break;
+                    default:
+                        // Handle other states if needead
+                        std::cerr << "Unknown error occurred. ";
+                        break;
+                }
+                std::cerr << "Error code: " << errno <<
+                          ", Error message: " << strerror(errno) << std::endl;
+                throw std::ios_base::failure("Failed to open file.");
+            } else {
+                myfile.close();
+                myfile.open("./WebsiteRecorder.csv", ios::app);
+
+                cout << filePath << endl;
+                myfile << filePath << endl;
+                myfile.close();
+                insertToList(filePath);
+                //list1.addToPolitnessList(filePath);
+                return true;
+            }
+        }
+        catch (const std::ofstream::failure &e) {
+            cout << "unable to create new file . something go wrong" << endl
+                 << "Exception: " << e.what() << endl;
+            exit(0);
+        }
+    }
+
+    void removeLine(string UrlFile) {
+        string command = " ex -sc '1d | x' " + UrlFile;
+        std::system(command.c_str());
+    }
+    void insertToList(const string& filePath){
+        FilesList.insert(filePath);
+    }
+    int UpdateListForFirtsTime(){
+        fstream fileCollection;
+        fileCollection.open("./WebsiteRecorder.csv" , ios::ate);
+        if (!fileCollection.is_open()) {
+            std::cerr << "Failed to open file collection" << std::endl;
+            return 1;
+        }
+        std::string fileName ;
+        while (std::getline(fileCollection, fileName)) {
+            if (!(FilesList.find(fileName) != FilesList.end())){
+                insertToList(fileName);
+            }
+        }
+    }
+};

@@ -6,15 +6,17 @@
 
 class Politeness {
 private:
+
+
+public:
+    Politeness(int fixTimer);  // Constructor declaration
+
     std::map<std::string, int> politenessMap;
     int DefaultTimer;
 
-public:
-    Politeness();  // Constructor declaration
-    void addToPolitnessList(std::string websiteName);
-    void updatePoliteList();
+    void updatePoliteList(std::string websiteName , int timeCounter);
     void Timer();
-    void setkeyValue(std::string key, int value);
+    void emptyDomainDeclaration(std::string key, int value);
 };
 
 #endif // POLITENESS_H

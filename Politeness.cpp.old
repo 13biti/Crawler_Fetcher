@@ -1,0 +1,52 @@
+#include <fstream>
+#include <map>
+#include <unistd.h>
+#include <string>
+#include <iostream>
+#include "FileOperations.h"
+#include "UrlManagement.h"
+#include "Politeness.h"
+using namespace std;
+class Politeness {
+  private :
+    std::map<std::string , int> politenessMap;
+    int DefaultTimer = (3*60);
+  public:
+    void addToPolitnessList(string websiteName){
+      pair<string , int>p1 (websiteName , DefaultTimer);
+      politenessMap.insert(p1);
+    }
+    void updatePoliteList(){
+      fstream myfile("./WebsiteRecorder.csv" , ios::in);
+      string line;
+      while (getline(myfile , line)){
+        if (politenessMap.find(line) != politenessMap.end())
+          continue;
+        pair<string , int> p1 (line , DefaultTimer);
+        politenessMap.insert(p1);
+        //for (auto itr = politenessMap.begin() ; itr != politenessMap.end() ; ++itr){
+      }
+    }
+    void Timer(){
+      for (auto itr = politenessMap.begin() ; itr != politenessMap.end() ; ++itr){
+        if(itr->second > 0){
+          itr->second -= 60;
+          if (itr->second == 0){
+            usleep(1000000);
+            itr->second = DefaultTimer;
+            cout<< getUrl(itr->first)<<endl;
+          }
+        }
+      }
+    }
+    void setkeyValue(string key , int value){
+      switch (value){
+        case -1:
+          politenessMap[key] = -1;
+          break;
+        default:
+          politenessMap[key] = DefaultTimer;
+          break;
+      }
+    }
+};

@@ -1,0 +1,11 @@
+hello
+https://chat.openai.com/c/06b76729-8681-40f1-bd05-44e856af0529
+https://codereview.stackexchange.com/questions/212867/regex-generator-in-Copyright (c) 2024 Author. All Rights Reserved.
+https://www.tutorialspoint.com/cplusplus/cpp_files_streams.htm
+https://www.tutorialspoint.com/cplusplus/index.htm
+https://cplusplus.com/forum/general/33457/
+https://www.tutorialspoint.com/cplusplus/cpp_overview.htm
+https://en.cppreference.com/w/cpp/regex/regex_search
+https://regex-generator.olafneumann.org/?sampleText=https%3A%2F%2Fregex-generator.olafneumann.org%2F%3FsampleText%3D2020-03-12T13%253A34%253A56.123Z%2520INFO%2520%2520%255Borg.example.Class%255D%253A%2520This%2520is%2520a%2520%2523simple%2520%2523logline%2520containing%2520a%2520%2527value%2527.%26flags%3Di&flags=i&selection=14%7CCombination%20%5BMultiple%20characters%20%2B%20Character%5D,8%7CMultiple%20characters,13%7CCharacter
+https://regex-generator.olafneumann.org/?sampleText=https%3A%2F%2Fregex-generator.olafneumann.org%2F%3FsampleText%3D2020-03-12T13%253A34%253A56.123Z%2520INFO%2520%2520%255Borg.example.Class%255D%253A%2520This%2520is%2520a%2520%2523simple%2520%2523logline%2520containing%2520a%2520%2527value%2527.%26flags%3Di&flags=i&selection=14%7CCombination%20%5BMultiple%20characters%20%2B%20Character%5D,8%7CMultiple%20characters,13%7CCharacter
+

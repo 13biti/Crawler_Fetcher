@@ -10,13 +10,16 @@
 #include "FileOperations.h"
 #include "UrlManager.h"
 #include "Politeness.h"
+#include "QueueManager.h"
 
 using namespace std;
 Politeness politeness(2*60);
 FileOperations fileOperator;
 UrlManager urlManager(fileOperator);
+QueueManager queueManager ("localhost" ,   5672 );
 
 int main () {
+    queueManager.createQueue("test");
     fileOperator.updateListForFirstTime();
     urlManager.sortingUrls("/home/kk_gorbee/Documents/project/Fetcher/mainProgram/test.txt");
     for(const auto& element : fileOperator.filesList) {
@@ -24,7 +27,7 @@ int main () {
             politeness.updatePoliteList(element, 180);
     }
 
-    while (true) {
+    while (1) {
         usleep(1000000);
         politeness.Timer();
         for (auto itr =politeness.politenessMap.begin() ; itr !=politeness.politenessMap.end() ; ++itr) {
@@ -34,7 +37,7 @@ int main () {
                     politeness.emptyDomainDeclaration(itr->first, -1);
                     continue;
                 }
-                std::cout << Url << std::endl;
+                queueManager.sendMessage("test" , Url);
                 politeness.emptyDomainDeclaration(itr->first, 0);
             }
         }
@@ -49,3 +52,35 @@ int main () {
 //    list1.Timer();
 //    cout<< "out of timer  "<<endl;
 }
+//queue example : 
+/*
+
+int main() {
+    const char* hostname = "localhost";
+    const int port = 5672;
+    const std::string queue_name = "test";
+
+    AMQPConnection connection(hostname, port);
+
+    // Send message
+    std::string message_to_send = "Hello, World!";
+    bool sent_successfully = connection.sendMessage(queue_name, message_to_send);
+    if (sent_successfully) {
+        std::cout << "Message sent successfully!" << std::endl;
+    } else {
+        std::cerr << "Error sending message" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    // Receive message
+    std::string received_message = connection.receiveMessage(queue_name);
+    if (!received_message.empty()) {
+        std::cout << "Received message: " << received_message << std::endl;
+    } else {
+        std::cerr << "Error receiving message" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+*/

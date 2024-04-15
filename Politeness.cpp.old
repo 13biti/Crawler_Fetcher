@@ -35,7 +35,7 @@ class Politeness {
             usleep(1000000);
             itr->second = DefaultTimer;
             cout<< getUrl(itr->first)<<endl;
-          }
+              }
         }
       }
     }

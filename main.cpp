@@ -9,39 +9,74 @@
 #include <cstdlib>
 #include "FileOperations.h"
 #include "UrlManager.h"
-#include "Politeness.h"
 #include "QueueManager.h"
 
 using namespace std;
-Politeness politeness(2*60);
+
 FileOperations fileOperator;
 UrlManager urlManager(fileOperator);
 QueueManager queueManager ("localhost" ,   5672 );
 
-int main () {
-    queueManager.createQueue("test");
-    fileOperator.updateListForFirstTime();
-    urlManager.sortingUrls("/home/kk_gorbee/Documents/project/Fetcher/mainProgram/test.txt");
-    for(const auto& element : fileOperator.filesList) {
-        if (politeness.politenessMap.find(element) == politeness.politenessMap.end())
-            politeness.updatePoliteList(element, 180);
+class Politeness {
+private:
+    int DefaultTimer;
+
+public:
+    Politeness(int fixTimer) : DefaultTimer(fixTimer) {}
+    std::map<std::string, int> politenessMap;
+    void updateLinkMap(){
+        for(const auto& element : fileOperator.filesList) {
+            std::cout<<element<<std::endl;
+            if (politenessMap.find(element) == politenessMap.end()) {
+                politenessMap[element] = DefaultTimer;
+            }
+            //updatePoliteList(element, 180);
+        }
     }
 
-    while (1) {
-        usleep(1000000);
-        politeness.Timer();
-        for (auto itr =politeness.politenessMap.begin() ; itr !=politeness.politenessMap.end() ; ++itr) {
-            if (itr->second == 0) {
-                string Url = urlManager.getUrl(itr->first);
-                if (Url == "") {
-                    politeness.emptyDomainDeclaration(itr->first, -1);
-                    continue;
+    void updatePoliteList(std::string websiteName, int timeCounter) {
+        politenessMap[websiteName] = timeCounter;
+    }
+
+    void Timer() {
+        for (auto &pair : politenessMap) {
+            std::cout<<"i am in for"<<std::endl;
+            std::cout << pair.second << std::endl;
+            if (pair.second > 0) {
+                pair.second -= 1;
+                if (pair.second == 0) {
+                    string Url = urlManager.getUrl(pair.first);
+                    if (!Url.empty()) {
+                        queueManager.sendMessage("test" , Url);
+                        emptyDomainDeclaration(pair.first, 0);
+                        continue;
+                    }
+                    emptyDomainDeclaration(pair.first, -1);
                 }
-                queueManager.sendMessage("test" , Url);
-                politeness.emptyDomainDeclaration(itr->first, 0);
             }
         }
     }
+
+    void emptyDomainDeclaration(std::string key, int value) {
+        int x = value < 0 ? -1 : DefaultTimer;
+        politenessMap[key] = x;
+    }
+};
+
+int main () {
+
+    Politeness politeness(10);
+
+    queueManager.createQueue("test");
+    fileOperator.updateListForFirstTime();
+    urlManager.sortingUrls("/home/kk_gorbee/Documents/project/Fetcher/mainProgram/test.txt");
+    politeness.updateLinkMap();
+
+    while (1) {
+        usleep(500000);
+        politeness.Timer();
+    }
+
 
     //  list1.updatePoliteList();
 //  SortingUrls("./test.txt");

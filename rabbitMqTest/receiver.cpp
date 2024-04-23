@@ -49,8 +49,8 @@ int main() {
         printf("Error consuming from queue\n");
         return -1;
     }
-
-    while (1) {
+    int i = 0 ;
+    while (i<10) {
         amqp_maybe_release_buffers(conn);
         reply = amqp_consume_message(conn, &envelope, NULL, 0);
 
@@ -58,6 +58,7 @@ int main() {
             printf("Received message: %.*s\n", (int)envelope.message.body.len, (char*)envelope.message.body.bytes);
             amqp_destroy_envelope(&envelope);
         }
+        i++;
     }
 
     return 0;

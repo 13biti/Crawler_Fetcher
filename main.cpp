@@ -9,13 +9,13 @@
 #include <cstdlib>
 #include "FileOperations.h"
 #include "UrlManager.h"
-#include "QueueManager.h"
+#include "/home/kk_gorbee/Documents/project/Fetcher/mainProgram/messageManagerClass/messageManagerClass.h"
 
 using namespace std;
 
 FileOperations fileOperator;
 UrlManager urlManager(fileOperator);
-QueueManager queueManager ("localhost" ,   5672 );
+MessageHandler queueManager("localhost" ,5672 , "guest" , "guest" , "test" , "test");
 
 class Politeness {
 private:
@@ -47,7 +47,7 @@ public:
                 if (pair.second == 0) {
                     string Url = urlManager.getUrl(pair.first);
                     if (!Url.empty()) {
-                        queueManager.sendMessage("test" , Url);
+                        queueManager.sendMessage( Url);
                         emptyDomainDeclaration(pair.first, 0);
                         continue;
                     }
@@ -67,7 +67,7 @@ int main () {
 
     Politeness politeness(10);
 
-    queueManager.createQueue("test");
+    //queueManager.createQueue("test");
     fileOperator.updateListForFirstTime();
     urlManager.sortingUrls("/home/kk_gorbee/Documents/project/Fetcher/mainProgram/test.txt");
     politeness.updateLinkMap();

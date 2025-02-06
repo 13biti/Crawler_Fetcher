@@ -15,7 +15,7 @@ using namespace std;
 
 FileOperations fileOperator;
 UrlManager urlManager(fileOperator);
-MessageHandler queueManager("localhost" ,5672 , "guest" , "guest" , "test" , "test");
+MessageHandler queueManager("localhost" ,5672 , "guest" , "guest" , "downloaderA_result" , "test");
 
 class Politeness {
 private:
@@ -40,16 +40,14 @@ public:
 
     void Timer() {
         for (auto &pair : politenessMap) {
-            std::cout<<"i am in for"<<std::endl;
-            std::cout << pair.second << std::endl;
+            std::cout<<"iam in timer"<<std::endl;
             if (pair.second > 0) {
                 pair.second -= 1;
+                std::cout<<pair.second<<std::endl;
                 if (pair.second == 0) {
                     string Url = urlManager.getUrl(pair.first);
                     if (!Url.empty()) {
                         queueManager.sendMessage( Url);
-                        emptyDomainDeclaration(pair.first, 0);
-                        continue;
                     }
                     emptyDomainDeclaration(pair.first, -1);
                 }
@@ -61,6 +59,22 @@ public:
         int x = value < 0 ? -1 : DefaultTimer;
         politenessMap[key] = x;
     }
+    void domainUnlocker(std::string result){  
+      size_t loc = result.find("~");
+      int resultNumber = stoi(result.substr(0 , loc));
+      std::string RUrl = result.substr(loc+1);
+      //std::cout<<resultNumber<<RUrl<<std::endl;
+        string tmp = std::string();
+        std::string target = tmp ;
+         smatch domain;
+        string UrlFilePath;
+        regex pattern ("(?:https?://)([^/]+)");
+        if (std::regex_search(target, domain, pattern))
+            UrlFilePath = domain.str(1)+".csv";
+
+      if (resultNumber == 0)
+          emptyDomainDeclaration(UrlFilePath , 1);
+    }
 };
 
 int main () {
@@ -71,11 +85,17 @@ int main () {
     fileOperator.updateListForFirstTime();
     urlManager.sortingUrls("/home/kk_gorbee/Documents/project/Fetcher/mainProgram/test.txt");
     politeness.updateLinkMap();
-
+    std::string result ;
     while (1) {
-        usleep(500000);
+        usleep(100000);
         politeness.Timer();
+        result = queueManager.receiveMessage();
+        std::cout<<result<<"   ----" << std::endl;
+        if (result == "@")
+            continue;
+        politeness.domainUnlocker(result);
     }
+
 
 
     //  list1.updatePoliteList();

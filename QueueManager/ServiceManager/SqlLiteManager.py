@@ -40,6 +40,25 @@ class SqlLiteManager:
         except sqlite3.Error as e:
             logging.error(f"Error creating database: {e}")
 
+    def is_admin_user(self, username: str) -> bool:
+        if not self.connection:
+            logging.warning("Database connection not established. Creating database.")
+            self.createDb()
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(
+                "SELECT * FROM Agents WHERE username = ? AND role = ?",
+                (
+                    username,
+                    Role.admin.value,
+                ),
+            )
+            row = cursor.fetchone()
+            return row is not None
+        except sqlite3.Error as e:
+            logging.error(f"Error checking admin user: {e}")
+            return False
+
     def insert(self, data: dict):
         """Inserts a new record into the Agents table."""
         if not self.connection:
@@ -86,7 +105,7 @@ class SqlLiteManager:
             logging.error(f"Error fetching record by ID {id}: {e}")
             return None
 
-    def find_by_username(self, username: str) -> dict:
+    def find_by_username(self, username: str):
         """Fetches a record by username."""
         if not self.connection:
             logging.warning("Database connection not established. Creating database.")
@@ -105,6 +124,37 @@ class SqlLiteManager:
                     "pass": row[2],
                     "role": row[3],
                 }
+            else:
+                logging.warning(f"No record found with username '{username}'")
+                return None
+        except sqlite3.Error as e:
+            logging.error(f"Error fetching record by username '{username}': {e}")
+            return None
+
+    def user_authorazation(self, username, password):
+        if not self.connection:
+            logging.warning("Database connection not established. Creating database.")
+            self.createDb()
+
+        try:
+            cursor = self.connection.cursor()
+            logging.info(f"Try to authenticate by u:{username} , p:{password}")
+            cursor.execute(
+                "SELECT * FROM Agents WHERE username = ? AND pass = ?",
+                (
+                    username,
+                    password,
+                ),
+            )
+            row = cursor.fetchone()
+            if row:
+                logging.info(f"auth result : {row}")
+                if row[3] == Role.admin.value:
+                    return Role.admin
+                elif row[3] == Role.readOnly.value:
+                    return Role.readOnly
+                else:
+                    return Role.writeOnly
             else:
                 logging.warning(f"No record found with username '{username}'")
                 return None

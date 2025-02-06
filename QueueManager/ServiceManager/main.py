@@ -1,22 +1,29 @@
+from typing import ReadOnly
 from fastapi import FastAPI, HTTPException, Depends, Header
 from pydantic import BaseModel
 import jwt
-import os 
+import os
 import datetime
-from SqlLiteManager import SqlLiteManager , Role
+from fastapi import Depends
+from SqlLiteManager import SqlLiteManager, Role
 from RabbitManager import RabbitMQService
+from contextlib import asynccontextmanager
 
-app = FastAPI()
 
 # Secret key for JWT encoding
 SECRET_KEY = "mysecretkey"
-
 
 
 # Model for login request
 class LoginRequest(BaseModel):
     username: str
     password: str
+
+
+class CreateUserRequest(BaseModel):
+    username: str
+    password: str
+    role: str
 
 
 # Model for sending messages
@@ -28,40 +35,53 @@ class MessageRequest(BaseModel):
     message: str
 
 
-sqlconnection = None
-rabbitmqManager = None
-@app.on_event("startup")
-async def startup_event():
+# dp
+def get_db():
+    db = SqlLiteManager("Agent.db")
+    db.createDb()
+    return db
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global sqlconnection, rabbitmqManager  # Declare as global
     print("Server is starting up. Checking initial conditions...")
+
     initUser = str(os.environ.get("init_admin", "default_username"))
     initUserPass = str(os.environ.get("init_pass", "default_password"))
 
-    sqlconnection = SqlLiteManager('Agent.db')
+    sqlconnection = SqlLiteManager("Agent.db")
     sqlconnection.createDb()
-
-    sqlconnection.insert({
-        "username": initUser,
-        "pass": initUserPass,
-        "role": Role.admin
-    })
+    sqlconnection.insert(
+        {"username": initUser, "pass": initUserPass, "role": Role.admin.value}
+    )
 
     rmq_host = str(os.environ.get("rmq_host", "default_host"))
     rmq_username = str(os.environ.get("rmq_username", "default_username"))
     rmq_pass = str(os.environ.get("rmq_pass", "default_password"))
 
-    # Create an instance of RabbitMQService with the fetched environment variables
     rabbitmqManager = RabbitMQService(rmq_host, rmq_username, rmq_pass)
     rabbitmqManager.connect()
+
+    yield  # This is where FastAPI will run the app
+
+    print("Server is shutting down...")  # Optional cleanup logic here
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 # User login and token generation
 @app.post("/login")
 def login(user: LoginRequest):
-    if USERS_DB.get(user.username) == user.password:
+    # try to find agent
+    auth_user_role = sqlconnection.user_authorazation(user.username, user.password)
+    print(auth_user_role)
+    if auth_user_role:
         token = jwt.encode(
             {
                 "sub": user.username,
-                "role": user.role
+                "role": auth_user_role,
                 "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
             },
             SECRET_KEY,
@@ -69,6 +89,36 @@ def login(user: LoginRequest):
         )
         return {"token": token}
     raise HTTPException(status_code=401, detail="Invalid credentials")
+
+
+@app.get("/create_agent")
+def create_agent(
+    message: CreateUserRequest,
+    authorization: str = Header(None),
+    db: SqlLiteManager = Depends(get_db),
+):
+    try:
+        token = authorization.split(" ")[1]
+        decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        username = decoded.get("username")
+        if db.is_admin_user(username):
+            role = Role.writeOnly.value if message.role == "w" else Role.readOnly.value
+            db.insert(
+                {"username": message.username, "pass": message.password, "role": role}
+            )
+            return {
+                "status": "success",
+                "message": "user is created use /login to get token",
+            }
+        else:
+            raise HTTPException(
+                status_code=403, detail="Only admin users can create agents"
+            )
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
 
 # Simulated message sending
 @app.post("/send-message")

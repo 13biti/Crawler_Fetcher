@@ -46,7 +46,7 @@ def get_db():
 async def lifespan(app: FastAPI):
     global sqlconnection, rabbitmqManager  # Declare as global
     print("Server is starting up. Checking initial conditions...")
-
+    os.system("source ./Setup.sh")
     initUser = str(os.environ.get("init_admin", "default_username"))
     initUserPass = str(os.environ.get("init_pass", "default_password"))
 
@@ -76,8 +76,7 @@ app = FastAPI(lifespan=lifespan)
 def login(user: LoginRequest):
     # try to find agent
     auth_user_role = sqlconnection.user_authorazation(user.username, user.password)
-    print(auth_user_role)
-    if auth_user_role:
+    if auth_user_role != None:
         token = jwt.encode(
             {
                 "sub": user.username,
@@ -100,7 +99,7 @@ def create_agent(
     try:
         token = authorization.split(" ")[1]
         decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        username = decoded.get("username")
+        username = decoded.get("sub")
         if db.is_admin_user(username):
             role = Role.writeOnly.value if message.role == "w" else Role.readOnly.value
             db.insert(

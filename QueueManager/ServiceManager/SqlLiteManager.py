@@ -1,6 +1,7 @@
 import sqlite3
 import logging
 from enum import Enum
+import threading
 
 # Configure logging
 logging.basicConfig(
@@ -19,14 +20,19 @@ class Role(Enum):
 class SqlLiteManager:
     def __init__(self, filename: str) -> None:
         self.servername = filename
-        self.connection = None
+        self.local = threading.local()
         logging.info(f"Initialized SqlLiteManager with database file: {filename}")
+
+    def get_connection(self):
+        if not hasattr(self.local, "connection"):
+            self.local.connection = sqlite3.connect(self.servername)
+        return self.local.connection
 
     def createDb(self):
         """Creates the database and the Agents table if it doesn't exist."""
         try:
-            self.connection = sqlite3.connect(self.servername)
-            cursor = self.connection.cursor()
+            connection = self.get_connection()
+            cursor = connection.cursor()
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS Agents (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,17 +41,16 @@ class SqlLiteManager:
                 role INTEGER NOT NULL
             )
             """)
-            self.connection.commit()
+            connection.commit()
             logging.info("Database and table 'Agents' created (if not exist).")
         except sqlite3.Error as e:
             logging.error(f"Error creating database: {e}")
 
     def is_admin_user(self, username: str) -> bool:
-        if not self.connection:
-            logging.warning("Database connection not established. Creating database.")
-            self.createDb()
+        connection = self.get_connection()
         try:
-            cursor = self.connection.cursor()
+            cursor = connection.cursor()
+            logging.info(f"Try to check role by u:{username}")
             cursor.execute(
                 "SELECT * FROM Agents WHERE username = ? AND role = ?",
                 (
@@ -54,6 +59,7 @@ class SqlLiteManager:
                 ),
             )
             row = cursor.fetchone()
+            logging.info(f"checking result : {row}")
             return row is not None
         except sqlite3.Error as e:
             logging.error(f"Error checking admin user: {e}")
@@ -61,12 +67,9 @@ class SqlLiteManager:
 
     def insert(self, data: dict):
         """Inserts a new record into the Agents table."""
-        if not self.connection:
-            logging.warning("Database connection not established. Creating database.")
-            self.createDb()
-
+        connection = self.get_connection()
         try:
-            cursor = self.connection.cursor()
+            cursor = connection.cursor()
             cursor.execute(
                 """
                 INSERT INTO Agents (username, pass, role)
@@ -74,19 +77,16 @@ class SqlLiteManager:
                 """,
                 data,
             )
-            self.connection.commit()
+            connection.commit()
             logging.info(f"Inserted record: {data}")
         except sqlite3.Error as e:
             logging.error(f"Error inserting record {data}: {e}")
 
-    def read_by_id(self, id: int) -> dict:
+    def read_by_id(self, id: int):
         """Fetches a record by ID."""
-        if not self.connection:
-            logging.warning("Database connection not established. Creating database.")
-            self.createDb()
-
+        connection = self.get_connection()
         try:
-            cursor = self.connection.cursor()
+            cursor = connection.cursor()
             cursor.execute("SELECT * FROM Agents WHERE id = ?", (id,))
             row = cursor.fetchone()
 
@@ -107,12 +107,9 @@ class SqlLiteManager:
 
     def find_by_username(self, username: str):
         """Fetches a record by username."""
-        if not self.connection:
-            logging.warning("Database connection not established. Creating database.")
-            self.createDb()
-
+        connection = self.get_connection()
         try:
-            cursor = self.connection.cursor()
+            cursor = connection.cursor()
             cursor.execute("SELECT * FROM Agents WHERE username = ?", (username,))
             row = cursor.fetchone()
 
@@ -132,12 +129,9 @@ class SqlLiteManager:
             return None
 
     def user_authorazation(self, username, password):
-        if not self.connection:
-            logging.warning("Database connection not established. Creating database.")
-            self.createDb()
-
+        connection = self.get_connection()
         try:
-            cursor = self.connection.cursor()
+            cursor = connection.cursor()
             logging.info(f"Try to authenticate by u:{username} , p:{password}")
             cursor.execute(
                 "SELECT * FROM Agents WHERE username = ? AND pass = ?",
@@ -150,11 +144,11 @@ class SqlLiteManager:
             if row:
                 logging.info(f"auth result : {row}")
                 if row[3] == Role.admin.value:
-                    return Role.admin
+                    return Role.admin.value
                 elif row[3] == Role.readOnly.value:
-                    return Role.readOnly
+                    return Role.readOnly.value
                 else:
-                    return Role.writeOnly
+                    return Role.writeOnly.value
             else:
                 logging.warning(f"No record found with username '{username}'")
                 return None
@@ -164,8 +158,8 @@ class SqlLiteManager:
 
     def close(self):
         """Closes the database connection."""
-        if self.connection:
-            self.connection.close()
+        if hasattr(self.local, "connection"):
+            self.local.connection.close()
             logging.info("Database connection closed.")
         else:
             logging.warning("Attempted to close a non-existent connection.")

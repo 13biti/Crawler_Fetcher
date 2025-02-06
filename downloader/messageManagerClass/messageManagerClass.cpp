@@ -12,7 +12,7 @@ MessageHandler::MessageHandler(const std::string& host, int port,
 void MessageHandler::sendMessage(const std::string& message) {
     try {
         auto channel = AmqpClient::Channel::Create(m_host, m_port, m_username, m_password);
-        channel->DeclareQueue(m_senderQueue, false, true, false, false);
+        channel->DeclareQueue(m_senderQueue, true, true, false, false);
         auto msg = AmqpClient::BasicMessage::Create(message);
         channel->BasicPublish("", m_senderQueue, msg);
         std::clog << " [x] Sent '" << message << "'" << std::endl;
@@ -24,7 +24,7 @@ void MessageHandler::sendMessage(const std::string& message) {
 std::string MessageHandler::receiveMessage() {
     try {
         auto channel = AmqpClient::Channel::Create(m_host, m_port, m_username, m_password);
-        channel->DeclareQueue(m_receiverQueue, false, true, false,false);
+        channel->DeclareQueue(m_receiverQueue, true, true, false,false);
         auto consumerTag = channel->BasicConsume(m_receiverQueue);
         std::clog << "Consumer tag: " << consumerTag << std::endl;
         auto envelope = channel->BasicConsumeMessage(consumerTag);

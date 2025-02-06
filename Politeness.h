@@ -17,7 +17,9 @@ public:
     void updatePoliteList(std::string websiteName , int timeCounter);
     void Timer();
     void emptyDomainDeclaration(std::string key, int value);
-};
+    void domainUnlocker(std::string result);
+
+    };
 
 #endif // POLITENESS_H
 

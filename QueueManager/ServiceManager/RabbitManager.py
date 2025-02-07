@@ -1,5 +1,16 @@
 import pika
 import json
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("rabbitmq_service.log"),  # Log to a file
+        logging.StreamHandler(),  # Log to console
+    ],
+)
 
 
 class RabbitMQService:
@@ -9,6 +20,7 @@ class RabbitMQService:
         self.password = password
         self.connection = None
         self.channel = None
+        logging.info("RabbitMQService initialized with host: %s", self.host)
 
     def connect(self):
         """Connect to RabbitMQ server with authentication."""
@@ -19,17 +31,17 @@ class RabbitMQService:
             )
             self.connection = pika.BlockingConnection(parameters)
             self.channel = self.connection.channel()
-            print(f"Connected to RabbitMQ at {self.host} successfully.")
+            logging.info("Connected to RabbitMQ at %s successfully.", self.host)
         except Exception as e:
-            print(f"Failed to connect to RabbitMQ: {e}")
+            logging.error("Failed to connect to RabbitMQ: %s", e)
 
     def disconnect(self):
         """Disconnect from RabbitMQ server."""
         if self.connection and not self.connection.is_closed:
             self.connection.close()
-            print("Disconnected from RabbitMQ successfully.")
+            logging.info("Disconnected from RabbitMQ successfully.")
         else:
-            print("No active connection to disconnect.")
+            logging.warning("No active connection to disconnect.")
 
     def queue_exists(self, queue_name):
         """
@@ -38,21 +50,21 @@ class RabbitMQService:
         :return: True if queue exists, False otherwise.
         """
         if not self.channel:
-            print("Error: No active channel. Call connect() first.")
+            logging.error("No active channel. Call connect() first.")
             return False
 
         try:
             self.channel.queue_declare(queue=queue_name, passive=True)
-            print(f"Queue '{queue_name}' exists.")
+            logging.info("Queue '%s' exists.", queue_name)
             return True
         except pika.exceptions.ChannelClosedByBroker:
-            print(f"Queue '{queue_name}' does not exist.")
+            logging.warning("Queue '%s' does not exist.", queue_name)
             self.channel = (
                 self.connection.channel()
             )  # Reopen the channel after exception
             return False
         except Exception as e:
-            print(f"Error while checking queue existence: {e}")
+            logging.error("Error while checking queue existence: %s", e)
             return False
 
     def create_queue(self, queue_name, durable=True, ttl=None, max_length=None):
@@ -64,11 +76,11 @@ class RabbitMQService:
         :param max_length: Maximum number of messages in the queue.
         """
         if not self.channel:
-            print("Error: No active channel. Call connect() first.")
+            logging.error("No active channel. Call connect() first.")
             return
 
         if self.queue_exists(queue_name):
-            print(f"Queue '{queue_name}' already exists. Skipping creation.")
+            logging.info("Queue '%s' already exists. Skipping creation.", queue_name)
             return
 
         try:
@@ -81,16 +93,18 @@ class RabbitMQService:
             self.channel.queue_declare(
                 queue=queue_name, durable=durable, arguments=arguments
             )
-            print(
-                f"Queue '{queue_name}' created successfully with arguments: {arguments}"
+            logging.info(
+                "Queue '%s' created successfully with arguments: %s",
+                queue_name,
+                arguments,
             )
         except Exception as e:
-            print(f"Failed to create queue: {e}")
+            logging.error("Failed to create queue: %s", e)
 
     def add_item_to_queue(self, queue_name, item):
         """Add an item to the specified queue."""
         if not self.channel:
-            print("Error: No active channel. Call connect() first.")
+            logging.error("No active channel. Call connect() first.")
             return
 
         try:
@@ -102,9 +116,9 @@ class RabbitMQService:
                     delivery_mode=2,  # Make message persistent
                 ),
             )
-            print(f"Item added to queue '{queue_name}': {item}")
+            logging.info("Item added to queue '%s': %s", queue_name, item)
         except Exception as e:
-            print(f"Failed to add item to queue: {e}")
+            logging.error("Failed to add item to queue: %s", e)
 
     def remove_item_from_queue(self, queue_name, auto_ack=True):
         """
@@ -114,7 +128,7 @@ class RabbitMQService:
         :return: The item removed from the queue, or None if the queue is empty.
         """
         if not self.channel:
-            print("Error: No active channel. Call connect() first.")
+            logging.error("No active channel. Call connect() first.")
             return None
 
         try:
@@ -123,34 +137,11 @@ class RabbitMQService:
             )
             if method_frame:
                 item = json.loads(body)
-                print(f"Item removed from queue '{queue_name}': {item}")
+                logging.info("Item removed from queue '%s': %s", queue_name, item)
                 return item
             else:
-                print(f"No items in queue '{queue_name}'.")
+                logging.info("No items in queue '%s'.", queue_name)
                 return None
         except Exception as e:
-            print(f"Failed to remove item from queue: {e}")
+            logging.error("Failed to remove item from queue: %s", e)
             return None
-
-
-# Example usage:
-if __name__ == "__main__":
-    rabbitmq_service = RabbitMQService(
-        host="localhost", username="guest", password="guest"
-    )
-    rabbitmq_service.connect()
-
-    # Create a queue only if it doesn't already exist
-    rabbitmq_service.create_queue(
-        "test_queue", ttl=60000, max_length=10
-    )  # TTL = 60 seconds, max length = 10
-
-    # Add items to the queue
-    rabbitmq_service.add_item_to_queue("test_queue", {"key1": "value1"})
-    rabbitmq_service.add_item_to_queue("test_queue", {"key2": "value2"})
-
-    # Remove a single item from the queue
-    item = rabbitmq_service.remove_item_from_queue("test_queue")
-    print(f"Removed item: {item}")
-
-    rabbitmq_service.disconnect()

@@ -27,12 +27,13 @@ class CreateUserRequest(BaseModel):
 
 
 # Model for sending messages
-class MessageRequest(BaseModel):
+class SendMessageRequest(BaseModel):
     queue_name: str
-    queue_server: str = "localhost:5672"
-    username: str
-    password: str
     message: str
+
+
+class GetMessageRequest(BaseModel):
+    queue_name: str
 
 
 # dp
@@ -119,19 +120,41 @@ def create_agent(
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
+# This method should change in future , should have queue auth in token , like get queue name
 # Simulated message sending
-@app.post("/send-message")
-def send_message(message: MessageRequest, authorization: str = Header(None)):
+@app.post("/write")
+def write(message: SendMessageRequest, authorization: str = Header(None)):
     try:
         token = authorization.split(" ")[1]  # Extract token from "Bearer <token>"
         decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        print(decoded.get("exp"))
-        return {
-            "status": "success",
-            "queue_name": message.queue_name,
-            "queue_server": message.queue_server,
-            "message": message.message,
-        }
+        if decoded.get("role") == Role.writeOnly.value:
+            rabbitmqManager.create_queue(message.queue_name, durable=True)
+            rabbitmqManager.add_item_to_queue(message.queue_name, message.message)
+            return {
+                "status": "success",
+            }
+        else:
+            raise HTTPException(status_code=401, detail="You do not have access.")
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+@app.post("/read")
+def read(message: GetMessageRequest, authorization: str = Header(None)):
+    try:
+        token = authorization.split(" ")[1]  # Extract token from "Bearer <token>"
+        decoded = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        if decoded.get("role") == Role.readOnly.value:
+            message = rabbitmqManager.remove_item_from_queue(message.queue_name)
+            print(message)
+            return {
+                "status": "success",
+                "message": message,
+            }
+        else:
+            raise HTTPException(status_code=401, detail="You do not have access.")
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expired")
     except jwt.InvalidTokenError:

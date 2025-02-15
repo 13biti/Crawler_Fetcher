@@ -1,0 +1,17 @@
+[ERROR glean_core::metrics::ping] Invalid reason code active for ping usage-reporting
+[ERROR glean_core::metrics::ping] Invalid reason code active for ping usage-reporting
+[ERROR glean_core::metrics::ping] Invalid reason code active for ping usage-reporting
+[Child 365989, MediaDecoderStateMachine #1] WARNING: Decoder=70cedbc20000 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachine.cpp:372
+[Child 365989, MediaDecoderStateMachine #1] WARNING: Decoder=70cedbc20000 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006) - static MP4Metadata::ResultAndByteBuffer mozilla::MP4Metadata::Metadata(ByteStream *): Cannot parse metadata: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachineBase.cpp:168
+[Child 391194, MediaDecoderStateMachine #1] WARNING: Decoder=7f85bc80b500 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachine.cpp:372
+[Child 391194, MediaDecoderStateMachine #1] WARNING: Decoder=7f85bc80b500 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006) - static MP4Metadata::ResultAndByteBuffer mozilla::MP4Metadata::Metadata(ByteStream *): Cannot parse metadata: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachineBase.cpp:168
+[ERROR glean_core::metrics::ping] Invalid reason code inactive for ping usage-reporting
+[ERROR glean_core::metrics::ping] Invalid reason code inactive for ping usage-reporting
+[Child 392820, MediaDecoderStateMachine #1] WARNING: Decoder=73a217048d00 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachine.cpp:372
+[Child 392820, MediaDecoderStateMachine #1] WARNING: Decoder=73a217048d00 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006) - static MP4Metadata::ResultAndByteBuffer mozilla::MP4Metadata::Metadata(ByteStream *): Cannot parse metadata: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachineBase.cpp:168
+[Child 392820, MediaDecoderStateMachine #1] WARNING: Decoder=73a21b26a600 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachine.cpp:372
+[Child 392820, MediaDecoderStateMachine #1] WARNING: Decoder=73a21b26a600 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006) - static MP4Metadata::ResultAndByteBuffer mozilla::MP4Metadata::Metadata(ByteStream *): Cannot parse metadata: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachineBase.cpp:168
+[Child 392820, MediaDecoderStateMachine #1] WARNING: Decoder=73a2161ab800 state=DECODING_METADATA Decode metadata failed, shutting down decoder: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachine.cpp:372
+[Child 392820, MediaDecoderStateMachine #1] WARNING: Decoder=73a2161ab800 Decode error: NS_ERROR_DOM_MEDIA_METADATA_ERR (0x806e0006) - static MP4Metadata::ResultAndByteBuffer mozilla::MP4Metadata::Metadata(ByteStream *): Cannot parse metadata: file /usr/src/debug/firefox/firefox-134.0.1/dom/media/MediaDecoderStateMachineBase.cpp:168
+[ERROR glean_core::metrics::ping] Invalid reason code inactive for ping usage-reporting
+[ERROR glean_core::metrics::ping] Invalid reason code inactive for ping usage-reporting

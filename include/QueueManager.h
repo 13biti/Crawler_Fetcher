@@ -1,26 +1,45 @@
 #ifndef QUEUE_MANAGER_H
 #define QUEUE_MANAGER_H
 
-#include <amqp_tcp_socket.h>
 #include <amqp.h>
 #include <amqp_framing.h>
+#include <amqp_tcp_socket.h>
 #include <iostream>
 #include <string>
 
 class QueueManager {
 private:
-    amqp_connection_state_t conn;
-    amqp_socket_t *socket = NULL;
-    amqp_connection_state_t getConnection();
+  std::string Active_Token;
+  std::string Queue_Manager_Server_Base_Url;
+  void setActive_token(std::string &token) { Active_Token = token; }
+  void unsetActive_token() { Active_Token = ""; }
 
 public:
-    QueueManager(const char* hostname, int port);
-    ~QueueManager();
+  QueueManager(const std::string &queue_manager_base_url)
+      : Queue_Manager_Server_Base_Url(queue_manager_base_url) {};
 
-    bool createQueue(const std::string& queueName);
-    bool sendMessage(const std::string& queue_name, const std::string& message);
-    std::string receiveMessage(const std::string& queue_name);
+  // this method will only use to get token , it will not create queue !!!
+  // destructor!!!
+  ~QueueManager();
+  const std::string &getToken(const std::string &username,
+                              const std::string &password,
+                              const std::string &api);
+  void removeToken();
+  bool createQueue(const std::string &queueName, std::string &api);
+  bool sendMessage(const std::string &queue_name, const std::string &message,
+                   const std::string &token, std::string api);
+  bool sendMessage(const std::string &queue_name, const std::string &message,
+                   std::string api) {
+    return sendMessage(queue_name, message, Active_Token, api);
+  };
+
+  std::string receiveMessage(const std::string &queue_name,
+                             const std::string &token,
+                             std::string api = "read");
+
+  std::string receiveMessage(const std::string &queue_name,
+                             std::string api = "read") {
+    return receiveMessage(queue_name, Active_Token, api);
+  };
 };
-
 #endif
-

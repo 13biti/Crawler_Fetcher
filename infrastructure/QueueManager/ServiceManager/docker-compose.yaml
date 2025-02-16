@@ -18,14 +18,14 @@ services:
 
 
 
-  rabbitmqManager:
+  rabbitmq_manager:
     build: .
     container_name: rabbitmq_manager
     restart: always
     depends_on:
       - rabbitmq
     ports:
-      - "8000:8001"
+      - "5000:8001"
     networks:
       - app_network
 

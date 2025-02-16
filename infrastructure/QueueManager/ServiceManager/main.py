@@ -1,4 +1,3 @@
-from typing import ReadOnly
 from fastapi import FastAPI, HTTPException, Depends, Header
 from pydantic import BaseModel
 import jwt

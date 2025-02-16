@@ -2,17 +2,21 @@
 #include "../include/PerformHttpRequest.h"
 #include <amqp.h>
 #include <amqp_tcp_socket.h>
+#include <curl/curl.h>
 #include <curl/header.h>
 #include <nlohmann/json.hpp>
 #include <string>
 HTTPRequest httpRequest;
+QueueManager::~QueueManager() { return; }
 const std::string &QueueManager::getToken(const std::string &username,
                                           const std::string &password,
                                           const std::string &api) {
   // Use the provided base URL or default to localhost
-  std::string url = Queue_Manager_Server_Base_Url.empty()
-                        ? "http://127.0.0.1:8000/login"
-                        : Queue_Manager_Server_Base_Url + api;
+  std::string url =
+      Queue_Manager_Server_Base_Url.empty()
+          ? "http://127.0.0.1:8000/" + api
+          : Queue_Manager_Server_Base_Url +
+                (Queue_Manager_Server_Base_Url.back() == '/' ? "" : "/") + api;
 
   // Prepare JSON payload
   std::string jsonData = "{\"username\": \"" + username +
@@ -46,12 +50,13 @@ bool QueueManager::createQueue(const std::string &queueName, std::string &api) {
 };
 bool QueueManager::sendMessage(const std::string &queue_name,
                                const std::string &message,
-                               const std::string &token,
-                               std::string api = "write") {
+                               const std::string &token, std::string api) {
 
-  std::string url = Queue_Manager_Server_Base_Url.empty()
-                        ? "http://127.0.0.1:8000/write"
-                        : Queue_Manager_Server_Base_Url + "/" + api;
+  std::string url =
+      Queue_Manager_Server_Base_Url.empty()
+          ? "http://127.0.0.1:8000/" + api
+          : Queue_Manager_Server_Base_Url +
+                (Queue_Manager_Server_Base_Url.back() == '/' ? "" : "/") + api;
 
   // Prepare JSON payload
   std::string jsonData = "{\"queue_name\": \"" + queue_name +
@@ -73,12 +78,13 @@ bool QueueManager::sendMessage(const std::string &queue_name,
 };
 std::string QueueManager::receiveMessage(const std::string &queue_name,
                                          const std::string &token,
-                                         std::string api = "read") {
+                                         std::string api) {
 
-  std::string url = Queue_Manager_Server_Base_Url.empty()
-                        ? "http://127.0.0.1:8000/read"
-                        : Queue_Manager_Server_Base_Url + "/" + api;
-
+  std::string url =
+      Queue_Manager_Server_Base_Url.empty()
+          ? "http://127.0.0.1:8000/" + api
+          : Queue_Manager_Server_Base_Url +
+                (Queue_Manager_Server_Base_Url.back() == '/' ? "" : "/") + api;
   // Prepare JSON payload
   std::string jsonData = "{\"queue_name\": \"" + queue_name + "\"}";
 

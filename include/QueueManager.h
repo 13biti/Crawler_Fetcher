@@ -11,7 +11,7 @@ class QueueManager {
 private:
   std::string Active_Token;
   std::string Queue_Manager_Server_Base_Url;
-  void setActive_token(std::string &token) { Active_Token = token; }
+  void setActive_token(const std::string &token) { Active_Token = token; }
   void unsetActive_token() { Active_Token = ""; }
 
 public:

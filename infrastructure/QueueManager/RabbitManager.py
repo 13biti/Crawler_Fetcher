@@ -2,15 +2,21 @@ import pika
 import json
 import logging
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler("rabbitmq_service.log"),  # Log to a file
-        logging.StreamHandler(),  # Log to console
-    ],
+logger = logging.getLogger("rabbitmq_logger")  # Unique logger name
+logger.setLevel(logging.INFO)
+
+file_handler = logging.FileHandler("rabbitmq_service.log")
+file_handler.setFormatter(
+    logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 )
+
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(
+    logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+)
+
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
 
 
 class RabbitMQService:
@@ -21,6 +27,40 @@ class RabbitMQService:
         self.connection = None
         self.channel = None
         logging.info("RabbitMQService initialized with host: %s", self.host)
+        self.connect()
+
+
+import logging
+import pika
+
+# Create a logger for this script
+logger = logging.getLogger("rabbitmq_logger")  # Unique logger name
+logger.setLevel(logging.INFO)
+
+# Create file handler
+file_handler = logging.FileHandler("rabbitmq_service.log")
+file_handler.setFormatter(
+    logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+)
+
+# Create console handler
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(
+    logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+)
+
+# Add handlers to logger
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+
+
+class RabbitMQService:
+    def __init__(self, host, username, password):
+        self.host = host
+        self.username = username
+        self.password = password
+        self.connection = None
+        self.channel = None
 
     def connect(self):
         """Connect to RabbitMQ server with authentication."""
@@ -31,9 +71,11 @@ class RabbitMQService:
             )
             self.connection = pika.BlockingConnection(parameters)
             self.channel = self.connection.channel()
-            logging.info("Connected to RabbitMQ at %s successfully.", self.host)
+            logger.info("Connected to RabbitMQ at %s successfully.", self.host)
+            return True
         except Exception as e:
-            logging.error("Failed to connect to RabbitMQ: %s", e)
+            logger.error("Failed to connect to RabbitMQ: %s", e)
+            return False
 
     def disconnect(self):
         """Disconnect from RabbitMQ server."""

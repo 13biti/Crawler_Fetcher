@@ -7,6 +7,7 @@ from fastapi import Depends
 from SqlLiteManager import SqlLiteManager, Role
 from RabbitManager import RabbitMQService
 from contextlib import asynccontextmanager
+import time
 
 
 # Secret key for JWT encoding
@@ -55,13 +56,15 @@ async def lifespan(app: FastAPI):
     sqlconnection.insert(
         {"username": initUser, "pass": initUserPass, "role": Role.admin.value}
     )
-
     rmq_host = str(os.environ.get("rmq_host", "default_host"))
     rmq_username = str(os.environ.get("rmq_username", "default_username"))
     rmq_pass = str(os.environ.get("rmq_pass", "default_password"))
-
     rabbitmqManager = RabbitMQService(rmq_host, rmq_username, rmq_pass)
-    rabbitmqManager.connect()
+
+    while True:
+        if rabbitmqManager.connect():
+            break
+        time.sleep(5)
 
     yield  # This is where FastAPI will run the app
 

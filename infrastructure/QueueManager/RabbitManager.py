@@ -1,6 +1,7 @@
 import pika
 import json
 import logging
+import time
 
 logger = logging.getLogger("rabbitmq_logger")  # Unique logger name
 logger.setLevel(logging.INFO)
@@ -27,47 +28,16 @@ class RabbitMQService:
         self.connection = None
         self.channel = None
         logging.info("RabbitMQService initialized with host: %s", self.host)
-        self.connect()
-
-
-import logging
-import pika
-
-# Create a logger for this script
-logger = logging.getLogger("rabbitmq_logger")  # Unique logger name
-logger.setLevel(logging.INFO)
-
-# Create file handler
-file_handler = logging.FileHandler("rabbitmq_service.log")
-file_handler.setFormatter(
-    logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-)
-
-# Create console handler
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(
-    logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-)
-
-# Add handlers to logger
-logger.addHandler(file_handler)
-logger.addHandler(console_handler)
-
-
-class RabbitMQService:
-    def __init__(self, host, username, password):
-        self.host = host
-        self.username = username
-        self.password = password
-        self.connection = None
-        self.channel = None
 
     def connect(self):
         """Connect to RabbitMQ server with authentication."""
         try:
             credentials = pika.PlainCredentials(self.username, self.password)
             parameters = pika.ConnectionParameters(
-                host=self.host, credentials=credentials
+                host=self.host,
+                credentials=credentials,
+                heartbeat=600,
+                blocked_connection_timeout=300,
             )
             self.connection = pika.BlockingConnection(parameters)
             self.channel = self.connection.channel()
@@ -76,6 +46,25 @@ class RabbitMQService:
         except Exception as e:
             logger.error("Failed to connect to RabbitMQ: %s", e)
             return False
+
+    def connectionRecovery(self, retries=5, delay=10):
+        credentials = pika.PlainCredentials(self.username, self.password)
+        parameters = pika.ConnectionParameters(
+            host=self.host,
+            credentials=credentials,
+            heartbeat=600,
+            blocked_connection_timeout=300,
+        )
+        for _ in range(retries):
+            try:
+                self.connection = pika.BlockingConnection(parameters)
+                self.channel = self.connection.channel()
+                logger.info("Connected to RabbitMQ at %s successfully.", self.host)
+                return True
+            except Exception as e:
+                logger.error("Failed to connect to RabbitMQ: %s", e)
+                time.sleep(delay)
+        return False
 
     def disconnect(self):
         """Disconnect from RabbitMQ server."""
@@ -92,8 +81,9 @@ class RabbitMQService:
         :return: True if queue exists, False otherwise.
         """
         if not self.channel:
-            logging.error("No active channel. Call connect() first.")
-            return False
+            logging.error("No active channel. try to connecctoin recovery ")
+            if not self.connectionRecovery():
+                return False
 
         try:
             self.channel.queue_declare(queue=queue_name, passive=True)
@@ -118,8 +108,9 @@ class RabbitMQService:
         :param max_length: Maximum number of messages in the queue.
         """
         if not self.channel:
-            logging.error("No active channel. Call connect() first.")
-            return
+            logging.error("No active channel. try to connecctoin recovery ")
+            if not self.connectionRecovery():
+                return False
 
         if self.queue_exists(queue_name):
             logging.info("Queue '%s' already exists. Skipping creation.", queue_name)
@@ -146,8 +137,9 @@ class RabbitMQService:
     def add_item_to_queue(self, queue_name, item):
         """Add an item to the specified queue."""
         if not self.channel:
-            logging.error("No active channel. Call connect() first.")
-            return
+            logging.error("No active channel. try to connecctoin recovery ")
+            if not self.connectionRecovery():
+                return False
 
         try:
             self.channel.basic_publish(
@@ -170,8 +162,9 @@ class RabbitMQService:
         :return: The item removed from the queue, or None if the queue is empty.
         """
         if not self.channel:
-            logging.error("No active channel. Call connect() first.")
-            return None
+            logging.error("No active channel. try to connecctoin recovery ")
+            if not self.connectionRecovery():
+                return False
 
         try:
             method_frame, header_frame, body = self.channel.basic_get(

@@ -1,6 +1,20 @@
+#include <iostream>
+#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 #include <sstream>
 #include <string>
 
+// here i try to have something like what we have in dotnet , Since this
+// mongo stores every record, I tried to create a template that allows me to
+// add records to it. In general, I'm probably doing it wrong, but I'm dealing
+// with it better this way.
+class BaseModel {
+public:
+  virtual ~BaseModel() = default;
+  virtual std::string toJson() const = 0; // Convert model to JSON (for MongoDB)
+};
+
+using json = nlohmann::json;
 class User : public BaseModel {
 public:
   User(const std::string &name, int age, const std::string &email)
@@ -16,23 +30,20 @@ public:
     return oss.str();
   }
 
-  static User fromJson(const std::string &json) {
-    // Parse JSON (you can use a library like nlohmann/json for better parsing)
-    // For simplicity, we'll assume the JSON is well-formed and extract fields
-    // manually.
-    size_t nameStart = json.find("\"name\": \"") + 9;
-    size_t nameEnd = json.find("\"", nameStart);
-    std::string name = json.substr(nameStart, nameEnd - nameStart);
+  static User fromJson(const std::string &string_json) {
 
-    size_t ageStart = json.find("\"age\": ") + 7;
-    size_t ageEnd = json.find(",", ageStart);
-    int age = std::stoi(json.substr(ageStart, ageEnd - ageStart));
-
-    size_t emailStart = json.find("\"email\": \"") + 10;
-    size_t emailEnd = json.find("\"", emailStart);
-    std::string email = json.substr(emailStart, emailEnd - emailStart);
-
-    return User(name, age, email);
+    try {
+      json data = json::parse(string_json);
+      std::string name = data["name"];
+      int age = data["age"];
+      std::string email = data["email"];
+      return User(name, age, email);
+    } catch (const json::parse_error &e) {
+      std::cerr << "JSON parsing error: " << e.what() << std::endl;
+    } catch (const json::type_error &e) {
+      std::cerr << "Type error: " << e.what() << std::endl;
+    }
+    return User("", 0, " ");
   }
 
 private:

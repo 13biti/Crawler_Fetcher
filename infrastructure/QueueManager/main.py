@@ -61,10 +61,8 @@ async def lifespan(app: FastAPI):
     rmq_pass = str(os.environ.get("rmq_pass", "default_password"))
     rabbitmqManager = RabbitMQService(rmq_host, rmq_username, rmq_pass)
 
-    while True:
-        if rabbitmqManager.connect():
-            break
-        time.sleep(5)
+    if not rabbitmqManager.connect():
+        rabbitmqManager.connectionRecovery()
 
     yield  # This is where FastAPI will run the app
 
@@ -84,7 +82,7 @@ def login(user: LoginRequest):
             {
                 "sub": user.username,
                 "role": auth_user_role,
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=12),
             },
             SECRET_KEY,
             algorithm="HS256",

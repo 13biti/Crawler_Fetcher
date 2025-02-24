@@ -34,9 +34,10 @@ bool UrlManager::sortingUrls(std::string url) {
     // collection.insert_one(make_document(kvp("name", "p1")));
     // but it seems that error handeling in this method is better !!
     try {
-      auto insert_result = collection.insert_one(
-          bsoncxx::builder::stream::document{}
-          << "url" << url << bsoncxx::builder::stream::finalize);
+      auto insert_result =
+          collection.insert_one(bsoncxx::builder::stream::document{}
+                                << "url" << url << "hasBeenRead" << false
+                                << bsoncxx::builder::stream::finalize);
 
       if (insert_result) {
         std::cout << "URL inserted successfully: " << url << std::endl;
@@ -79,11 +80,22 @@ Result_read UrlManager::getUrl(std::string domain) {
     // collection.find(make_document(kvp("<field name>", "<value>"))); but seems
     // ...
     auto collection = database_[domain];
-    auto cursor = collection.find_one({});
+    auto cursor = collection.find_one(bsoncxx::builder::stream::document{}
+                                      << "hasBeenRead" << false
+                                      << bsoncxx::builder::stream::finalize);
 
     if (cursor) {
       auto url = (*cursor)["url"].get_string().value;
+      // change record(document) status to read
+      collection.update_one(
 
+          bsoncxx::builder::stream::document{}
+              << "url" << url << bsoncxx::builder::stream::finalize,
+          bsoncxx::builder::stream::document{}
+              << "$set" << bsoncxx::builder::stream::open_document
+              << "hasBeenRead" << true
+              << bsoncxx::builder::stream::close_document
+              << bsoncxx::builder::stream::finalize);
       return Result_read{true, std::string(url)};
     } else {
       return Result_read{false, "No URL found in collection: " + domain};

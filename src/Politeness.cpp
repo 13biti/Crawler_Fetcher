@@ -1,35 +1,55 @@
-#include "Politeness.h"
-#include "UrlManager.h" // Assuming getUrl function is declared here
+#include "../include/Politeness.h"
 
-#include <fstream>
-#include <iostream>
-#include <unistd.h>
+void Politeness::addJob(int id, uint64_t timestamp) {
 
-Politeness::Politeness(int fixTimer) : DefaultTimer(120) {}  // Constructor definition
-
-
-void Politeness::updatePoliteList (std::string websiteName , int timeCounter) {
-    politenessMap[websiteName] = timeCounter;
-}
-//    std::fstream myfile("./WebsiteRecorder.csv", std::ios::in);
-//    std::string line;
-//    while (std::getline(myfile, line)) {
-//        if (politenessMap.find(line) == politenessMap.end()) {
-//            politenessMap[line] = DefaultTimer;
-//        }
-//    }
-
-void Politeness::Timer() {
-    for (auto& pair : politenessMap) {
-        std::cout<<pair.second<<std::endl;
-        if (pair.second > 0) {
-            pair.second -= 60;
-        }
-    }
+  Job job{id, timestamp};
+  auto handle = heap.push(job);
+  jobHandles[id] = handle;
 }
 
-void Politeness::emptyDomainDeclaration(std::string key, int value) {
-   int x = value < 0 ? -1 : DefaultTimer;
-    politenessMap[key] = x;
+Politeness::Job Politeness::getReadyJob() {
+  if (heap.empty()) {
+    throw std::runtime_error("Heap is empty");
+  }
+  return heap.top();
 }
 
+void Politeness::updateJob(int id, uint64_t newTimestamp) {
+  auto it = jobHandles.find(id);
+  if (it != jobHandles.end()) {
+    Job updatedJob = *(it->second);
+    updatedJob.timestamp = newTimestamp;
+    heap.update(it->second, updatedJob);
+  } else {
+    throw std::runtime_error("Job not found");
+  }
+}
+
+void Politeness::deleteJob(int id) {
+  auto it = jobHandles.find(id);
+  if (it != jobHandles.end()) {
+    heap.erase(it->second);
+    jobHandles.erase(it);
+  } else {
+    throw std::runtime_error("Job not found");
+  }
+}
+void Politeness::displayHeap() const {
+  for (const auto &job : heap) {
+    std::cout << "Job ID: " << job.id << " | Timestamp: " << job.timestamp
+              << std::endl;
+  }
+}
+void Politeness::displayHeap1() const {
+  std::vector<Job> jobs;
+  for (const auto &handle : jobHandles) {
+    jobs.push_back(*handle.second);
+  }
+  std::sort(jobs.begin(), jobs.end(), [](const Job &a, const Job &b) {
+    return a.timestamp < b.timestamp;
+  });
+  for (const auto &job : jobs) {
+    std::cout << "Job ID: " << job.id << " | Timestamp: " << job.timestamp
+              << std::endl;
+  }
+}

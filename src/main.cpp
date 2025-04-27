@@ -1,23 +1,27 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <cstring>
+#include "../include/QueueManager.h"
+#include <algorithm>
 #include <cerrno>
-#include <regex>
-#include <map>
-#include <unistd.h>
 #include <cstdlib>
-#include "FileOperations.h"
-#include "UrlManager.h"
-#include "/home/kk_gorbee/Documents/project/Fetcher/mainProgram/messageManagerClass/messageManagerClass.h"
+#include <cstring>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <regex>
+#include <string>
+#include <unistd.h>
+#include <vector>
+
+#define CONSUMER_QUEUE_NAME "Ready-to-use-links"
+#define NEW_LINKS_QUEUE_BASE_URL "http://127.0.0.1:5000"
 
 using namespace std;
 
 FileOperations fileOperator;
 UrlManager urlManager(fileOperator);
-MessageHandler queueManager("localhost" ,5672 , "guest" , "guest" , "downloaderA_result" , "test");
-
-class Politeness {
+MessageHandler queueManager("localhost", 5672, "guest", "guest",
+                            "downloaderA_result", "test");
+/*
+classass Politeness {
 private:
     int DefaultTimer;
 
@@ -59,7 +63,7 @@ public:
         int x = value < 0 ? -1 : DefaultTimer;
         politenessMap[key] = x;
     }
-    void domainUnlocker(std::string result){  
+    void domainUnlocker(std::string result){
       size_t loc = result.find("~");
       int resultNumber = stoi(result.substr(0 , loc));
       std::string RUrl = result.substr(loc+1);
@@ -76,38 +80,115 @@ public:
           emptyDomainDeclaration(UrlFilePath , 1);
     }
 };
+*/
 
-int main () {
+const std::string WRITE_USERNAME = "u1";
+const std::string READ_USERNAME = "u2";
+const std::string PASSWORD = "123";
+const std::string API_SEND = "write";
+const std::string API_RECEIVE = "read";
+const std::string QUEUE_NAME = "test_queue";
+auto envReader = [](const char *env_name,
+                    const char *default_value) -> const char * {
+  const char *env_value = std::getenv(env_name);
+  return env_value ? env_value : default_value;
+};
+const std::string NEW_LINKS_QUEUE_NAME = envReader("Link_Queue", "newlinks");
+const std::string NEW_LINK_QUEUE_READ_USERNAME =
+    envReader("Link_Queue_User", "u");
+const std::string NEW_LINKS_QUEUE_PASSWORD =
+    envReader("Link_Queue_Pass", "123");
+const std::string API_LOGIN = envReader("Link_Queue_Login_Api", "login");
+const std::string MONGO_URLS_URI = envReader("MONGO_URI", "");
+const std::string MONGO_URLS_DB = envReader("MONGO_DB", "");
+const std::string MONGO_URLS_CLIENT = envReader("MONGO_CLIENT", "");
+#include <chrono>
+#include <future>
+#include <thread>
+#define NEW_LINK_PEER_SORT 10
+#include "../include/UrlManager.h"
+void readNewLinks() {
+  // token.empty() should checked here !
+  std::future<bool> futureResult;
+  bool result;
 
-    Politeness politeness(10);
+  QueueManager *newLinksQueue;
+  newLinksQueue = new QueueManager(NEW_LINKS_QUEUE_BASE_URL);
 
-    //queueManager.createQueue("test");
-    fileOperator.updateListForFirstTime();
-    urlManager.sortingUrls("/home/kk_gorbee/Documents/project/Fetcher/mainProgram/test.txt");
-    politeness.updateLinkMap();
-    std::string result ;
-    while (1) {
-        usleep(100000);
-        politeness.Timer();
-        result = queueManager.receiveMessage();
-        std::cout<<result<<"   ----" << std::endl;
-        if (result == "@")
-            continue;
-        politeness.domainUnlocker(result);
+  UrlManager *urlManager;
+  urlManager = new UrlManager(MONGO_URLS_URI, MONGO_URLS_DB, MONGO_URLS_CLIENT);
+
+  newLinksQueue->getToken(NEW_LINK_QUEUE_READ_USERNAME,
+                          NEW_LINKS_QUEUE_PASSWORD, API_LOGIN);
+  std::vector<std::string> newLinks;
+
+  // self log here , write lambeda , get like 10 link , async the liink manager
+  // and then get link again , dont waist any time on writing dbs !!
+  auto getLink = [&newLinks]() -> void {
+    newLinks.clear();
+    for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
+      std::string newLink =
+          newLinksQueue->receiveMessage("NEW_LINKS_QUEUE_NAME");
+      if (!newLink.empty())
+        newLinks.push_back(newLink);
+      else
+        break;
     }
+  };
+  std::future<bool> futureResult =
+      std::async(std::launch::async, []() { return true; });
+  bool result;
+  while (true) {
+    try {
+      getLink();
+      if (futureResult.valid()) {
+        result = futureResult
+                     .get(); // Get the result of the previous async operation
+      }
 
+      if (newLinks.empty()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        continue;
+      }
+      futureResult = std::async(std::launch::async, &UrlManager::sortingUrls,
+                                urlManager.get(), newLinks);
 
-
-    //  list1.updatePoliteList();
-//  SortingUrls("./test.txt");
-//  std::cout << "done sorting "<<endl;
-//  while (1){
-//    usleep(1000000);
-//    cout << "done ss "<<endl;
-//    list1.Timer();
-//    cout<< "out of timer  "<<endl;
+    } catch (const std::future_error &ex) {
+      std::cerr << "Future error: " << ex.what() << std::endl;
+      futureResult = std::async(std::launch::async, []() { return true; });
+    }
+  }
 }
-//queue example : 
+int main() {
+
+  Politeness politeness(10);
+
+  // queueManager.createQueue("test");
+  fileOperator.updateListForFirstTime();
+  urlManager.sortingUrls(
+      "/home/kk_gorbee/Documents/project/Fetcher/mainProgram/test.txt");
+  politeness.updateLinkMap();
+  std::string result;
+  while (1) {
+    usleep(100000);
+    politeness.Timer();
+    result = queueManager.receiveMessage();
+    std::cout << result << "   ----" << std::endl;
+    if (result == "@")
+      continue;
+    politeness.domainUnlocker(result);
+  }
+
+  //  list1.updatePoliteList();
+  //  SortingUrls("./test.txt");
+  //  std::cout << "done sorting "<<endl;
+  //  while (1){
+  //    usleep(1000000);
+  //    cout << "done ss "<<endl;
+  //    list1.Timer();
+  //    cout<< "out of timer  "<<endl;
+}
+// queue example :
 /*
 
 int main() {
@@ -119,12 +200,10 @@ int main() {
 
     // Send message
     std::string message_to_send = "Hello, World!";
-    bool sent_successfully = connection.sendMessage(queue_name, message_to_send);
-    if (sent_successfully) {
-        std::cout << "Message sent successfully!" << std::endl;
-    } else {
-        std::cerr << "Error sending message" << std::endl;
-        return EXIT_FAILURE;
+    bool sent_successfully = connection.sendMessage(queue_name,
+message_to_send); if (sent_successfully) { std::cout << "Message sent
+successfully!" << std::endl; } else { std::cerr << "Error sending message" <<
+std::endl; return EXIT_FAILURE;
     }
 
     // Receive message

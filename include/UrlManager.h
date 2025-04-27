@@ -12,6 +12,7 @@
 #include <regex>
 #include <string>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 struct Result_read {
   bool status;
@@ -29,6 +30,7 @@ public:
   bool sortingUrls(std::vector<std::string> urls);
   std::vector<Result_read> getUrl(std::vector<std::string> domains);
   Result_read getUrl(std::string domain);
+  std::unordered_map<std::string, std::string> getCollectionNames();
   ~UrlManager() {}
 
 private:

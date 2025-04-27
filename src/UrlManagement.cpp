@@ -46,6 +46,17 @@ bool UrlManager::sortingUrls(const std::string &url) {
     try {
       auto collection = database_["urls"];
 
+      auto duplicate_filter = bsoncxx::builder::stream::document{}
+                              << "base_url" << base_url << "url" << url
+                              << bsoncxx::builder::stream::finalize;
+
+      auto duplicate_result = collection.find_one(duplicate_filter.view());
+      if (duplicate_result) {
+        std::cerr << "Duplicate URL detected. Skipping insertion: " << url
+                  << std::endl;
+        return false;
+      }
+
       // Find the latest batch_id document for this base_url
       auto cursor = collection.find(bsoncxx::builder::stream::document{}
                                     << "base_url" << base_url

@@ -11,12 +11,20 @@
 #include <mongocxx/instance.hpp>
 
 #include <mongocxx/uri.hpp>
+#include <string>
+#include <unordered_map>
 #include <vector>
 #define BATCH_SIZE = 100
 
 // i define collection map here , its better to iterate over map rather then
 // using find in mongo
+// there is 2 main approuch for updating map , eather i should re read database
+// , or i can change it manualy after first read , which as you may geuss i
+// chose second method
 std::unordered_map<std::string, std::string> collection_map;
+bool map_initiated = false;
+bool map_updated = false;
+
 void UrlManager::retryConnection(int interval_seconds = 10) {
   while (!is_connected_) {
     std::cout << "Retrying connection to MongoDB..." << std::endl;
@@ -79,9 +87,18 @@ bool UrlManager::sortingUrls(const std::string &url) {
                   << bsoncxx::builder::stream::open_array << url_doc
                   << bsoncxx::builder::stream::close_array;
 
-        collection.insert_one(batch_doc.view());
-        std::cout << "Created new batch " << batch_id
-                  << " and inserted URL: " << url << std::endl;
+        auto insert_result = collection.insert_one(batch_doc.view());
+        if (insert_result &&
+            insert_result->inserted_id().type() == bsoncxx::type::k_oid) {
+          std::string inserted_id =
+              insert_result->inserted_id().get_oid().value.to_string();
+
+          updateMap(collection_map, base_url,
+                    inserted_id); // Pass by reference!
+
+          std::cout << "Created new batch " << batch_id
+                    << " and inserted URL: " << url << std::endl;
+        }
       } else {
         bsoncxx::builder::stream::document update_query;
         update_query << "base_url" << base_url << "batch_id" << batch_id;
@@ -316,8 +333,20 @@ std::vector<Result_read> UrlManager::getUrl(std::vector<std::string> domains) {
 
   return results;
 }
-std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
-  std::unordered_map<std::string, std::string> collection_map;
+void UrlManager::updateMap(std::unordered_map<std::string, std::string> &target,
+                           std::string key, std::string value) {
+  if (map_initiated)
+    return;
+  else if (target.find(key) == target.end())
+    target.insert({key, value});
+  else
+    target[key] = value;
+  map_updated = true;
+}
+/*
+smatchd::unordered_map<std::string, std::string>
+UrlManager::getCollectionNames() { std::unordered_map<std::string, std::string>
+collection_map;
 
   try {
     auto collection = database_["urls"];
@@ -332,6 +361,42 @@ std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
     for (const auto &doc : cursor) {
       std::string base_url = doc["_id"].get_utf8().value.to_string();
       collection_map[base_url] = base_url;
+    }
+
+    std::cout << "Base URLs loaded successfully. Found: "
+              << collection_map.size() << " domains." << std::endl;
+  } catch (const mongocxx::exception &e) {
+    std::cerr << "An error occurred while fetching base URLs: " << e.what()
+              << std::endl;
+  }
+
+  return collection_map;
+}
+*/
+std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
+  std::unordered_map<std::string, std::string> collection_map;
+
+  try {
+    auto collection = database_["urls"];
+
+    // Find distinct base_urls
+    auto distinct_base_urls =
+        collection.distinct("base_url", bsoncxx::document::view{});
+
+    for (const auto &base_url_element : distinct_base_urls) {
+      std::string base_url = base_url_element.get_utf8().value.to_string();
+
+      // Find one document for each base_url to get its _id
+      bsoncxx::builder::stream::document filter_builder;
+      filter_builder << "base_url" << base_url;
+
+      auto maybe_doc = collection.find_one(filter_builder.view());
+
+      if (maybe_doc) {
+        auto doc = maybe_doc->view();
+        std::string object_id = doc["_id"].get_oid().value.to_string();
+        collection_map[base_url] = object_id;
+      }
     }
 
     std::cout << "Base URLs loaded successfully. Found: "

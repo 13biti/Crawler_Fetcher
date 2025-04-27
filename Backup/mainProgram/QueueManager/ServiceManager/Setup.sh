@@ -1,5 +1,0 @@
-export init_admin="admin"
-export init_pass="123"
-export rmq_host="localhost"
-export rmq_username="test1"
-export rmq_pass="123123"

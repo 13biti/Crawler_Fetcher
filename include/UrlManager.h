@@ -10,6 +10,7 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
 #include <regex>
+#include <set>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -43,6 +44,7 @@ private:
   mongocxx::collection collection_;
   bool is_connected_ = false;
   void retryConnection(int interval_seconds);
+  void updateMap(std::set<std::string> &target, std::string key);
   void updateMap(std::unordered_map<std::string, std::string> &target,
                  std::string key, std::string value);
   void connectToMongoDB(const std::string &mongo_uri,

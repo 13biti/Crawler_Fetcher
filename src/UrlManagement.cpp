@@ -23,7 +23,6 @@
 // chose second method
 // ofter changin schema , this map is useless , i change it to set
 // std::unordered_map<std::string, std::string> collection_map;
-std::set<string> collection_map;
 void UrlManager::retryConnection(int interval_seconds = 10) {
   while (!is_connected_) {
     std::cout << "Retrying connection to MongoDB..." << std::endl;
@@ -226,7 +225,28 @@ void UrlManager::updateMap(std::unordered_map<std::string, std::string> &target,
     return;
   map_updated = true;
 }
-
+std::set<std::string> UrlManager::getBaseUrls() {
+  std::set<std::string> temp_map;
+  try {
+    auto collection = database_["urls"];
+    auto distinct_base_urls =
+        collection.distinct("base_url", bsoncxx::document::view{});
+    for (const auto &base_url_element : distinct_base_urls) {
+      std::string base_url = base_url_element.get_utf8().value.to_string();
+      temp_map.insert(base_url);
+    }
+    if (!temp_map.empty()) {
+      std::cout << "Base URLs loaded successfully. Found: " << temp_map.size()
+                << " domains." << std::endl;
+      map_initiated = true;
+      return temp_map;
+    }
+  } catch (const mongocxx::exception &e) {
+    std::cerr << "An error occurred while fetching base URLs: " << e.what()
+              << std::endl;
+  }
+  return temp_map;
+}
 std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
   std::unordered_map<std::string, std::string> collection_map;
   try {

@@ -31,7 +31,11 @@ public:
   bool sortingUrls(const std::string &url);
   std::vector<Result_read> getUrl(std::vector<std::string> domains);
   Result_read getUrl(std::string domain);
-  std::unordered_map<std::string, std::string> getCollectionNames();
+  std::set<std::string> getBaseMap() {
+    if (collection_map.empty())
+      initiateMap();
+    return collection_map;
+  }
   ~UrlManager() {}
   bool map_initiated = false;
   bool map_updated = false;
@@ -43,10 +47,22 @@ private:
   mongocxx::database database_;
   mongocxx::collection collection_;
   bool is_connected_ = false;
+  std::set<std::string> collection_map;
   void retryConnection(int interval_seconds);
+  void initiateMap() {
+    auto result = getBaseUrls();
+    if (result && map_initiated) {
+      collection_map = result;
+    } else {
+      collection_map.clear();
+    }
+  }
   void updateMap(std::set<std::string> &target, std::string key);
   void updateMap(std::unordered_map<std::string, std::string> &target,
                  std::string key, std::string value);
+
+  std::unordered_map<std::string, std::string> getCollectionNames();
+  std::set<std::string> getBaseUrls();
   void connectToMongoDB(const std::string &mongo_uri,
                         const std::string &database_name,
                         const std::string &client_name) {

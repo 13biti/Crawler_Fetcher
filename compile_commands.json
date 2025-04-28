@@ -1,0 +1,3 @@
+/usr/bin/clang -xobjective-c++-header -I/usr/include/bsoncxx -I/usr/include/mongocxx -std=c++17 ...
+-I/usr/include/bsoncxx/v_noabi
+

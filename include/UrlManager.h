@@ -26,12 +26,14 @@ public:
       : instance_{}, client_{mongocxx::uri{mongo_uri}}, is_connected_{false} {
     connectToMongoDB(mongo_uri, database_name, client_name);
   }
-  bool sortingUrls(std::string url);
   bool sortingUrls(std::vector<std::string> urls);
+  bool sortingUrls(const std::string &url);
   std::vector<Result_read> getUrl(std::vector<std::string> domains);
   Result_read getUrl(std::string domain);
   std::unordered_map<std::string, std::string> getCollectionNames();
   ~UrlManager() {}
+  bool map_initiated = false;
+  bool map_updated = false;
 
 private:
   // from up to down , instance of mongo , then a client , ...
@@ -41,6 +43,8 @@ private:
   mongocxx::collection collection_;
   bool is_connected_ = false;
   void retryConnection(int interval_seconds);
+  void updateMap(std::unordered_map<std::string, std::string> &target,
+                 std::string key, std::string value);
   void connectToMongoDB(const std::string &mongo_uri,
                         const std::string &database_name,
                         const std::string &client_name) {

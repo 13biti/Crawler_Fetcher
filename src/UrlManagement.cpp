@@ -1,4 +1,3 @@
-#include "../include/UrlManager.h"
 #include <bsoncxx/builder/basic/document.hpp>
 #include <iostream>
 
@@ -10,6 +9,7 @@
 
 #include <mongocxx/instance.hpp>
 
+#include "../include/UrlManager.h"
 #include <mongocxx/uri.hpp>
 #include <string>
 #include <unordered_map>
@@ -22,8 +22,6 @@
 // , or i can change it manualy after first read , which as you may geuss i
 // chose second method
 std::unordered_map<std::string, std::string> collection_map;
-bool map_initiated = false;
-bool map_updated = false;
 
 void UrlManager::retryConnection(int interval_seconds = 10) {
   while (!is_connected_) {

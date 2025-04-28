@@ -1,0 +1,4 @@
+CompileFlags:
+  Add:
+    - "-I/usr/include/bsoncxx/v_noabi"
+    - "-I/usr/include/mongocxx/v_noabi" # if you are using mongocxx too

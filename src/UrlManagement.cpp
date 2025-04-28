@@ -21,8 +21,9 @@
 // there is 2 main approuch for updating map , eather i should re read database
 // , or i can change it manualy after first read , which as you may geuss i
 // chose second method
-std::unordered_map<std::string, std::string> collection_map;
-
+// ofter changin schema , this map is useless , i change it to set
+// std::unordered_map<std::string, std::string> collection_map;
+std::set<string> collection_map;
 void UrlManager::retryConnection(int interval_seconds = 10) {
   while (!is_connected_) {
     std::cout << "Retrying connection to MongoDB..." << std::endl;
@@ -206,20 +207,28 @@ std::vector<Result_read> UrlManager::getUrl(std::vector<std::string> domains) {
 
   return results;
 }
+void UrlManager::updateMap(std::set<std::string> &target, std::string key) {
+  if (!map_initiated)
+    return;
+  else if (target.find(key) == target.end()) {
+    target.insert(key);
+    map_updated = true;
+  }
+}
+// if i return back to map
 void UrlManager::updateMap(std::unordered_map<std::string, std::string> &target,
                            std::string key, std::string value) {
-  if (map_initiated)
+  if (!map_initiated)
     return;
   else if (target.find(key) == target.end())
     target.insert({key, value});
-  else
-    target[key] = value;
+  else if (target[key] == value)
+    return;
   map_updated = true;
 }
 
 std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
   std::unordered_map<std::string, std::string> collection_map;
-
   try {
     auto collection = database_["urls"];
 

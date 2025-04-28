@@ -7,19 +7,15 @@
 #include <iostream>
 #include <map>
 #include <regex>
+#include <set>
 #include <string>
 #include <unistd.h>
 #include <vector>
-
 #define CONSUMER_QUEUE_NAME "Ready-to-use-links"
 #define NEW_LINKS_QUEUE_BASE_URL "http://127.0.0.1:5000"
 
 using namespace std;
 
-FileOperations fileOperator;
-UrlManager urlManager(fileOperator);
-MessageHandler queueManager("localhost", 5672, "guest", "guest",
-                            "downloaderA_result", "test");
 /*
 classass Politeness {
 private:
@@ -107,6 +103,9 @@ const std::string MONGO_URLS_CLIENT = envReader("MONGO_CLIENT", "");
 #include <thread>
 #define NEW_LINK_PEER_SORT 10
 #include "../include/UrlManager.h"
+UrlManager *urlManager;
+urlManager = new UrlManager(MONGO_URLS_URI, MONGO_URLS_DB, MONGO_URLS_CLIENT);
+
 void readNewLinks() {
   // token.empty() should checked here !
   std::future<bool> futureResult;
@@ -114,9 +113,6 @@ void readNewLinks() {
 
   QueueManager *newLinksQueue;
   newLinksQueue = new QueueManager(NEW_LINKS_QUEUE_BASE_URL);
-
-  UrlManager *urlManager;
-  urlManager = new UrlManager(MONGO_URLS_URI, MONGO_URLS_DB, MONGO_URLS_CLIENT);
 
   newLinksQueue->getToken(NEW_LINK_QUEUE_READ_USERNAME,
                           NEW_LINKS_QUEUE_PASSWORD, API_LOGIN);
@@ -135,6 +131,7 @@ void readNewLinks() {
         break;
     }
   };
+  // its hard to wrok in async !
   std::future<bool> futureResult =
       std::async(std::launch::async, []() { return true; });
   bool result;
@@ -156,6 +153,13 @@ void readNewLinks() {
     } catch (const std::future_error &ex) {
       std::cerr << "Future error: " << ex.what() << std::endl;
       futureResult = std::async(std::launch::async, []() { return true; });
+    }
+  }
+}
+int main() {
+  std::set<std::string> _urlMap;
+  auto updateCollectionMap = [&]() -> std::set<std::string> {
+    if (_urlMap.empty() && urlManager->map_initiated) {
     }
   }
 }

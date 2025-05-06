@@ -9,7 +9,10 @@
 #include <future>
 #include <iostream>
 #include <set>
+#include <signal.h>
 #include <string>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
 #include <vector>
@@ -17,33 +20,37 @@
 #define NEW_LINKS_QUEUE_BASE_URL "http://127.0.0.1:5000"
 #define NEW_LINK_PEER_SORT 10
 
-using namespace std;
-const std::string WRITE_USERNAME = "u2";
-const std::string READ_USERNAME = "u1";
-const std::string PASSWORD = "123";
-const std::string API_SEND = "write";
-const std::string API_RECEIVE = "read";
-const std::string QUEUE_NAME = "test_queue";
-auto envReader = [](const char *env_name,
-                    const char *default_value) -> const char * {
-  std::cout << env_name << std::endl;
-  const char *env_value = std::getenv(env_name);
-  return env_value ? env_value : default_value;
+struct Config {
+  static std::string getenvOrDefault(const char *name, const char *defaultVal) {
+    const char *val = std::getenv(name);
+    return val ? val : defaultVal;
+  }
+  static inline const std::string rawLinksQeueuName =
+      getenvOrDefault("RAW_LINKS_QUEUE_NAME", "rawlinks");
+  static inline const std::string downloadLinksQeueuName =
+      getenvOrDefault("DOWNLOAD_LINKS_QUEUE_NAME", "downloadlinks");
+  static inline const std::string writeUsername =
+      getenvOrDefault("WRITE_USERNAME", "u2");
+  static inline const std::string readUsername =
+      getenvOrDefault("READ_USERNAME", "u1");
+  static inline const std::string queuePassword =
+      getenvOrDefault("QUEUE_PASSWORD", "123");
+  static inline const std::string apiLogin =
+      getenvOrDefault("API_LOGIN", "login");
+  static inline const std::string apiSend =
+      getenvOrDefault("API_SEND", "/write");
+  static inline const std::string apiReceive =
+      getenvOrDefault("API_RECEIVE", "/read");
+  static inline const std::string mongoUrlsUri =
+      getenvOrDefault("MONGO_URLS_URI", "");
+  static inline const std::string mongoUrlsDb =
+      getenvOrDefault("MONGO_URLS_DB", "");
+  static inline const std::string mongoUrlsClient =
+      getenvOrDefault("MONGO_URLS_CLIENT", "");
 };
-const std::string NEW_LINKS_QUEUE_NAME =
-    envReader("NEW_LINKS_QUEUE_NAME", "newlinks");
-const std::string NEW_LINK_QUEUE_READ_USERNAME =
-    envReader("NEW_LINK_QUEUE_READ_USERNAME", "u");
-const std::string NEW_LINKS_QUEUE_PASSWORD =
-    envReader("NEW_LINKS_QUEUE_PASSWORD", "123");
-const std::string API_LOGIN = envReader("API_LOGIN", "login");
-const std::string MONGO_URLS_URI = envReader("MONGO_URLS_URI", "");
-const std::string MONGO_URLS_DB = envReader("MONGO_URLS_DB", "");
-const std::string MONGO_URLS_CLIENT = envReader("MONGO_URLS_CLIENT", "");
-
 UrlManager *urlManager;
 Politeness *politeness;
-void readNewLinks() {
+void readNewLinks(UrlManager *urlManager) {
   // token.empty() should checked here !
   std::future<bool> futureResult;
   bool result;
@@ -51,7 +58,8 @@ void readNewLinks() {
   QueueManager *newLinksQueue;
   newLinksQueue = new QueueManager(NEW_LINKS_QUEUE_BASE_URL);
 
-  newLinksQueue->getToken(READ_USERNAME, NEW_LINKS_QUEUE_PASSWORD, API_LOGIN);
+  newLinksQueue->getToken(Config::readUsername, Config::queuePassword,
+                          Config::apiLogin);
   // std::cout << newLinksQueue->returnToken() << std::endl;
   std::vector<std::string> newLinks;
 
@@ -60,7 +68,8 @@ void readNewLinks() {
   auto getLink = [&newLinks, newLinksQueue]() -> void {
     newLinks.clear();
     for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
-      std::string newLink = newLinksQueue->receiveMessage(NEW_LINKS_QUEUE_NAME);
+      std::string newLink =
+          newLinksQueue->receiveMessage(Config::rawLinksQeueuName);
       if (!newLink.empty())
         newLinks.push_back(newLink);
       else
@@ -69,8 +78,7 @@ void readNewLinks() {
   };
   // its hard to wrok in async !
   futureResult = std::async(std::launch::async, []() { return true; });
-  int i = 10;
-  while (i > 0) {
+  while (true) {
     try {
       getLink();
       if (futureResult.valid()) {
@@ -98,42 +106,81 @@ void readNewLinks() {
       std::cerr << "Future error: " << ex.what() << std::endl;
       futureResult = std::async(std::launch::async, []() { return true; });
     }
-    i--;
   }
 }
-int main() {
+void writeNewLinks(UrlManager *urlManager, Politeness *politeness) {
   Politeness::JotDto newjob;
   std::set<std::string> _urlMap;
   QueueManager *newLinksQueue;
   newLinksQueue = new QueueManager(NEW_LINKS_QUEUE_BASE_URL);
-  newLinksQueue->getToken(WRITE_USERNAME, "123", API_LOGIN);
+  newLinksQueue->getToken(Config::writeUsername, Config::queuePassword,
+                          Config::apiLogin);
   auto token = newLinksQueue->returnToken();
+
   auto sendLink = [newLinksQueue, token](std::string downloadbleUrl) -> void {
     for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
-      newLinksQueue->sendMessage("downloadable", downloadbleUrl, token,
-                                 API_SEND);
+      newLinksQueue->sendMessage(Config::downloadLinksQeueuName, downloadbleUrl,
+                                 token, Config::apiSend);
     }
   };
-  urlManager = new UrlManager(MONGO_URLS_URI, MONGO_URLS_DB, MONGO_URLS_CLIENT);
-  // readNewLinks();
-  politeness = new Politeness();
+  // you may ask why i have this conditions ? for not reading database every
+  // time someting happen there !!
   auto updateCollectionMap = [&]() -> void {
-    _urlMap = urlManager->getBaseMap();
+    if (!urlManager->map_initiated || urlManager->map_updated) {
+      _urlMap = urlManager->getBaseMap();
+      politeness->addJobs(_urlMap);
+    }
   };
-  updateCollectionMap();
-  politeness->addJobs(_urlMap);
-  while (!newjob.status) {
-    newjob = politeness->getReadyJobStr();
-    sleep(10);
-  }
-  if (newjob.status) {
-    printf("iam here ");
+  while (true) {
+    // i may need to call this function in periods , like in loop :
+    updateCollectionMap();
+    while (true) {
+      newjob = politeness->getReadyJobStr();
+      if (newjob.status)
+        break;
+      sleep(1);
+    }
     auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
-    std::cout << downloadbleUrl.message << std::endl;
-    sendLink(downloadbleUrl.message);
-  } else {
-    std::cout << "someting went wrong";
+    if (downloadbleUrl.status)
+      sendLink(downloadbleUrl.message);
   }
+}
+pid_t reader_pid = -1;
+pid_t writer_pid = -1;
+
+void shutdownHandler(int signum) {
+  std::cout << "Shutting down..." << std::endl;
+  if (reader_pid > 0)
+    kill(reader_pid, SIGTERM);
+  if (writer_pid > 0)
+    kill(writer_pid, SIGTERM);
+  exit(0);
+}
+
+int main() {
+  signal(SIGINT, shutdownHandler); // ctrl+c handler
+  urlManager = new UrlManager(Config::mongoUrlsUri, Config::mongoUrlsDb,
+                              Config::mongoUrlsClient);
+  politeness = new Politeness();
+  reader_pid = fork();
+  if (reader_pid == 0) {
+    readNewLinks(urlManager);
+    exit(0);
+  }
+
+  writer_pid = fork();
+  if (writer_pid == 0) {
+    writeNewLinks(urlManager, politeness);
+    exit(0);
+  }
+
+  std::cout << "Spawned child processes. Reader PID: " << reader_pid
+            << ", Writer PID: " << writer_pid << std::endl;
+
+  int status;
+  waitpid(reader_pid, &status, 0);
+  waitpid(writer_pid, &status, 0);
+
   return 0;
 }
 

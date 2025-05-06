@@ -237,7 +237,6 @@ std::set<std::string> UrlManager::getBaseUrls() {
         if (val.type() == bsoncxx::type::k_string) {
           std::string base_url(val.get_string().value.data(),
                                val.get_string().value.size());
-          std::cout << "here some fucking base " << base_url << std::endl;
           temp_map.insert(base_url);
         } else {
           std::cerr << "Unexpected BSON type in values array: "

@@ -1,19 +1,15 @@
-#include <bsoncxx/builder/basic/document.hpp>
-#include <iostream>
-
-#include <bsoncxx/json.hpp>
-
-#include <mongocxx/client.hpp>
-
-#include <mongocxx/exception/exception.hpp>
-
-#include <mongocxx/instance.hpp>
-
 #include "../include/UrlManager.h"
-#include <mongocxx/uri.hpp>
+#include <bsoncxx/array/view.hpp>
+#include <bsoncxx/builder/stream/document.hpp>
+#include <bsoncxx/document/view.hpp>
+#include <bsoncxx/types.hpp>
+#include <bsoncxx/types/bson_value/view.hpp>
+#include <iostream>
+#include <mongocxx/collection.hpp>
+#include <mongocxx/exception/exception.hpp>
+#include <ostream>
+#include <set>
 #include <string>
-#include <unordered_map>
-#include <vector>
 #define BATCH_SIZE = 100
 
 // i define collection map here , its better to iterate over map rather then
@@ -219,14 +215,34 @@ std::set<std::string> UrlManager::getBaseUrls() {
   std::set<std::string> temp_map;
   try {
     auto collection = database_["urls"];
-    auto cursor = collection.distinct("base_url", bsoncxx::document::view{});
 
-    for (const auto &doc : cursor) {
-      // The distinct values are returned as documents with a single "value"
-      // field
-      auto value_field = doc["value"];
-      if (value_field && value_field.type() == bsoncxx::type::k_string) {
-        temp_map.insert(std::string(value_field.get_string().value));
+    bsoncxx::builder::stream::document filter_builder;
+    auto filter = filter_builder << bsoncxx::builder::stream::finalize;
+
+    auto cursor = collection.distinct("base_url", filter.view());
+
+    // The cursor contains a single document with a 'values' array
+    for (auto &&doc : cursor) {
+      // Access the 'values' field
+      auto values_element = doc["values"];
+      if (!values_element || values_element.type() != bsoncxx::type::k_array) {
+        std::cerr << "Expected 'values' field of type array." << std::endl;
+        continue;
+      }
+
+      // Create a view over the 'values' array
+      bsoncxx::array::view values_array = values_element.get_array().value;
+
+      for (const auto &val : values_array) {
+        if (val.type() == bsoncxx::type::k_string) {
+          std::string base_url(val.get_string().value.data(),
+                               val.get_string().value.size());
+          std::cout << "here some fucking base " << base_url << std::endl;
+          temp_map.insert(base_url);
+        } else {
+          std::cerr << "Unexpected BSON type in values array: "
+                    << static_cast<int>(val.type()) << std::endl;
+        }
       }
     }
 
@@ -234,12 +250,16 @@ std::set<std::string> UrlManager::getBaseUrls() {
       std::cout << "Base URLs loaded successfully. Found: " << temp_map.size()
                 << " domains." << std::endl;
       map_initiated = true;
-      return temp_map;
     }
   } catch (const mongocxx::exception &e) {
     std::cerr << "An error occurred while fetching base URLs: " << e.what()
               << std::endl;
   }
+
+  for (const auto &url : temp_map) {
+    std::cout << url << std::endl;
+  }
+
   return temp_map;
 }
 std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {

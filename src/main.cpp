@@ -104,12 +104,24 @@ void readNewLinks() {
 int main() {
   std::set<std::string> _urlMap;
   urlManager = new UrlManager(MONGO_URLS_URI, MONGO_URLS_DB, MONGO_URLS_CLIENT);
-  readNewLinks();
+  // readNewLinks();
   politeness = new Politeness();
   auto updateCollectionMap = [&]() -> void {
     _urlMap = urlManager->getBaseMap();
+    printf("iam here ");
   };
+  updateCollectionMap();
+  for (const auto &key : _urlMap) {
+
+    std::cout << key << std::endl;
+  }
   politeness->addJobs(_urlMap);
+  politeness->displayStrHeapSorted();
+  Politeness::StrJob newjob = politeness->getReadyJobStr();
+  std::cout << newjob.nodeName << std::endl;
+  sleep(5);
+  newjob = politeness->getReadyJobStr();
+  std::cout << newjob.nodeName << std::endl;
   politeness->displayStrHeapSorted();
   return 0;
 }

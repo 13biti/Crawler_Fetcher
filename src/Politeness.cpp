@@ -1,4 +1,5 @@
 #include "../include/Politeness.h"
+#include <bits/types/struct_timeval.h>
 
 void Politeness::addJob(int id, uint64_t timestamp) {
   Job job{id, timestamp};
@@ -48,8 +49,14 @@ Politeness::StrJob Politeness::getReadyJobStr() {
   if (strHeap.empty()) {
     throw std::runtime_error("Heap is empty");
   }
-  return strHeap.top();
+  StrJob readyOne = strHeap.top();
+  if (readyOne.timestamp + secondsToMilliseconds(timerVal) <
+      getCurrentTimestampInMilliseconds())
+    return Politeness::StrJob();
+  updateStrJob(readyOne.id, getCurrentTimestampInSeconds());
+  return readyOne;
 }
+
 void Politeness::displayStrHeap() const {
   for (const auto &job : strHeap) {
     std::cout << "StrJob ID: " << job.id << " | Node: " << job.nodeName
@@ -77,7 +84,12 @@ Politeness::Job Politeness::getReadyJob() {
   if (heap.empty()) {
     throw std::runtime_error("Heap is empty");
   }
-  return heap.top();
+  Job readyOne = heap.top();
+  if (readyOne.timestamp + secondsToMilliseconds(timerVal) <
+      getCurrentTimestampInMilliseconds())
+    return Politeness::Job();
+  updateStrJob(readyOne.id, getCurrentTimestampInSeconds());
+  return readyOne;
 }
 
 void Politeness::updateJob(int id, uint64_t newTimestamp) {

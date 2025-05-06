@@ -15,6 +15,10 @@ private:
   void unsetActive_token() { Active_Token = ""; }
 
 public:
+  struct Message {
+    bool status = false;
+    std::string message = "";
+  };
   QueueManager(const std::string &queue_manager_base_url)
       : Queue_Manager_Server_Base_Url(queue_manager_base_url) {};
 
@@ -33,14 +37,11 @@ public:
     return sendMessage(queue_name, message, Active_Token, api);
   };
 
-  std::string receiveMessage(const std::string &queue_name,
-                             const std::string &token,
-                             std::string api = "read");
+  Message receiveMessage(const std::string &queue_name,
+                         const std::string &token, std::string api = "read");
 
-  std::string receiveMessage(const std::string &queue_name,
-                             std::string api = "read") {
-    std::cout << "iam try to receive message by this inputs " << queue_name
-              << api << Active_Token;
+  Message receiveMessage(const std::string &queue_name,
+                         std::string api = "read") {
     return receiveMessage(queue_name, Active_Token, api);
   };
   std::string returnToken() { return Active_Token; }

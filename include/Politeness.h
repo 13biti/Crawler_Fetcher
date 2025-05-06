@@ -34,7 +34,14 @@ public:
     int id;
     std::string nodeName;
     uint64_t timestamp;
+
     bool operator==(const StrJob &other) const { return id == other.id; }
+
+    bool operator<(const StrJob &other) const {
+      if (timestamp == other.timestamp)
+        return id > other.id;
+      return timestamp > other.timestamp;
+    }
   };
 
   template <typename T> struct Comparator {

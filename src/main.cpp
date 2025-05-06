@@ -116,10 +116,8 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
   auto token = newLinksQueue->returnToken();
 
   auto sendLink = [newLinksQueue, token](std::string downloadbleUrl) -> void {
-    for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
-      newLinksQueue->sendMessage(Config::downloadLinksQeueuName, downloadbleUrl,
-                                 token, Config::apiSend);
-    }
+    newLinksQueue->sendMessage(Config::downloadLinksQeueuName, downloadbleUrl,
+                               token, Config::apiSend);
   };
   // you may ask why i have this conditions ? for not reading database every
   // time someting happen there !!
@@ -154,8 +152,10 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
       sleep(1);
     }
     auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
-    if (downloadbleUrl.status)
+    if (downloadbleUrl.status) {
+      std::cout << "here is the messgae " + downloadbleUrl.message << std::endl;
       sendLink(downloadbleUrl.message);
+    }
   }
 }
 // iam use threading for simplisity , case if i fork them , i need to have

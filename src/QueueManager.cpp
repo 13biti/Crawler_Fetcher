@@ -48,7 +48,6 @@ bool QueueManager::createQueue(const std::string &queueName, std::string &api) {
 bool QueueManager::sendMessage(const std::string &queue_name,
                                const std::string &message,
                                const std::string &token, std::string api) {
-
   std::string url =
       Queue_Manager_Server_Base_Url.empty()
           ? "http://127.0.0.1:8000/" + api

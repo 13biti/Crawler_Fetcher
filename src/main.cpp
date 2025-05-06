@@ -68,10 +68,9 @@ void threadRead(UrlManager *urlManager) {
   auto getLink = [&newLinks, newLinksQueue]() -> void {
     newLinks.clear();
     for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
-      std::string newLink =
-          newLinksQueue->receiveMessage(Config::rawLinksQeueuName);
-      if (!newLink.empty())
-        newLinks.push_back(newLink);
+      auto newLink = newLinksQueue->receiveMessage(Config::rawLinksQeueuName);
+      if (newLink.status)
+        newLinks.push_back(newLink.message);
       else
         break;
     }
@@ -87,7 +86,6 @@ void threadRead(UrlManager *urlManager) {
       }
 
       if (newLinks.empty()) {
-        std::cout << "iam empty" << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(10000));
         continue;
       }
@@ -125,12 +123,27 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
   };
   // you may ask why i have this conditions ? for not reading database every
   // time someting happen there !!
-  auto updateCollectionMap = [&]() -> void {
+  auto updateCollectionMap = [&]() -> bool {
     if (!urlManager->map_initiated || urlManager->map_updated) {
       _urlMap = urlManager->getBaseMap();
-      politeness->addJobs(_urlMap);
+      if (!_urlMap.empty())
+        politeness->addJobs(_urlMap);
+      else
+        return false;
+
+      return true;
     }
+    return false;
   };
+  // this is for the very first time , i should have something to work with . so
+  // first , it will initiate base map , if politeness have something to work
+  // one , then it will update it and continue if not , then i will try to rich
+  // it untill have something to work , so this while will break after first
+  // true , first thing that politeness can work with it ;
+  while (!updateCollectionMap()) {
+    std::cout << "[wait] No URLs to process yet. Retrying in 5s...\n";
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+  }
   while (true) {
     // i may need to call this function in periods , like in loop :
     updateCollectionMap();
@@ -145,7 +158,8 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
       sendLink(downloadbleUrl.message);
   }
 }
-
+// iam use threading for simplisity , case if i fork them , i need to have
+// shared memory and stuff to share the urlManager between this two method
 int main() {
   urlManager = new UrlManager(Config::mongoUrlsUri, Config::mongoUrlsDb,
                               Config::mongoUrlsClient);

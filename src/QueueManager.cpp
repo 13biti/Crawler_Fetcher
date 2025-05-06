@@ -71,9 +71,9 @@ bool QueueManager::sendMessage(const std::string &queue_name,
     return false;
   }
 };
-std::string QueueManager::receiveMessage(const std::string &queue_name,
-                                         const std::string &token,
-                                         std::string api) {
+QueueManager::Message
+QueueManager::receiveMessage(const std::string &queue_name,
+                             const std::string &token, std::string api) {
 
   std::string url =
       Queue_Manager_Server_Base_Url.empty()
@@ -91,11 +91,15 @@ std::string QueueManager::receiveMessage(const std::string &queue_name,
   if (response.statusCode == 200) {
     try {
       nlohmann::json jsonResponse = nlohmann::json::parse(response.data);
-      if (jsonResponse.contains("message")) {
-        return (jsonResponse["message"]); // Set the active token
-      } else {
-        std::cerr << "message not found in response!" << std::endl;
-      }
+
+      if (jsonResponse.contains("message") &&
+          !jsonResponse["message"].is_null())
+        return QueueManager::Message{
+            true, jsonResponse["message"].get<std::string>()};
+      else
+        std::cerr << "message field is missing or null in response!"
+                  << std::endl;
+
     } catch (const std::exception &e) {
       std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;
     }
@@ -103,5 +107,5 @@ std::string QueueManager::receiveMessage(const std::string &queue_name,
     std::cerr << "HTTP request failed with status code: " << response.statusCode
               << std::endl;
   }
-  return "";
+  return QueueManager::Message();
 };

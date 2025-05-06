@@ -105,7 +105,7 @@ Politeness::Job Politeness::getReadyJob() {
     throw std::runtime_error("Heap is empty");
   }
   Job readyOne = heap.top();
-  if (readyOne.timestamp + secondsToMilliseconds(timerVal) <
+  if (readyOne.timestamp + secondsToMilliseconds(timerVal) >
       getCurrentTimestampInMilliseconds())
     return Politeness::Job();
   updateStrJob(readyOne.id, getCurrentTimestampInSeconds());

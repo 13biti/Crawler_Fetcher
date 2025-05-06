@@ -146,7 +146,12 @@ void writeNewLinks(UrlManager *urlManager, Politeness *politeness) {
   }
 }
 
-int main() { return 0; }
+int main() {
+  urlManager = new UrlManager(int somethig, Config::mongoUrlsUri,
+                              Config::mongoUrlsDb, Config::mongoUrlsClient);
+  politeness = new Politeness(int someting);
+  return 0;
+}
 
 /*
 classass Politeness {

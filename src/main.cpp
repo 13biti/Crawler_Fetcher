@@ -116,25 +116,13 @@ int main() {
     std::cout << key << std::endl;
   }
   politeness->addJobs(_urlMap);
-  politeness->displayStrHeapSorted();
   Politeness::StrJob newjob = politeness->getReadyJobStr();
   std::cout << newjob.nodeName << std::endl;
-  sleep(5);
+  sleep(11);
   newjob = politeness->getReadyJobStr();
   std::cout << newjob.nodeName << std::endl;
-  politeness->displayStrHeapSorted();
-  sleep(5);
-  newjob = politeness->getReadyJobStr();
-  std::cout << newjob.nodeName << std::endl;
-  politeness->displayStrHeapSorted();
-  sleep(5);
-  newjob = politeness->getReadyJobStr();
-  std::cout << newjob.nodeName << std::endl;
-  politeness->displayStrHeapSorted();
-  sleep(5);
-  newjob = politeness->getReadyJobStr();
-  std::cout << newjob.nodeName << std::endl;
-  politeness->displayStrHeapSorted();
+  auto urlll = urlManager->getUrl(newjob.nodeName);
+  std::cout << urlll.message << std::endl;
   return 0;
 }
 

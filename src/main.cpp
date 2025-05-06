@@ -50,7 +50,7 @@ struct Config {
 };
 UrlManager *urlManager;
 Politeness *politeness;
-void readNewLinks(UrlManager *urlManager) {
+void threadRead(UrlManager *urlManager) {
   // token.empty() should checked here !
   std::future<bool> futureResult;
   bool result;
@@ -108,7 +108,7 @@ void readNewLinks(UrlManager *urlManager) {
     }
   }
 }
-void writeNewLinks(UrlManager *urlManager, Politeness *politeness) {
+void threadWrite(UrlManager *urlManager, Politeness *politeness) {
   Politeness::JotDto newjob;
   std::set<std::string> _urlMap;
   QueueManager *newLinksQueue;
@@ -146,7 +146,16 @@ void writeNewLinks(UrlManager *urlManager, Politeness *politeness) {
   }
 }
 
-int main() { return 0; }
+int main() {
+  urlManager = new UrlManager(Config::mongoUrlsUri, Config::mongoUrlsDb,
+                              Config::mongoUrlsClient);
+  politeness = new Politeness();
+  std::thread reader(threadRead, urlManager);
+  std::thread writer(threadWrite, urlManager, politeness);
+  writer.join();
+  reader.join();
+  return 0;
+}
 
 /*
 classass Politeness {

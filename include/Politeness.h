@@ -29,7 +29,11 @@ public:
     int id;
     uint64_t timestamp;
   };
-
+  struct JotDto {
+    int id;
+    std::string base_url;
+    bool status;
+  };
   struct StrJob {
     int id;
     std::string nodeName;
@@ -58,7 +62,7 @@ public:
   void addJobs(const std::set<std::string> &nodeNames);
   void deleteStrJob(int id);
   void updateStrJob(int id, uint64_t newTimestamp);
-  StrJob getReadyJobStr();
+  JotDto getReadyJobStr();
   void displayStrHeap() const;
   void displayStrHeapSorted() const;
   //-----

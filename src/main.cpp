@@ -102,27 +102,38 @@ void readNewLinks() {
   }
 }
 int main() {
+  Politeness::JotDto newjob;
   std::set<std::string> _urlMap;
+  QueueManager *newLinksQueue;
+  newLinksQueue = new QueueManager(NEW_LINKS_QUEUE_BASE_URL);
+  newLinksQueue->getToken(WRITE_USERNAME, "123", API_LOGIN);
+  auto token = newLinksQueue->returnToken();
+  auto sendLink = [newLinksQueue, token](std::string downloadbleUrl) -> void {
+    for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
+      newLinksQueue->sendMessage("downloadable", downloadbleUrl, token,
+                                 API_SEND);
+    }
+  };
   urlManager = new UrlManager(MONGO_URLS_URI, MONGO_URLS_DB, MONGO_URLS_CLIENT);
   // readNewLinks();
   politeness = new Politeness();
   auto updateCollectionMap = [&]() -> void {
     _urlMap = urlManager->getBaseMap();
-    printf("iam here ");
   };
   updateCollectionMap();
-  for (const auto &key : _urlMap) {
-
-    std::cout << key << std::endl;
-  }
   politeness->addJobs(_urlMap);
-  Politeness::StrJob newjob = politeness->getReadyJobStr();
-  std::cout << newjob.nodeName << std::endl;
-  sleep(11);
-  newjob = politeness->getReadyJobStr();
-  std::cout << newjob.nodeName << std::endl;
-  auto urlll = urlManager->getUrl(newjob.nodeName);
-  std::cout << urlll.message << std::endl;
+  while (!newjob.status) {
+    newjob = politeness->getReadyJobStr();
+    sleep(10);
+  }
+  if (newjob.status) {
+    printf("iam here ");
+    auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
+    std::cout << downloadbleUrl.message << std::endl;
+    sendLink(downloadbleUrl.message);
+  } else {
+    std::cout << "someting went wrong";
+  }
   return 0;
 }
 

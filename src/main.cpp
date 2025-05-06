@@ -123,6 +123,18 @@ int main() {
   newjob = politeness->getReadyJobStr();
   std::cout << newjob.nodeName << std::endl;
   politeness->displayStrHeapSorted();
+  sleep(5);
+  newjob = politeness->getReadyJobStr();
+  std::cout << newjob.nodeName << std::endl;
+  politeness->displayStrHeapSorted();
+  sleep(5);
+  newjob = politeness->getReadyJobStr();
+  std::cout << newjob.nodeName << std::endl;
+  politeness->displayStrHeapSorted();
+  sleep(5);
+  newjob = politeness->getReadyJobStr();
+  std::cout << newjob.nodeName << std::endl;
+  politeness->displayStrHeapSorted();
   return 0;
 }
 

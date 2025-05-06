@@ -1,5 +1,6 @@
 #include "../include/Politeness.h"
 #include <bits/types/struct_timeval.h>
+#include <string>
 
 void Politeness::addJob(int id, uint64_t timestamp) {
   Job job{id, timestamp};
@@ -50,10 +51,29 @@ Politeness::StrJob Politeness::getReadyJobStr() {
     throw std::runtime_error("Heap is empty");
   }
   StrJob readyOne = strHeap.top();
-  if (readyOne.timestamp + secondsToMilliseconds(timerVal) <
+  //  std::cout << "readyOne is " << std::to_string(readyOne.timestamp) << " "
+  //            << readyOne.nodeName << " timerval "
+  //            << std::to_string(secondsToMilliseconds(timerVal))
+  //            << " sum of timeval and timestamp "
+  //            << std::to_string(readyOne.timestamp +
+  //                              secondsToMilliseconds(timerVal))
+  //            << " current time "
+  //            << std::to_string(getCurrentTimestampInMilliseconds())
+  //            << " is it bigger? "
+  //            << ((readyOne.timestamp + secondsToMilliseconds(timerVal)) <
+  //                        getCurrentTimestampInMilliseconds()
+  //                    ? "yes"
+  //                    : "no")
+  //            << std::endl;
+  // lord have mercy i make big mistkae , i wrote this if in reverce !!
+  if (readyOne.timestamp + secondsToMilliseconds(timerVal) >
       getCurrentTimestampInMilliseconds())
     return Politeness::StrJob();
-  updateStrJob(readyOne.id, getCurrentTimestampInSeconds());
+  //  std::cout << "change time stemp from "
+  //            << std::to_string(readyOne.timestamp) + "to" +
+  //                   std::to_string(getCurrentTimestampInMilliseconds())
+  //            << std::endl;
+  updateStrJob(readyOne.id, getCurrentTimestampInMilliseconds());
   return readyOne;
 }
 

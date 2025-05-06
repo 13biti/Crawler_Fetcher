@@ -145,44 +145,8 @@ void writeNewLinks(UrlManager *urlManager, Politeness *politeness) {
       sendLink(downloadbleUrl.message);
   }
 }
-pid_t reader_pid = -1;
-pid_t writer_pid = -1;
 
-void shutdownHandler(int signum) {
-  std::cout << "Shutting down..." << std::endl;
-  if (reader_pid > 0)
-    kill(reader_pid, SIGTERM);
-  if (writer_pid > 0)
-    kill(writer_pid, SIGTERM);
-  exit(0);
-}
-
-int main() {
-  signal(SIGINT, shutdownHandler); // ctrl+c handler
-  urlManager = new UrlManager(Config::mongoUrlsUri, Config::mongoUrlsDb,
-                              Config::mongoUrlsClient);
-  politeness = new Politeness();
-  reader_pid = fork();
-  if (reader_pid == 0) {
-    readNewLinks(urlManager);
-    exit(0);
-  }
-
-  writer_pid = fork();
-  if (writer_pid == 0) {
-    writeNewLinks(urlManager, politeness);
-    exit(0);
-  }
-
-  std::cout << "Spawned child processes. Reader PID: " << reader_pid
-            << ", Writer PID: " << writer_pid << std::endl;
-
-  int status;
-  waitpid(reader_pid, &status, 0);
-  waitpid(writer_pid, &status, 0);
-
-  return 0;
-}
+int main() { return 0; }
 
 /*
 classass Politeness {

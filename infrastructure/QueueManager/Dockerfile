@@ -1,4 +1,4 @@
-from python:3.11
+from registry.docker.ir/library/python:3.11
 
 WORKDIR /app 
 

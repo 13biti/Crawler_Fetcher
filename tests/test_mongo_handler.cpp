@@ -1,4 +1,4 @@
-// this is wroten by ai , still cannot write test , i write like half of it  
+// this is wroten by ai , still cannot write test , i write like half of it
 #include "../include/MongoHandler.h"
 #include <gtest/gtest.h>
 #include <iostream>
@@ -68,9 +68,7 @@ protected:
     mongoDBHandler = new MongoDBHandler(URI, DATABASE_NAME);
   }
 
-  void TearDown() override {
-    delete mongoDBHandler;
-  }
+  void TearDown() override { delete mongoDBHandler; }
 };
 
 // Test: Store a model in MongoDB
@@ -98,7 +96,8 @@ TEST_F(MongoDBHandlerTest, FindModels) {
   std::string queryJson = R"({"age": {"$gt": 20}})";
 
   // Find models matching the query
-  OperationResult result = mongoDBHandler->findModels<User>(COLLECTION_NAME, queryJson);
+  OperationResult result =
+      mongoDBHandler->findModels<User>(COLLECTION_NAME, queryJson);
 
   // Check if the operation was successful
   EXPECT_TRUE(result.success);
@@ -122,5 +121,6 @@ TEST_F(MongoDBHandlerTest, FindModels) {
   EXPECT_TRUE(found);
 
   // Log the result
-  std::cout << "FindModels Test: Found " << users.size() << " users." << std::endl;
+  std::cout << "FindModels Test: Found " << users.size() << " users."
+            << std::endl;
 }

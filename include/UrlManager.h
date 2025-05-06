@@ -51,7 +51,7 @@ private:
   void retryConnection(int interval_seconds);
   void initiateMap() {
     auto result = getBaseUrls();
-    if (result && map_initiated) {
+    if (!result.empty() && map_initiated) {
       collection_map = result;
     } else {
       collection_map.clear();

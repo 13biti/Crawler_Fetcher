@@ -1,4 +1,4 @@
-//like before , this is not mine !! :)) 
+// like before , this is not mine !! :))
 #include "../include/UrlManager.h"
 #include <iostream>
 #include <vector>
@@ -17,9 +17,7 @@ int main() {
 
   // Test inserting multiple URLs (batch)
   std::vector<std::string> urls = {
-      "https://example.org",
-      "https://example.net",
-      "https://example.org/page1",
+      "https://example.org", "https://example.net", "https://example.org/page1",
       "https://example.net/page2",
       "https://invalid-url" // This should fail due to invalid format
   };
@@ -34,15 +32,18 @@ int main() {
   std::string domain = "example.com";
   Result_read firstUrlResult = urlManager.getUrl(domain);
   if (firstUrlResult.status) {
-    std::cout << "🔍 First unread URL from " << domain << ": " << firstUrlResult.message << std::endl;
+    std::cout << "🔍 First unread URL from " << domain << ": "
+              << firstUrlResult.message << std::endl;
   } else {
     std::cerr << "⚠️ Error: " << firstUrlResult.message << std::endl;
   }
 
-  // Try getting another unread URL from the same domain (should return next unread URL)
+  // Try getting another unread URL from the same domain (should return next
+  // unread URL)
   Result_read secondUrlResult = urlManager.getUrl(domain);
   if (secondUrlResult.status) {
-    std::cout << "🔍 Second unread URL from " << domain << ": " << secondUrlResult.message << std::endl;
+    std::cout << "🔍 Second unread URL from " << domain << ": "
+              << secondUrlResult.message << std::endl;
   } else {
     std::cerr << "⚠️ No unread URLs left in " << domain << std::endl;
   }
@@ -51,17 +52,21 @@ int main() {
   std::string anotherDomain = "example.org";
   Result_read anotherDomainUrl = urlManager.getUrl(anotherDomain);
   if (anotherDomainUrl.status) {
-    std::cout << "🔍 Unread URL from " << anotherDomain << ": " << anotherDomainUrl.message << std::endl;
+    std::cout << "🔍 Unread URL from " << anotherDomain << ": "
+              << anotherDomainUrl.message << std::endl;
   } else {
     std::cerr << "⚠️ No unread URLs in " << anotherDomain << std::endl;
   }
 
-  // Try fetching from example.com again (should return no URLs if marking works)
+  // Try fetching from example.com again (should return no URLs if marking
+  // works)
   Result_read finalCheck = urlManager.getUrl(domain);
   if (!finalCheck.status) {
-    std::cout << "✅ Confirmed that no unread URLs remain in " << domain << std::endl;
+    std::cout << "✅ Confirmed that no unread URLs remain in " << domain
+              << std::endl;
   } else {
-    std::cerr << "❌ Error: Expected no unread URLs, but got: " << finalCheck.message << std::endl;
+    std::cerr << "❌ Error: Expected no unread URLs, but got: "
+              << finalCheck.message << std::endl;
   }
 
   return EXIT_SUCCESS;

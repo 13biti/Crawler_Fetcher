@@ -1,4 +1,4 @@
-FROM mongodb/mongodb-community-server:latest
+FROM registry.docker.ir/library/mongo:latest
 
 EXPOSE 27017
 

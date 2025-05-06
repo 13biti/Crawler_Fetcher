@@ -39,7 +39,10 @@ public:
 
   std::string receiveMessage(const std::string &queue_name,
                              std::string api = "read") {
+    std::cout << "iam try to receive message by this inputs " << queue_name
+              << api << Active_Token;
     return receiveMessage(queue_name, Active_Token, api);
   };
+  std::string returnToken() { return Active_Token; }
 };
 #endif

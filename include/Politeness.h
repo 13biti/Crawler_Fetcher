@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <iostream>
 #include <map>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -26,14 +27,31 @@ public:
     uint64_t timestamp;
   };
 
-  struct Comparator {
-    bool operator()(const Job &a, const Job &b) const {
+  struct StrJob {
+    int id;
+    std::string nodeName;
+    uint64_t timestamp;
+    bool operator==(const StrJob &other) const { return id == other.id; }
+  };
+
+  template <typename T> struct Comparator {
+    bool operator()(const T &a, const T &b) const {
       if (a.timestamp == b.timestamp) {
         return a.id > b.id;
       }
       return a.timestamp > b.timestamp;
     }
   };
+  // adding string jobs :
+  void addJob(int id, const std::string &nodeName, uint64_t timestamp);
+  void addJob(const std::string &nodeName, uint64_t timestamp);
+  void addJobs(const std::set<std::string> &nodeNames);
+  void deleteStrJob(int id);
+  void updateStrJob(int id, uint64_t newTimestamp);
+  StrJob getReadyJobStr();
+  void displayStrHeap() const;
+  void displayStrHeapSorted() const;
+  //-----
   void addJob(int id, uint64_t timestamp);
   Job getReadyJob();
   void updateJob(int id, uint64_t newTimestamp);
@@ -41,11 +59,19 @@ public:
   void displayHeap() const;
   void displayHeap1() const;
   using Heap =
-      boost::heap::fibonacci_heap<Job, boost::heap::compare<Comparator>>;
+      boost::heap::fibonacci_heap<Job, boost::heap::compare<Comparator<Job>>>;
   using Handle = Heap::handle_type;
+
+  using StrHeap =
+      boost::heap::fibonacci_heap<StrJob,
+                                  boost::heap::compare<Comparator<StrJob>>>;
+  using StrHandle = StrHeap::handle_type;
 
 private:
   Heap heap;
+  StrHeap strHeap;
   std::unordered_map<int, Handle> jobHandles;
+  std::unordered_map<int, StrHandle> strJobHandles;
+  int nextId = 0;
 };
 #endif // POLITENESS_H

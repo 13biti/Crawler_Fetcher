@@ -88,7 +88,7 @@ bool UrlManager::sortingUrls(const std::string &url) {
         std::string inserted_id =
             insert_result->inserted_id().get_oid().value.to_string();
 
-        updateMap(collection_map, base_url, inserted_id); // Pass by reference!
+        updateMap(collection_map, base_url);
 
         std::cout << "Inserted URL into batch " << batch_id << ": " << url
                   << std::endl;
@@ -154,7 +154,7 @@ Result_read UrlManager::getUrl(std::string domain) {
     }
 
     auto url_doc = *cursor.begin();
-    std::string url = url_doc["url"].get_utf8().value.to_string();
+    std::string url{url_doc["url"].get_string().value};
 
     // Mark it as read
     bsoncxx::builder::stream::document update_filter;
@@ -215,26 +215,21 @@ void UrlManager::updateMap(std::set<std::string> &target, std::string key) {
   }
 }
 // if i return back to map
-void UrlManager::updateMap(std::unordered_map<std::string, std::string> &target,
-                           std::string key, std::string value) {
-  if (!map_initiated)
-    return;
-  else if (target.find(key) == target.end())
-    target.insert({key, value});
-  else if (target[key] == value)
-    return;
-  map_updated = true;
-}
 std::set<std::string> UrlManager::getBaseUrls() {
   std::set<std::string> temp_map;
   try {
     auto collection = database_["urls"];
-    auto distinct_base_urls =
-        collection.distinct("base_url", bsoncxx::document::view{});
-    for (const auto &base_url_element : distinct_base_urls) {
-      std::string base_url = base_url_element.get_utf8().value.to_string();
-      temp_map.insert(base_url);
+    auto cursor = collection.distinct("base_url", bsoncxx::document::view{});
+
+    for (const auto &doc : cursor) {
+      // The distinct values are returned as documents with a single "value"
+      // field
+      auto value_field = doc["value"];
+      if (value_field && value_field.type() == bsoncxx::type::k_string) {
+        temp_map.insert(std::string(value_field.get_string().value));
+      }
     }
+
     if (!temp_map.empty()) {
       std::cout << "Base URLs loaded successfully. Found: " << temp_map.size()
                 << " domains." << std::endl;
@@ -251,24 +246,29 @@ std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
   std::unordered_map<std::string, std::string> collection_map;
   try {
     auto collection = database_["urls"];
+    auto cursor = collection.distinct("base_url", bsoncxx::document::view{});
 
-    // Find distinct base_urls
-    auto distinct_base_urls =
-        collection.distinct("base_url", bsoncxx::document::view{});
+    for (const auto &doc : cursor) {
+      // The distinct values are returned as documents with a single "value"
+      // field
+      auto value_field = doc["value"];
+      if (value_field && value_field.type() == bsoncxx::type::k_string) {
+        std::string base_url(value_field.get_string().value);
 
-    for (const auto &base_url_element : distinct_base_urls) {
-      std::string base_url = base_url_element.get_utf8().value.to_string();
+        // Find the earliest (or any) document for each base_url to get _id
+        auto filter = bsoncxx::builder::stream::document{}
+                      << "base_url" << base_url
+                      << bsoncxx::builder::stream::finalize;
 
-      // Find the earliest (or any) document for each base_url to get _id
-      bsoncxx::builder::stream::document filter_builder;
-      filter_builder << "base_url" << base_url;
+        auto maybe_doc = collection.find_one(filter.view());
 
-      auto maybe_doc = collection.find_one(filter_builder.view());
-
-      if (maybe_doc) {
-        auto doc = maybe_doc->view();
-        std::string object_id = doc["_id"].get_oid().value.to_string();
-        collection_map[base_url] = object_id;
+        if (maybe_doc) {
+          auto doc = *maybe_doc;
+          auto id_element = doc["_id"];
+          if (id_element && id_element.type() == bsoncxx::type::k_oid) {
+            collection_map[base_url] = id_element.get_oid().value.to_string();
+          }
+        }
       }
     }
 
@@ -281,7 +281,6 @@ std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
 
   return collection_map;
 }
-
 /*
 Result_read UrlManager::getUrl(std::string domain) {
   if (!is_connected_) {

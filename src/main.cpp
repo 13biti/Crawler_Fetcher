@@ -1,20 +1,118 @@
+#include "../include/Politeness.h"
 #include "../include/QueueManager.h"
-#include <algorithm>
+#include "../include/UrlManager.h"
 #include <cerrno>
+#include <chrono>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <fstream>
+#include <future>
 #include <iostream>
-#include <map>
-#include <regex>
 #include <set>
 #include <string>
+#include <thread>
 #include <unistd.h>
 #include <vector>
 #define CONSUMER_QUEUE_NAME "Ready-to-use-links"
 #define NEW_LINKS_QUEUE_BASE_URL "http://127.0.0.1:5000"
+#define NEW_LINK_PEER_SORT 10
 
 using namespace std;
+const std::string WRITE_USERNAME = "u2";
+const std::string READ_USERNAME = "u1";
+const std::string PASSWORD = "123";
+const std::string API_SEND = "write";
+const std::string API_RECEIVE = "read";
+const std::string QUEUE_NAME = "test_queue";
+auto envReader = [](const char *env_name,
+                    const char *default_value) -> const char * {
+  std::cout << env_name << std::endl;
+  const char *env_value = std::getenv(env_name);
+  return env_value ? env_value : default_value;
+};
+const std::string NEW_LINKS_QUEUE_NAME =
+    envReader("NEW_LINKS_QUEUE_NAME", "newlinks");
+const std::string NEW_LINK_QUEUE_READ_USERNAME =
+    envReader("NEW_LINK_QUEUE_READ_USERNAME", "u");
+const std::string NEW_LINKS_QUEUE_PASSWORD =
+    envReader("NEW_LINKS_QUEUE_PASSWORD", "123");
+const std::string API_LOGIN = envReader("API_LOGIN", "login");
+const std::string MONGO_URLS_URI = envReader("MONGO_URLS_URI", "");
+const std::string MONGO_URLS_DB = envReader("MONGO_URLS_DB", "");
+const std::string MONGO_URLS_CLIENT = envReader("MONGO_URLS_CLIENT", "");
+
+UrlManager *urlManager;
+Politeness *politeness;
+void readNewLinks() {
+  // token.empty() should checked here !
+  std::future<bool> futureResult;
+  bool result;
+
+  QueueManager *newLinksQueue;
+  newLinksQueue = new QueueManager(NEW_LINKS_QUEUE_BASE_URL);
+
+  newLinksQueue->getToken(READ_USERNAME, NEW_LINKS_QUEUE_PASSWORD, API_LOGIN);
+  // std::cout << newLinksQueue->returnToken() << std::endl;
+  std::vector<std::string> newLinks;
+
+  // self log here , write lambeda , get like 10 link , async the liink manager
+  // and then get link again , dont waist any time on writing dbs !!
+  auto getLink = [&newLinks, newLinksQueue]() -> void {
+    newLinks.clear();
+    for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
+      std::string newLink = newLinksQueue->receiveMessage(NEW_LINKS_QUEUE_NAME);
+      if (!newLink.empty())
+        newLinks.push_back(newLink);
+      else
+        break;
+    }
+  };
+  // its hard to wrok in async !
+  futureResult = std::async(std::launch::async, []() { return true; });
+  int i = 10;
+  while (i > 0) {
+    try {
+      getLink();
+      if (futureResult.valid()) {
+        result = futureResult
+                     .get(); // Get the result of the previous async operation
+      }
+
+      if (newLinks.empty()) {
+        std::cout << "iam empty" << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+        continue;
+      }
+      // static_cast<bool
+      // (UrlManager::*)(std::vector<std::string>)>(&UrlManager::sortingUrls)
+      // this line is trying to specefiy which one of sortingUrls is to use ,
+      // case i have 2 of them , base on this , i tell it the one that get
+      // vector of string and return bool
+      futureResult = std::async(
+          std::launch::async,
+          static_cast<bool (UrlManager::*)(std::vector<std::string>)>(
+              &UrlManager::sortingUrls),
+          urlManager, newLinks);
+
+    } catch (const std::future_error &ex) {
+      std::cerr << "Future error: " << ex.what() << std::endl;
+      futureResult = std::async(std::launch::async, []() { return true; });
+    }
+    i--;
+  }
+}
+int main() {
+  std::set<std::string> _urlMap;
+  urlManager = new UrlManager(MONGO_URLS_URI, MONGO_URLS_DB, MONGO_URLS_CLIENT);
+  readNewLinks();
+  politeness = new Politeness();
+  auto updateCollectionMap = [&]() -> void {
+    _urlMap = urlManager->getBaseMap();
+  };
+  politeness->addJobs(_urlMap);
+  politeness->displayStrHeapSorted();
+  return 0;
+}
 
 /*
 classass Politeness {
@@ -78,91 +176,7 @@ public:
 };
 */
 
-const std::string WRITE_USERNAME = "u1";
-const std::string READ_USERNAME = "u2";
-const std::string PASSWORD = "123";
-const std::string API_SEND = "write";
-const std::string API_RECEIVE = "read";
-const std::string QUEUE_NAME = "test_queue";
-auto envReader = [](const char *env_name,
-                    const char *default_value) -> const char * {
-  const char *env_value = std::getenv(env_name);
-  return env_value ? env_value : default_value;
-};
-const std::string NEW_LINKS_QUEUE_NAME = envReader("Link_Queue", "newlinks");
-const std::string NEW_LINK_QUEUE_READ_USERNAME =
-    envReader("Link_Queue_User", "u");
-const std::string NEW_LINKS_QUEUE_PASSWORD =
-    envReader("Link_Queue_Pass", "123");
-const std::string API_LOGIN = envReader("Link_Queue_Login_Api", "login");
-const std::string MONGO_URLS_URI = envReader("MONGO_URI", "");
-const std::string MONGO_URLS_DB = envReader("MONGO_DB", "");
-const std::string MONGO_URLS_CLIENT = envReader("MONGO_CLIENT", "");
-#include <chrono>
-#include <future>
-#include <thread>
-#define NEW_LINK_PEER_SORT 10
-#include "../include/UrlManager.h"
-UrlManager *urlManager;
-urlManager = new UrlManager(MONGO_URLS_URI, MONGO_URLS_DB, MONGO_URLS_CLIENT);
-
-void readNewLinks() {
-  // token.empty() should checked here !
-  std::future<bool> futureResult;
-  bool result;
-
-  QueueManager *newLinksQueue;
-  newLinksQueue = new QueueManager(NEW_LINKS_QUEUE_BASE_URL);
-
-  newLinksQueue->getToken(NEW_LINK_QUEUE_READ_USERNAME,
-                          NEW_LINKS_QUEUE_PASSWORD, API_LOGIN);
-  std::vector<std::string> newLinks;
-
-  // self log here , write lambeda , get like 10 link , async the liink manager
-  // and then get link again , dont waist any time on writing dbs !!
-  auto getLink = [&newLinks]() -> void {
-    newLinks.clear();
-    for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
-      std::string newLink =
-          newLinksQueue->receiveMessage("NEW_LINKS_QUEUE_NAME");
-      if (!newLink.empty())
-        newLinks.push_back(newLink);
-      else
-        break;
-    }
-  };
-  // its hard to wrok in async !
-  std::future<bool> futureResult =
-      std::async(std::launch::async, []() { return true; });
-  bool result;
-  while (true) {
-    try {
-      getLink();
-      if (futureResult.valid()) {
-        result = futureResult
-                     .get(); // Get the result of the previous async operation
-      }
-
-      if (newLinks.empty()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        continue;
-      }
-      futureResult = std::async(std::launch::async, &UrlManager::sortingUrls,
-                                urlManager.get(), newLinks);
-
-    } catch (const std::future_error &ex) {
-      std::cerr << "Future error: " << ex.what() << std::endl;
-      futureResult = std::async(std::launch::async, []() { return true; });
-    }
-  }
-}
-int main() {
-  std::set<std::string> _urlMap;
-  auto updateCollectionMap = [&]() -> std::set<std::string> {
-    if (_urlMap.empty() && urlManager->map_initiated) {
-    }
-  }
-}
+/*
 int main() {
 
   Politeness politeness(10);

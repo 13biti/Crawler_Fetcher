@@ -14,6 +14,9 @@ static auto getCurrentTimestampInSeconds = []() -> uint64_t {
              std::chrono::system_clock::now().time_since_epoch())
       .count();
 };
+static uint64_t secondsToMilliseconds(int seconds) {
+  return static_cast<uint64_t>(seconds) * 1000;
+}
 
 static auto getCurrentTimestampInMilliseconds = []() -> uint64_t {
   return std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -66,8 +69,10 @@ public:
       boost::heap::fibonacci_heap<StrJob,
                                   boost::heap::compare<Comparator<StrJob>>>;
   using StrHandle = StrHeap::handle_type;
+  void setTimerVal(int sec) { timerVal = sec; }
 
 private:
+  uint64_t timerVal = 10;
   Heap heap;
   StrHeap strHeap;
   std::unordered_map<int, Handle> jobHandles;

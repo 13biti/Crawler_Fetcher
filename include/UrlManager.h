@@ -50,6 +50,7 @@ private:
   std::set<std::string> collection_map;
   void retryConnection(int interval_seconds);
   void initiateMap() {
+    printf("it was empty -- ");
     auto result = getBaseUrls();
     if (!result.empty() && map_initiated) {
       collection_map = result;

@@ -46,7 +46,7 @@ void Politeness::updateStrJob(int id, uint64_t newTimestamp) {
     throw std::runtime_error("StrJob not found");
   }
 }
-Politeness::StrJob Politeness::getReadyJobStr() {
+Politeness::JotDto Politeness::getReadyJobStr() {
   if (strHeap.empty()) {
     throw std::runtime_error("Heap is empty");
   }
@@ -68,13 +68,14 @@ Politeness::StrJob Politeness::getReadyJobStr() {
   // lord have mercy i make big mistkae , i wrote this if in reverce !!
   if (readyOne.timestamp + secondsToMilliseconds(timerVal) >
       getCurrentTimestampInMilliseconds())
-    return Politeness::StrJob();
+    return Politeness::JotDto{0, "", false};
   //  std::cout << "change time stemp from "
   //            << std::to_string(readyOne.timestamp) + "to" +
   //                   std::to_string(getCurrentTimestampInMilliseconds())
   //            << std::endl;
   updateStrJob(readyOne.id, getCurrentTimestampInMilliseconds());
-  return readyOne;
+
+  return Politeness::JotDto{readyOne.id, readyOne.nodeName, true};
 }
 
 void Politeness::displayStrHeap() const {

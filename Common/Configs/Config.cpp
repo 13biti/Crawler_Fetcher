@@ -1,7 +1,5 @@
 #include "Config.h"
 #include <cstdlib>
-
-#define NEW_LINKS_QUEUE_BASE_URL "http://127.0.0.1:5000"
 std::string Config::getenvOrDefault(const char *name, const char *defaultVal) {
   const char *val = std::getenv(name);
   return val ? val : defaultVal;

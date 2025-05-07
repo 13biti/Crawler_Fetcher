@@ -21,14 +21,13 @@ struct Result_read {
 };
 class UrlManager {
 public:
-  UrlManager(const std::string &mongo_uri = "mongodb://localhost:27017/",
-             const std::string &database_name = "testDb",
-             const std::string &client_name = "admin")
-      : instance_{}, client_{mongocxx::uri{mongo_uri}}, is_connected_{false} {
-    connectToMongoDB(mongo_uri, database_name, client_name);
-  }
-  bool sortingUrls(std::vector<std::string> urls);
+  UrlManager(mongocxx::client client, // Takes ownership
+             const std::string &database_name,
+             const std::string &collection_name = "urls")
+      : client_(std::move(client)), database_(client_[database_name]),
+        collection_(database_[collection_name]) {}
   bool sortingUrls(const std::string &url);
+  bool sortingUrls(std::vector<std::string> urls);
   std::vector<Result_read> getUrl(std::vector<std::string> domains);
   Result_read getUrl(std::string domain);
   std::set<std::string> getBaseMap() {
@@ -41,8 +40,6 @@ public:
   bool map_updated = false;
 
 private:
-  // from up to down , instance of mongo , then a client , ...
-  mongocxx::instance instance_;
   mongocxx::client client_;
   mongocxx::database database_;
   mongocxx::collection collection_;
@@ -64,25 +61,6 @@ private:
 
   std::unordered_map<std::string, std::string> getCollectionNames();
   std::set<std::string> getBaseUrls();
-  void connectToMongoDB(const std::string &mongo_uri,
-                        const std::string &database_name,
-                        const std::string &client_name) {
-    try {
-      // Access the "admin" database and run the ping command
-      auto admin = client_[client_name];
-      admin.run_command(bsoncxx::from_json(R"({ "ping": 1 })"));
-
-      // Access the specified database
-      database_ = client_[database_name];
-
-      // If no exception is thrown, the connection is successful
-      is_connected_ = true;
-      std::cout << "Successfully connected to MongoDB!" << std::endl;
-    } catch (const mongocxx::exception &e) {
-      std::cerr << "An exception occurred: " << e.what() << std::endl;
-      is_connected_ = false;
-    }
-  }
 };
 
 #endif // URL_MANAGER_H

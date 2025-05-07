@@ -17,29 +17,24 @@ public:
     std::string timestamp;
     bool status = false;
   };
-  // Constructor with default values
   DownloadResultStorage(
-      const std::string &mongo_uri = "mongodb://localhost:27017/",
-      const std::string &database_name = "testDb",
-      const std::string &client_name = "admin");
-
-  // Store a DownloadResult in MongoDB
+      mongocxx::client client, const std::string &database_name,
+      const std::string &collection_name = "DownloadedContent")
+      : client_(std::move(client)), database_(client_[database_name]),
+        collection_(database_[collection_name]) {}
   bool storeDownloadResult(const result &result);
 
-  // Check connection status
   bool isConnected() const { return is_connected_; }
 
 private:
-  // Connection helper
   void connectToMongoDB(const std::string &mongo_uri,
                         const std::string &database_name,
                         const std::string &client_name);
 
-  // MongoDB members
-  mongocxx::instance instance_; // The MongoDB instance (must remain alive)
-  mongocxx::client client_;     // MongoDB client
-  mongocxx::database database_; // Database reference
-  bool is_connected_;           // Connection status
+  mongocxx::client client_;
+  mongocxx::database database_;
+  mongocxx::collection collection_;
+  bool is_connected_;
 };
 
 #endif // DOWNLOAD_RESULT_STORAGE_H

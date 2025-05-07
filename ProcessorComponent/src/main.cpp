@@ -140,7 +140,6 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
           break;
         sleep(1);
       }
-
       std::cout << "politeness new job !" << newjob.base_url << std::endl;
       auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
       std::cout << "new url  !" << downloadbleUrl.message << std::endl;
@@ -257,13 +256,10 @@ int main() {
   Politeness politeness;
 
   std::thread reader(threadRead, &urlManager);
-
-  // Test 2: Only writer
   std::thread writer(threadWrite, &urlManager, &politeness);
+  std::thread handler([&storage] { threadDownloadResltHandler(&storage); });
   writer.join();
   reader.join();
-  // Test 3: Only handler
-  // std::thread handler([&storage] { threadDownloadResltHandler(&storage); });
-  // handler.join();
+  handler.join();
   return EXIT_SUCCESS;
 }

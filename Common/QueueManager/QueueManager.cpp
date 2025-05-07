@@ -1,5 +1,5 @@
-#include "../include/QueueManager.h"
-#include "../include/PerformHttpRequest.h"
+#include "./QueueManager.h"
+#include "../PerformRequest/PerformHttpRequest.h"
 #include <amqp.h>
 #include <amqp_tcp_socket.h>
 #include <curl/curl.h>

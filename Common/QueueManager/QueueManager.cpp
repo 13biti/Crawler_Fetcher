@@ -54,8 +54,9 @@ bool QueueManager::sendMessage(const std::string &queue_name,
           : Queue_Manager_Server_Base_Url +
                 (Queue_Manager_Server_Base_Url.back() == '/' ? "" : "/") + api;
 
-  std::string jsonData = "{\"queue_name\": \"" + queue_name +
-                         "\", \"message\": \"" + message + "\"}";
+  nlohmann::json wrapperPayload = {{"queue_name", queue_name},
+                                   {"message", message}};
+  std::string jsonData = wrapperPayload.dump();
   std::vector<std::string> headers = {"Content-Type: application/json",
                                       "Authorization: Bearer " + token};
 

@@ -17,7 +17,6 @@ struct DownloadResult {
   std::string error_message;
   std::string timestamp;
 
-  // Convert DownloadResult to JSON
   json to_json() const {
     return {{"url", url},
             {"html_content", html_content},

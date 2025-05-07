@@ -19,18 +19,7 @@
 // chose second method
 // ofter changin schema , this map is useless , i change it to set
 // std::unordered_map<std::string, std::string> collection_map;
-void UrlManager::retryConnection(int interval_seconds = 10) {
-  while (!is_connected_) {
-    std::cout << "Retrying connection to MongoDB..." << std::endl;
-    connectToMongoDB("mongodb://localhost:27017/", "testDb", "admin");
-    std::this_thread::sleep_for(std::chrono::seconds(interval_seconds));
-  }
-}
 bool UrlManager::sortingUrls(const std::string &url) {
-  if (!is_connected_) {
-    std::cerr << "Connection is not established!" << std::endl;
-    return false;
-  }
 
   std::smatch result;
   std::regex pattern(R"((?:https?://)?([^/]+))");

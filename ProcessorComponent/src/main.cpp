@@ -3,6 +3,7 @@
 #include "../../DownloaderComponent/include/CurlDownloder.h"
 #include "../include/DownloadResultStorage.h"
 #include "../include/LinkExtractor.h"
+#include "../include/Mongo.h"
 #include "../include/Politeness.h"
 #include "../include/UrlManager.h"
 #include <algorithm> // For std::find
@@ -135,12 +136,10 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     }
   }
 }
-void threadDownloadResltHandler() {
+void threadDownloadResltHandler(DownloadResultStorage *storage) {
 
   LinkExtractor *linkExec = new LinkExtractor();
   QueueManager *newLinksQueue;
-  DownloadResultStorage *drs = new DownloadResultStorage(
-      Config::mongoUrlsUri, Config::mongoUrlsDb, Config::mongoHandlerClient);
   newLinksQueue = new QueueManager(Config::queueBaseUrl);
   auto readToken = newLinksQueue->getToken(
       Config::processorReadUsername, Config::queuePassword, Config::apiLogin);
@@ -185,7 +184,7 @@ void threadDownloadResltHandler() {
       }
       sendRawLinks(filteredLinks);
       res.base_url = baseurl;
-      drs->storeDownloadResult(res);
+      storage->storeDownloadResult(res);
     }
   }
 }
@@ -197,18 +196,29 @@ void threadDownloadResltHandler() {
 // am using same username and pass for them all , but what if thy start to
 // change each other token and stuff ?
 int main() {
-  urlManager = new UrlManager(Config::mongoUrlsUri, Config::mongoUrlsDb,
-                              Config::mongoUrlsClient);
-  politeness = new Politeness();
-  std::thread reader(threadRead, urlManager);
-  std::thread writer(threadWrite, urlManager, politeness);
-  std::thread handler(threadDownloadResltHandler);
+  MongoDB::getInstance();
+
+  // 1. Create client pool (1 per thread)
+  std::vector<mongocxx::client> clients;
+  clients.emplace_back(mongocxx::uri{Config::mongoUrlsUri}); // For UrlManager
+  clients.emplace_back(mongocxx::uri{Config::mongoUrlsUri}); // For writer
+  clients.emplace_back(mongocxx::uri{Config::mongoUrlsUri}); // For handler
+
+  // 2. Initialize components
+  UrlManager urlManager(std::move(clients[0]), Config::mongoUrlsDb, "urls");
+  DownloadResultStorage storage(std::move(clients[2]), Config::mongoUrlsDb,
+                                "DownloadedContent");
+  Politeness politeness;
+
+  // 3. Start threads (pass dependencies)
+  std::thread reader(threadRead, &urlManager);
+  std::thread writer(threadWrite, &urlManager, &politeness);
+  std::thread handler([&storage] { threadDownloadResltHandler(&storage); });
+
   writer.join();
   reader.join();
   handler.join();
-  return 0;
 }
-
 /*
 classass Politeness {
 private:

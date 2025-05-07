@@ -3,13 +3,6 @@
 
 using namespace bsoncxx::builder::stream;
 
-DownloadResultStorage::DownloadResultStorage(const std::string &mongo_uri,
-                                             const std::string &database_name,
-                                             const std::string &client_name)
-    : client_{mongocxx::uri{mongo_uri}}, is_connected_{false} {
-  connectToMongoDB(mongo_uri, database_name, client_name);
-}
-
 void DownloadResultStorage::connectToMongoDB(const std::string &mongo_uri,
                                              const std::string &database_name,
                                              const std::string &client_name) {

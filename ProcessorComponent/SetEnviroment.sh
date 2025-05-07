@@ -19,6 +19,7 @@ show_help() {
 	echo "  --mongo-uri URI             -> sets MONGO_URLS_URI (default: empty)"
 	echo "  --mongo-db NAME             -> sets MONGO_URLS_DB (default: empty)"
 	echo "  --mongo-client NAME         -> sets MONGO_URLS_CLIENT (default: empty)"
+	echo "  --mongo-client2 NAME         -> sets MONGO_URLS_CLIENT (default: empty)"
 	echo "  --help                      -> show this help message"
 }
 
@@ -38,7 +39,7 @@ API_RECEIVE="/read"
 MONGO_URLS_URI=""
 MONGO_URLS_DB=""
 MONGO_URLS_CLIENT=""
-
+MONGO_HANDLER_CLIENT=""
 # Parse arguments
 while [[ $# -gt 0 ]]; do
 	case "$1" in
@@ -102,6 +103,10 @@ while [[ $# -gt 0 ]]; do
 		MONGO_URLS_CLIENT="$2"
 		shift 2
 		;;
+	--mongo-client2)
+		MONGO_HANDLER_CLIENT="$2"
+		shift 2
+		;;
 	--help)
 		show_help
 		return 0
@@ -130,6 +135,7 @@ export API_RECEIVE
 export MONGO_URLS_URI
 export MONGO_URLS_DB
 export MONGO_URLS_CLIENT
+export MONGO_HANDLER_CLIENT
 
 # Show current values
 echo "Environment variables set:"
@@ -148,3 +154,4 @@ echo "API_RECEIVE: $API_RECEIVE"
 echo "MONGO_URLS_URI: $MONGO_URLS_URI"
 echo "MONGO_URLS_DB: $MONGO_URLS_DB"
 echo "MONGO_URLS_CLIENT: $MONGO_URLS_CLIENT"
+echo "MONGO_URLS_CLIENT: $MONGO_HANDLER_CLIENT"

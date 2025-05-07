@@ -23,11 +23,6 @@ void DownloadResultStorage::connectToMongoDB(const std::string &mongo_uri,
 }
 
 bool DownloadResultStorage::storeDownloadResult(const result &download_result) {
-  if (!is_connected_) {
-    std::cerr << "Connection is not established!" << std::endl;
-    return false;
-  }
-
   try {
     auto collection = database_["DownloadedContent"];
 

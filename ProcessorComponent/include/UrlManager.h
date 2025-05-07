@@ -40,6 +40,17 @@ public:
   bool map_updated = false;
 
 private:
+  bool connectionValidator() {
+    try {
+      auto admin_db = client_["admin"];
+      auto ping_cmd = bsoncxx::builder::stream::document{}
+                      << "ping" << 1 << bsoncxx::builder::stream::finalize;
+      admin_db.run_command(ping_cmd.view());
+    } catch (const mongocxx::exception &e) {
+      std::cerr << "MongoDB connection lost: " << e.what() << std::endl;
+      return false;
+    }
+  }
   mongocxx::client client_;
   mongocxx::database database_;
   mongocxx::collection collection_;

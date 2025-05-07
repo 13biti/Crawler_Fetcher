@@ -1,31 +1,24 @@
 #ifndef LINK_EXTRACTOR_H
 #define LINK_EXTRACTOR_H
 
+#include <curl/curl.h>
 #include <string>
-#include <utility> // for std::pair
 #include <vector>
-// this is not my own code , i find it somewhere
+
 class LinkExtractor {
 public:
-  explicit LinkExtractor(const std::string &html_content);
+  // Extract redirect links from HTML content
+  static std::vector<std::string>
+  ExtractRedirectLinks(const std::string &html_content,
+                       const std::string &base_url = "");
 
-  std::vector<std::pair<std::string, std::string>> extractAllLinks() const;
-
-  std::vector<std::pair<std::string, std::string>>
-  extractExternalLinks(const std::string &base_url) const;
-
-  std::vector<std::pair<std::string, std::string>>
-  extractInternalLinks(const std::string &base_url) const;
+  // Helper function to get base URL
+  static std::string GetBaseUrl(const std::string &url);
 
 private:
-  std::string html_content_;
-
-  std::vector<std::pair<std::string, std::string>>
-  extractTagLinks(const std::string &tag_name,
-                  const std::string &attribute) const;
-  static bool isExternalLink(const std::string &link,
-                             const std::string &base_url);
-  static std::string getBaseUrl(const std::string &url);
+  // HTML parser callback
+  static size_t HtmlParserCallback(void *contents, size_t size, size_t nmemb,
+                                   void *userp);
 };
 
 #endif // LINK_EXTRACTOR_H

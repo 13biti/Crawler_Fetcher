@@ -139,7 +139,8 @@ void threadDownloadResltHandler() {
 
   LinkExtractor *linkExec = new LinkExtractor();
   QueueManager *newLinksQueue;
-  DownloadResultStorage *drs = new DownloadResultStorage;
+  DownloadResultStorage *drs = new DownloadResultStorage(
+      Config::mongoUrlsUri, Config::mongoUrlsDb, Config::mongoHandlerClient);
   newLinksQueue = new QueueManager(Config::queueBaseUrl);
   auto readToken = newLinksQueue->getToken(
       Config::processorReadUsername, Config::queuePassword, Config::apiLogin);
@@ -172,19 +173,20 @@ void threadDownloadResltHandler() {
   };
   while (true) {
     auto res = getResult();
-    auto baseurl = linkExec->GetBaseUrl(res.url);
-    auto rawLinks = linkExec->ExtractRedirectLinks(res.html_content, baseurl);
-    std::vector<std::string> filteredLinks;
-
-    for (const auto &link : rawLinks) {
-      if (std::find(filteredLinks.begin(), filteredLinks.end(), link) ==
-          filteredLinks.end()) {
-        filteredLinks.push_back(link);
+    if (res.status) {
+      auto baseurl = linkExec->GetBaseUrl(res.url);
+      auto rawLinks = linkExec->ExtractRedirectLinks(res.html_content, baseurl);
+      std::vector<std::string> filteredLinks;
+      for (const auto &link : rawLinks) {
+        if (std::find(filteredLinks.begin(), filteredLinks.end(), link) ==
+            filteredLinks.end()) {
+          filteredLinks.push_back(link);
+        }
       }
+      sendRawLinks(filteredLinks);
+      res.base_url = baseurl;
+      drs->storeDownloadResult(res);
     }
-    sendRawLinks(filteredLinks);
-    res.base_url = baseurl;
-    drs->storeDownloadResult(res);
   }
 }
 // iam use threading for simplisity , case if i fork them , i need to have
@@ -203,6 +205,7 @@ int main() {
   std::thread handler(threadDownloadResltHandler);
   writer.join();
   reader.join();
+  handler.join();
   return 0;
 }
 

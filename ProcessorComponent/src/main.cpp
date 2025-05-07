@@ -14,6 +14,7 @@
 #include <cstring>
 #include <future>
 #include <iostream>
+#include <mutex>
 #include <nlohmann/json.hpp>
 #include <set>
 #include <string>
@@ -27,6 +28,7 @@
 
 UrlManager *urlManager;
 Politeness *politeness;
+std::mutex UrlManagerMutex;
 void threadRead(UrlManager *urlManager) {
   // token.empty() should checked here !
   std::cout << "threadRead is initiated " << std::endl;
@@ -73,7 +75,6 @@ void threadRead(UrlManager *urlManager) {
         // this line is trying to specefiy which one of sortingUrls is to use ,
         // case i have 2 of them , base on this , i tell it the one that get
         // vector of string and return bool
-        std::cout << "i have some fucking links " + newLinks[0] << std::endl;
         futureResult = std::async(
             std::launch::async,
             static_cast<bool (UrlManager::*)(std::vector<std::string>)>(
@@ -132,13 +133,17 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     while (true) {
       // i may need to call this function in periods , like in loop :
       updateCollectionMap();
+      std::cout << "here waiting in while !\n";
       while (true) {
         newjob = politeness->getReadyJobStr();
         if (newjob.status)
           break;
         sleep(1);
       }
+
+      std::cout << "politeness new job !" << newjob.base_url << std::endl;
       auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
+      std::cout << "new url  !" << downloadbleUrl.message << std::endl;
       if (downloadbleUrl.status) {
         std::cout << "here is the messgae " + downloadbleUrl.message
                   << std::endl;
@@ -252,11 +257,13 @@ int main() {
   Politeness politeness;
 
   std::thread reader(threadRead, &urlManager);
-  std::thread writer(threadWrite, &urlManager, &politeness);
-  std::thread handler([&storage] { threadDownloadResltHandler(&storage); });
 
+  // Test 2: Only writer
+  std::thread writer(threadWrite, &urlManager, &politeness);
   writer.join();
   reader.join();
-  handler.join();
+  // Test 3: Only handler
+  // std::thread handler([&storage] { threadDownloadResltHandler(&storage); });
+  // handler.join();
   return EXIT_SUCCESS;
 }

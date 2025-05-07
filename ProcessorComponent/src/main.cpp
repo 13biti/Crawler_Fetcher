@@ -1,3 +1,4 @@
+#include "../../Common/Configs/Config.h"
 #include "../../Common/QueueManager/QueueManager.h"
 #include "../include/Politeness.h"
 #include "../include/UrlManager.h"
@@ -16,38 +17,8 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#define CONSUMER_QUEUE_NAME "Ready-to-use-links"
-#define NEW_LINKS_QUEUE_BASE_URL "http://127.0.0.1:5000"
 #define NEW_LINK_PEER_SORT 10
 
-struct Config {
-  static std::string getenvOrDefault(const char *name, const char *defaultVal) {
-    const char *val = std::getenv(name);
-    return val ? val : defaultVal;
-  }
-  static inline const std::string rawLinksQeueuName =
-      getenvOrDefault("RAW_LINKS_QUEUE_NAME", "rawlinks");
-  static inline const std::string downloadLinksQeueuName =
-      getenvOrDefault("DOWNLOAD_LINKS_QUEUE_NAME", "downloadlinks");
-  static inline const std::string writeUsername =
-      getenvOrDefault("WRITE_USERNAME", "u2");
-  static inline const std::string readUsername =
-      getenvOrDefault("READ_USERNAME", "u1");
-  static inline const std::string queuePassword =
-      getenvOrDefault("QUEUE_PASSWORD", "123");
-  static inline const std::string apiLogin =
-      getenvOrDefault("API_LOGIN", "login");
-  static inline const std::string apiSend =
-      getenvOrDefault("API_SEND", "/write");
-  static inline const std::string apiReceive =
-      getenvOrDefault("API_RECEIVE", "/read");
-  static inline const std::string mongoUrlsUri =
-      getenvOrDefault("MONGO_URLS_URI", "");
-  static inline const std::string mongoUrlsDb =
-      getenvOrDefault("MONGO_URLS_DB", "");
-  static inline const std::string mongoUrlsClient =
-      getenvOrDefault("MONGO_URLS_CLIENT", "");
-};
 UrlManager *urlManager;
 Politeness *politeness;
 void threadRead(UrlManager *urlManager) {
@@ -56,9 +27,9 @@ void threadRead(UrlManager *urlManager) {
   bool result;
 
   QueueManager *newLinksQueue;
-  newLinksQueue = new QueueManager(NEW_LINKS_QUEUE_BASE_URL);
+  newLinksQueue = new QueueManager(Config::queueBaseUrl);
 
-  newLinksQueue->getToken(Config::readUsername, Config::queuePassword,
+  newLinksQueue->getToken(Config::processorReadUsername, Config::queuePassword,
                           Config::apiLogin);
   // std::cout << newLinksQueue->returnToken() << std::endl;
   std::vector<std::string> newLinks;
@@ -68,7 +39,7 @@ void threadRead(UrlManager *urlManager) {
   auto getLink = [&newLinks, newLinksQueue]() -> void {
     newLinks.clear();
     for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
-      auto newLink = newLinksQueue->receiveMessage(Config::rawLinksQeueuName);
+      auto newLink = newLinksQueue->receiveMessage(Config::rawLinksQueueName);
       if (newLink.status)
         newLinks.push_back(newLink.message);
       else
@@ -110,13 +81,13 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
   Politeness::JotDto newjob;
   std::set<std::string> _urlMap;
   QueueManager *newLinksQueue;
-  newLinksQueue = new QueueManager(NEW_LINKS_QUEUE_BASE_URL);
-  newLinksQueue->getToken(Config::writeUsername, Config::queuePassword,
+  newLinksQueue = new QueueManager(Config::queueBaseUrl);
+  newLinksQueue->getToken(Config::processorWriteUsername, Config::queuePassword,
                           Config::apiLogin);
   auto token = newLinksQueue->returnToken();
 
   auto sendLink = [newLinksQueue, token](std::string downloadbleUrl) -> void {
-    newLinksQueue->sendMessage(Config::downloadLinksQeueuName, downloadbleUrl,
+    newLinksQueue->sendMessage(Config::downloadLinksQueueName, downloadbleUrl,
                                token, Config::apiSend);
   };
   // you may ask why i have this conditions ? for not reading database every

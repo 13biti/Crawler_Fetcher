@@ -1,10 +1,11 @@
 #include "../../Common/Configs/Config.h"
 #include "../../Common/QueueManager/QueueManager.h"
 #include "../include/CurlDownloder.h"
-#include <iostream>
-#include <set>
+#include <chrono>
 #include <string>
+#include <thread>
 void downloader() {
+  std::cout << "downloader is initiated " << std::endl;
   QueueManager *newLinksQueue = new QueueManager(Config::queueBaseUrl);
   Downloader downloader;
 
@@ -17,8 +18,11 @@ void downloader() {
   auto writetoken = newLinksQueue->returnToken();
 
   auto getLink = [newLinksQueue, &readtoken]() -> QueueManager::Message {
-    return newLinksQueue->receiveMessage(Config::downloadLinksQueueName,
-                                         readtoken, Config::apiReceive);
+    auto msg = newLinksQueue->receiveMessage(Config::downloadLinksQueueName,
+                                             readtoken, Config::apiReceive);
+    if (msg.status)
+      return msg;
+    return QueueManager::Message{false, ""};
   };
   auto sendResutl = [newLinksQueue,
                      writetoken](const DownloadResult &res) -> void {
@@ -27,11 +31,19 @@ void downloader() {
                                payload.dump(), // Convert JSON to string
                                writetoken, Config::apiSend);
   };
-  while (true) {
 
+  while (true) {
     QueueManager::Message message = getLink();
-    DownloadResult result = downloader.DownloadSingle(message.message);
-    sendResutl(result);
+    if (message.status) {
+      DownloadResult result = downloader.DownloadSingle(message.message);
+      sendResutl(result);
+    } else {
+      std::this_thread::sleep_for(
+          std::chrono::seconds(2)); // back off on failure
+    }
   }
 }
-int main() {}
+int main() {
+  downloader();
+  return 0;
+}

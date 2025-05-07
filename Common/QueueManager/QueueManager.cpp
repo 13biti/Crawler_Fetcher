@@ -95,9 +95,6 @@ QueueManager::receiveMessage(const std::string &queue_name,
           !jsonResponse["message"].is_null())
         return QueueManager::Message{
             true, jsonResponse["message"].get<std::string>()};
-      else
-        std::cerr << "message field is missing or null in response!"
-                  << std::endl;
 
     } catch (const std::exception &e) {
       std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;

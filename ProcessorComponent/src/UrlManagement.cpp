@@ -20,6 +20,10 @@
 // ofter changin schema , this map is useless , i change it to set
 // std::unordered_map<std::string, std::string> collection_map;
 bool UrlManager::sortingUrls(const std::string &url) {
+  if (!connectionValidator()) {
+    std::cerr << "--Connection is not established!A" << std::endl;
+    return false;
+  }
 
   std::smatch result;
   std::regex pattern(R"((?:https?://)?([^/]+))");
@@ -96,7 +100,7 @@ bool UrlManager::sortingUrls(const std::string &url) {
 }
 
 bool UrlManager::sortingUrls(std::vector<std::string> urls) {
-  if (!is_connected_) {
+  if (!connectionValidator()) {
     std::cerr << "connection is not established !" << std::endl;
     return false;
   }
@@ -113,9 +117,9 @@ bool UrlManager::sortingUrls(std::vector<std::string> urls) {
   return all_success;
 }
 Result_read UrlManager::getUrl(std::string domain) {
-  if (!is_connected_) {
-    std::cerr << "Connection is not established!" << std::endl;
-    return Result_read{false, "Connection is not established!"};
+  if (!connectionValidator()) {
+    std::cerr << "--Connection is not established!B" << std::endl;
+    return Result_read{false, "--Connection is not established!C"};
   }
 
   try {
@@ -168,9 +172,9 @@ Result_read UrlManager::getUrl(std::string domain) {
 std::vector<Result_read> UrlManager::getUrl(std::vector<std::string> domains) {
   std::vector<Result_read> results;
 
-  if (!is_connected_) {
-    std::cerr << "Connection is not established!" << std::endl;
-    results.push_back(Result_read{false, "Connection is not established!"});
+  if (!connectionValidator()) {
+    std::cerr << "--Connection is not established!D" << std::endl;
+    results.push_back(Result_read{false, "--Connection is not established!E"});
     return results;
   }
 

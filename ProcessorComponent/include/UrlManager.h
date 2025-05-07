@@ -9,6 +9,7 @@
 #include <mongocxx/exception/exception.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
+#include <mutex>
 #include <regex>
 #include <set>
 #include <string>
@@ -40,14 +41,27 @@ public:
   bool map_updated = false;
 
 private:
+  std::mutex _mutex;
   bool connectionValidator() {
+    std::lock_guard<std::mutex> lock(_mutex);
     try {
+      // Check client connection status (correct way)
+      if (!client_) { // Removed the () - client_ is an object, not callable
+        std::cerr << "MongoDB client is invalid!" << std::endl;
+        return false;
+      }
+
+      // Get admin database and run ping command
       auto admin_db = client_["admin"];
       auto ping_cmd = bsoncxx::builder::stream::document{}
                       << "ping" << 1 << bsoncxx::builder::stream::finalize;
-      admin_db.run_command(ping_cmd.view());
-    } catch (const mongocxx::exception &e) {
-      std::cerr << "MongoDB connection lost: " << e.what() << std::endl;
+
+      // Correct way to run command (on database, not collection)
+      auto result = admin_db.run_command(
+          ping_cmd.view()); // This is correct for mongocxx v3.7.0+
+      return true;
+    } catch (const std::exception &e) {
+      std::cerr << "Connection validation failed: " << e.what() << std::endl;
       return false;
     }
   }

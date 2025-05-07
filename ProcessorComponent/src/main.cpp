@@ -1,7 +1,11 @@
 #include "../../Common/Configs/Config.h"
 #include "../../Common/QueueManager/QueueManager.h"
+#include "../../DownloaderComponent/include/CurlDownloder.h"
+#include "../include/DownloadResultStorage.h"
+#include "../include/LinkExtractor.h"
 #include "../include/Politeness.h"
 #include "../include/UrlManager.h"
+#include <algorithm> // For std::find
 #include <cerrno>
 #include <chrono>
 #include <cstdio>
@@ -9,6 +13,7 @@
 #include <cstring>
 #include <future>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <set>
 #include <signal.h>
 #include <string>
@@ -17,6 +22,7 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
+
 #define NEW_LINK_PEER_SORT 10
 
 UrlManager *urlManager;
@@ -129,14 +135,72 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     }
   }
 }
+void threadDownloadResltHandler() {
+
+  LinkExtractor *linkExec = new LinkExtractor();
+  QueueManager *newLinksQueue;
+  DownloadResultStorage *drs = new DownloadResultStorage;
+  newLinksQueue = new QueueManager(Config::queueBaseUrl);
+  auto readToken = newLinksQueue->getToken(
+      Config::processorReadUsername, Config::queuePassword, Config::apiLogin);
+  auto writeToken = newLinksQueue->getToken(
+      Config::processorWriteUsername, Config::queuePassword, Config::apiLogin);
+  auto getResult = [newLinksQueue,
+                    &readToken]() -> DownloadResultStorage::result {
+    QueueManager::Message msg = newLinksQueue->receiveMessage(
+        Config::downloadedQueueName, readToken, Config::apiReceive);
+    if (msg.status) {
+      try {
+        json j = json::parse(msg.message);
+        DownloadResult res = DownloadResult::from_json(j);
+        if (res.http_code == 200)
+          return DownloadResultStorage::result{res.url, "", res.html_content,
+                                               res.timestamp, true};
+
+      } catch (const json::exception &e) {
+        std::cerr << "JSON parsing error: " << e.what() << std::endl;
+      }
+    }
+    return DownloadResultStorage::result();
+  };
+  auto sendRawLinks = [newLinksQueue,
+                       &writeToken](std::vector<std::string> rawUrls) -> void {
+    for (const auto url : rawUrls) {
+      newLinksQueue->sendMessage(Config::rawLinksQueueName, url, writeToken,
+                                 Config::apiSend);
+    }
+  };
+  while (true) {
+    auto res = getResult();
+    auto baseurl = linkExec->GetBaseUrl(res.url);
+    auto rawLinks = linkExec->ExtractRedirectLinks(res.html_content, baseurl);
+    std::vector<std::string> filteredLinks;
+
+    for (const auto &link : rawLinks) {
+      if (std::find(filteredLinks.begin(), filteredLinks.end(), link) ==
+          filteredLinks.end()) {
+        filteredLinks.push_back(link);
+      }
+    }
+    sendRawLinks(filteredLinks);
+    res.base_url = baseurl;
+    drs->storeDownloadResult(res);
+  }
+}
 // iam use threading for simplisity , case if i fork them , i need to have
 // shared memory and stuff to share the urlManager between this two method
+// several problem here : first , i remove everything in queue after i read it ,
+// which wrong , i sholud acknowledgeMessage insted second : is token condition
+// , as you know thy have expireion time,but i never recreate them , thred : i
+// am using same username and pass for them all , but what if thy start to
+// change each other token and stuff ?
 int main() {
   urlManager = new UrlManager(Config::mongoUrlsUri, Config::mongoUrlsDb,
                               Config::mongoUrlsClient);
   politeness = new Politeness();
   std::thread reader(threadRead, urlManager);
   std::thread writer(threadWrite, urlManager, politeness);
+  std::thread handler(threadDownloadResltHandler);
   writer.join();
   reader.join();
   return 0;

@@ -3,6 +3,7 @@
 #include <libxml2/libxml/HTMLparser.h>
 #include <libxml2/libxml/uri.h>
 #include <libxml2/libxml/xpath.h>
+#include <regex>
 
 std::vector<std::string>
 LinkExtractor::ExtractRedirectLinks(const std::string &html_content,
@@ -91,4 +92,16 @@ std::string LinkExtractor::GetBaseUrl(const std::string &url) {
     return url;
   }
   return url.substr(0, pos);
+}
+std::string LinkExtractor::GetBaseUrl(const std::string &url,
+                                      const std::string &html_content) {
+  // First check for <base href> in HTML
+  std::regex base_regex(R"(<base\s+href=["']([^"']+)["'])");
+  std::smatch matches;
+  if (std::regex_search(html_content, matches, base_regex)) {
+    return matches[1].str(); // Use <base href> if found
+  }
+
+  // Fall back to domain extraction
+  return GetBaseUrl(url); // Your existing implementation
 }

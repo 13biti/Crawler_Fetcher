@@ -15,6 +15,9 @@ public:
   // Helper function to get base URL
   static std::string GetBaseUrl(const std::string &url);
 
+  static std::string GetBaseUrl(const std::string &url,
+                                const std::string &html_content);
+
 private:
   // HTML parser callback
   static size_t HtmlParserCallback(void *contents, size_t size, size_t nmemb,

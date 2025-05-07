@@ -1,5 +1,5 @@
+#include "../../Common/QueueManager/QueueManager.h"
 #include "../include/Politeness.h"
-#include "../include/QueueManager.h"
 #include "../include/UrlManager.h"
 #include <cerrno>
 #include <chrono>

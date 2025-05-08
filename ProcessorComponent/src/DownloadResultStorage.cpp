@@ -1,7 +1,10 @@
 #include "../include/DownloadResultStorage.h"
+#include <bsoncxx/builder/basic/document.hpp>
 #include <iostream>
+#include <nlohmann/json.hpp>
 
-using namespace bsoncxx::builder::stream;
+// Use the basic builder's kvp
+using bsoncxx::builder::basic::kvp;
 
 void DownloadResultStorage::connectToMongoDB(const std::string &mongo_uri,
                                              const std::string &database_name,
@@ -9,7 +12,7 @@ void DownloadResultStorage::connectToMongoDB(const std::string &mongo_uri,
   try {
     // Ping the database to check connection
     auto admin_db = client_["admin"];
-    auto ping_cmd = document{} << "ping" << 1 << finalize;
+    auto ping_cmd = bsoncxx::builder::basic::make_document(kvp("ping", 1));
     admin_db.run_command(ping_cmd.view());
 
     database_ = client_[database_name];
@@ -26,13 +29,16 @@ bool DownloadResultStorage::storeDownloadResult(const result &download_result) {
   try {
     auto collection = database_["DownloadedContent"];
 
-    // Build the document using the stream builder
-    auto doc = document{};
-    doc << "url" << download_result.url << "timestamp"
-        << download_result.timestamp << "content_length"
-        << static_cast<int64_t>(download_result.html_content.length())
-        << "html_content" << download_result.html_content << "status"
-        << download_result.status;
+    // Build the document using the basic builder
+    auto doc = bsoncxx::builder::basic::document{};
+    doc.append(
+        kvp("url", download_result.url),
+        kvp("timestamp", download_result.timestamp),
+        kvp("content_length",
+            static_cast<int64_t>(download_result.html_content_base64.length())),
+        kvp("html_content_base64",
+            download_result.html_content_base64), // Store as base64
+        kvp("status", download_result.status));
 
     // Insert the document
     auto insert_result = collection.insert_one(doc.view());
@@ -49,7 +55,6 @@ bool DownloadResultStorage::storeDownloadResult(const result &download_result) {
     std::cerr << "Failed to store download result for URL: "
               << download_result.url << std::endl;
     return false;
-
   } catch (const std::exception &e) {
     std::cerr << "Exception while storing download result: " << e.what()
               << std::endl;

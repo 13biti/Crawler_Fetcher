@@ -17,7 +17,6 @@ void Politeness::addJob(int id, const std::string &nodeName,
 }
 
 void Politeness::addJob(const std::string &nodeName, uint64_t timestamp) {
-  std::cout << "add some fuking job !" + nodeName << std::endl;
   int id = nextId++;
   addJob(id, nodeName, timestamp);
 }
@@ -110,7 +109,6 @@ Politeness::Job Politeness::getReadyJob() {
   if (readyOne.timestamp + secondsToMilliseconds(timerVal) >
       getCurrentTimestampInMilliseconds())
     return Politeness::Job();
-  updateStrJob(readyOne.id, getCurrentTimestampInSeconds());
   return readyOne;
 }
 

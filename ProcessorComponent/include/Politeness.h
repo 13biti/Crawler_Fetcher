@@ -81,6 +81,14 @@ public:
                                   boost::heap::compare<Comparator<StrJob>>>;
   using StrHandle = StrHeap::handle_type;
   void setTimerVal(int sec) { timerVal = sec; }
+  void AckJob(int jobId) {
+    updateStrJob(jobId, getCurrentTimestampInSeconds());
+  }
+
+  void NAckJob(int jobId) {
+    updateStrJob(jobId,
+                 (getCurrentTimestampInSeconds() + secondsToMilliseconds(20)));
+  }
 
 private:
   uint64_t timerVal = 10;

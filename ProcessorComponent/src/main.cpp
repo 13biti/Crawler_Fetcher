@@ -39,17 +39,23 @@ void threadRead(UrlManager *urlManager) {
     QueueManager *newLinksQueue;
     newLinksQueue = new QueueManager(Config::queueBaseUrl);
 
-    newLinksQueue->getToken(Config::processorReadUsername,
-                            Config::queuePassword, Config::apiLogin);
+    auto token = newLinksQueue->getToken(
+        Config::processorReadUsername, Config::queuePassword, Config::apiLogin);
     // std::cout << newLinksQueue->returnToken() << std::endl;
     std::vector<std::string> newLinks;
 
     // self log here , write lambeda , get like 10 link , async the liink
     // manager and then get link again , dont waist any time on writing dbs !!
-    auto getLink = [&newLinks, newLinksQueue]() -> void {
+    auto getLink = [&newLinks, newLinksQueue, &token]() -> void {
       newLinks.clear();
       for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
-        auto newLink = newLinksQueue->receiveMessage(Config::rawLinksQueueName);
+        auto newLink = newLinksQueue->receiveMessage(Config::rawLinksQueueName,
+                                                     token, Config::apiReceive);
+        std::cout << "work on getting link with this info : "
+                  << Config::rawLinksQueueName + Config::apiReceive +
+                         Config::processorReadUsername
+                  << "and i get this " << newLink.message << newLink.status
+                  << std::endl;
         if (newLink.status)
           newLinks.push_back(newLink.message);
         else
@@ -64,7 +70,7 @@ void threadRead(UrlManager *urlManager) {
 
         if (newLinks.empty()) {
           std::cout << "[reader] No new links, sleeping 10s..." << std::endl;
-          std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+          std::this_thread::sleep_for(std::chrono::milliseconds(5000));
           continue;
         }
         // Synchronously call sortingUrls
@@ -125,6 +131,7 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
       std::cout << "[wait] No URLs to process yet. Retrying in 5s...\n";
       std::this_thread::sleep_for(std::chrono::seconds(5));
     }
+    int counter = 0;
     while (true) {
       // i may need to call this function in periods , like in loop :
       updateCollectionMap();
@@ -135,13 +142,17 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
           break;
         sleep(1);
       }
-      std::cout << "politeness new job !" << newjob.base_url << std::endl;
       auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
-      std::cout << "new url  !" << downloadbleUrl.message << std::endl;
       if (downloadbleUrl.status) {
-        std::cout << "here is the messgae " + downloadbleUrl.message
-                  << std::endl;
+        politeness->AckJob(newjob.id);
         sendLink(downloadbleUrl.message);
+      } else {
+        politeness->NAckJob(newjob.id);
+        counter++;
+      }
+      if (counter > 10) {
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(10000)); // brief backoff on error
       }
     }
   } catch (const std::exception &e) {
@@ -162,6 +173,7 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
     auto writeToken =
         newLinksQueue->getToken(Config::processorWriteUsername,
                                 Config::queuePassword, Config::apiLogin);
+
     auto getResult = [newLinksQueue,
                       &readToken]() -> DownloadResultStorage::result {
       QueueManager::Message msg = newLinksQueue->receiveMessage(
@@ -171,8 +183,8 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
           json j = json::parse(msg.message);
           DownloadResult res = DownloadResult::from_json(j);
           if (res.http_code == 200)
-            return DownloadResultStorage::result{res.url, "", res.html_content,
-                                                 res.timestamp, true};
+            return DownloadResultStorage::result{
+                res.url, "", res.html_content_base64, res.timestamp, true};
 
         } catch (const json::exception &e) {
           std::cerr << "JSON parsing error: " << e.what() << std::endl;
@@ -187,12 +199,13 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
                                    Config::apiSend);
       }
     };
+    int counter = 0;
     while (true) {
       auto res = getResult();
       if (res.status) {
         auto baseurl = linkExec->GetBaseUrl(res.url);
         auto rawLinks =
-            linkExec->ExtractRedirectLinks(res.html_content, baseurl);
+            linkExec->ExtractRedirectLinks(res.html_content_base64, baseurl);
         std::vector<std::string> filteredLinks;
         for (const auto &link : rawLinks) {
           if (std::find(filteredLinks.begin(), filteredLinks.end(), link) ==
@@ -203,9 +216,15 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
         sendRawLinks(filteredLinks);
         res.base_url = baseurl;
         storage->storeDownloadResult(res);
-      } else
+      } else {
+        counter++;
         std::this_thread::sleep_for(
             std::chrono::milliseconds(1000)); // brief backoff on error
+      }
+      if (counter > 10) {
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(10000)); // brief backoff on error
+      }
     }
   } catch (const std::exception &e) {
     std::cerr << "[reader] CRASH: " << e.what() << std::endl;

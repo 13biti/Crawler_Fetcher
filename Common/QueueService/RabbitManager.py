@@ -48,6 +48,8 @@ class RabbitMQService:
             return False
 
     def connectionRecovery(self, retries=5, delay=10):
+        if self.connection and not self.connection.is_closed:
+            self.connection.close()
         credentials = pika.PlainCredentials(self.username, self.password)
         parameters = pika.ConnectionParameters(
             host=self.host,
@@ -66,6 +68,17 @@ class RabbitMQService:
                 time.sleep(delay)
         return False
 
+    def ensure_connection(self):
+        if (
+            not self.connection
+            or self.connection.is_closed
+            or not self.channel
+            or self.channel.is_closed
+        ):
+            logger.warning("Connection or channel is closed. Reconnecting...")
+            return self.connectionRecovery()
+        return True
+
     def disconnect(self):
         """Disconnect from RabbitMQ server."""
         if self.connection and not self.connection.is_closed:
@@ -80,8 +93,8 @@ class RabbitMQService:
         :param queue_name: Name of the queue.
         :return: True if queue exists, False otherwise.
         """
-        if not self.channel:
-            logging.error("No active channel. try to connecctoin recovery ")
+        if not self.channel or self.channel.is_closed:
+            logger.error("Channel is closed. Attempting connection recovery.")
             if not self.connectionRecovery():
                 return False
 
@@ -161,22 +174,21 @@ class RabbitMQService:
         :param auto_ack: If True, the message will be automatically acknowledged.
         :return: The item removed from the queue, or None if the queue is empty.
         """
-        if not self.channel:
-            logging.error("No active channel. try to connecctoin recovery ")
-            if not self.connectionRecovery():
-                return False
-
+        if not self.ensure_connection():
+            return False
         try:
             method_frame, header_frame, body = self.channel.basic_get(
                 queue=queue_name, auto_ack=auto_ack
             )
             if method_frame:
                 item = json.loads(body)
-                logging.info("Item removed from queue '%s': %s", queue_name, item)
+                logger.info("Item removed from queue '%s': %s", queue_name, item)
                 return item
             else:
-                logging.info("No items in queue '%s'.", queue_name)
+                logger.info("No items in queue '%s'.", queue_name)
                 return None
         except Exception as e:
-            logging.error("Failed to remove item from queue: %s", e)
+            logger.exception(
+                "Failed to remove item from queue due to unexpected error."
+            )
             return None

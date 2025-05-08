@@ -64,25 +64,21 @@ async def lifespan(app: FastAPI):
     if not rabbitmqManager.connect():
         rabbitmqManager.connectionRecovery()
 
-    yield  # This is where FastAPI will run the app
-
-    print("Server is shutting down...")  # Optional cleanup logic here
+    yield
 
 
 app = FastAPI(lifespan=lifespan)
 
 
-# User login and token generation
 @app.post("/login")
 def login(user: LoginRequest):
-    # try to find agent
     auth_user_role = sqlconnection.user_authorazation(user.username, user.password)
     if auth_user_role != None:
         token = jwt.encode(
             {
                 "sub": user.username,
                 "role": auth_user_role,
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=12),
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24),
             },
             SECRET_KEY,
             algorithm="HS256",

@@ -22,6 +22,7 @@ public:
   static const std::string mongoUrlsUri;
   static const std::string mongoUrlsDb;
   static const std::string mongoUrlsClient;
+  static const std::string mongoHandlerClient;
 };
 
 #endif // CONFIG_H

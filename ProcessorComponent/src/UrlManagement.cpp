@@ -7,6 +7,7 @@
 #include <iostream>
 #include <mongocxx/collection.hpp>
 #include <mongocxx/exception/exception.hpp>
+#include <mutex>
 #include <ostream>
 #include <set>
 #include <string>
@@ -19,16 +20,9 @@
 // chose second method
 // ofter changin schema , this map is useless , i change it to set
 // std::unordered_map<std::string, std::string> collection_map;
-void UrlManager::retryConnection(int interval_seconds = 10) {
-  while (!is_connected_) {
-    std::cout << "Retrying connection to MongoDB..." << std::endl;
-    connectToMongoDB("mongodb://localhost:27017/", "testDb", "admin");
-    std::this_thread::sleep_for(std::chrono::seconds(interval_seconds));
-  }
-}
 bool UrlManager::sortingUrls(const std::string &url) {
-  if (!is_connected_) {
-    std::cerr << "Connection is not established!" << std::endl;
+  if (!connectionValidator()) {
+    std::cerr << "--Connection is not established!A" << std::endl;
     return false;
   }
 
@@ -38,12 +32,12 @@ bool UrlManager::sortingUrls(const std::string &url) {
     std::string base_url = result.str(1);
 
     try {
-      auto collection = database_["urls"];
+      std::unique_lock<std::mutex> lock(_mutex);
 
+      auto collection = database_["urls"];
       auto duplicate_filter = bsoncxx::builder::stream::document{}
                               << "base_url" << base_url << "url" << url
                               << bsoncxx::builder::stream::finalize;
-
       auto duplicate_result = collection.find_one(duplicate_filter.view());
       if (duplicate_result) {
         std::cerr << "Duplicate URL detected. Skipping insertion: " << url
@@ -83,7 +77,7 @@ bool UrlManager::sortingUrls(const std::string &url) {
           insert_result->inserted_id().type() == bsoncxx::type::k_oid) {
         std::string inserted_id =
             insert_result->inserted_id().get_oid().value.to_string();
-
+        lock.unlock();
         updateMap(collection_map, base_url);
 
         std::cout << "Inserted URL into batch " << batch_id << ": " << url
@@ -107,7 +101,7 @@ bool UrlManager::sortingUrls(const std::string &url) {
 }
 
 bool UrlManager::sortingUrls(std::vector<std::string> urls) {
-  if (!is_connected_) {
+  if (!connectionValidator()) {
     std::cerr << "connection is not established !" << std::endl;
     return false;
   }
@@ -124,12 +118,12 @@ bool UrlManager::sortingUrls(std::vector<std::string> urls) {
   return all_success;
 }
 Result_read UrlManager::getUrl(std::string domain) {
-  if (!is_connected_) {
-    std::cerr << "Connection is not established!" << std::endl;
-    return Result_read{false, "Connection is not established!"};
+  if (!connectionValidator()) {
+    std::cerr << "--Connection is not established!B" << std::endl;
+    return Result_read{false, "--Connection is not established!C"};
   }
-
   try {
+    std::unique_lock<std::mutex> lock(_mutex);
     auto collection = database_["urls"];
 
     // Find the unread URL with the lowest batch_id (earliest batches first)
@@ -164,6 +158,7 @@ Result_read UrlManager::getUrl(std::string domain) {
     auto update_result =
         collection.update_one(update_filter.view(), update_op.view());
 
+    lock.unlock();
     if (update_result && update_result->modified_count() > 0) {
       std::cout << "URL retrieved and marked as read: " << url << std::endl;
       return Result_read{true, url};
@@ -179,9 +174,9 @@ Result_read UrlManager::getUrl(std::string domain) {
 std::vector<Result_read> UrlManager::getUrl(std::vector<std::string> domains) {
   std::vector<Result_read> results;
 
-  if (!is_connected_) {
-    std::cerr << "Connection is not established!" << std::endl;
-    results.push_back(Result_read{false, "Connection is not established!"});
+  if (!connectionValidator()) {
+    std::cerr << "--Connection is not established!D" << std::endl;
+    results.push_back(Result_read{false, "--Connection is not established!E"});
     return results;
   }
 
@@ -214,6 +209,7 @@ void UrlManager::updateMap(std::set<std::string> &target, std::string key) {
 std::set<std::string> UrlManager::getBaseUrls() {
   std::set<std::string> temp_map;
   try {
+    std::unique_lock<std::mutex> lock(_mutex);
     auto collection = database_["urls"];
 
     bsoncxx::builder::stream::document filter_builder;
@@ -244,7 +240,7 @@ std::set<std::string> UrlManager::getBaseUrls() {
         }
       }
     }
-
+    lock.unlock();
     if (!temp_map.empty()) {
       std::cout << "Base URLs loaded successfully. Found: " << temp_map.size()
                 << " domains." << std::endl;

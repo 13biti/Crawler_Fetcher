@@ -54,8 +54,9 @@ bool QueueManager::sendMessage(const std::string &queue_name,
           : Queue_Manager_Server_Base_Url +
                 (Queue_Manager_Server_Base_Url.back() == '/' ? "" : "/") + api;
 
-  std::string jsonData = "{\"queue_name\": \"" + queue_name +
-                         "\", \"message\": \"" + message + "\"}";
+  nlohmann::json wrapperPayload = {{"queue_name", queue_name},
+                                   {"message", message}};
+  std::string jsonData = wrapperPayload.dump();
   std::vector<std::string> headers = {"Content-Type: application/json",
                                       "Authorization: Bearer " + token};
 
@@ -95,9 +96,6 @@ QueueManager::receiveMessage(const std::string &queue_name,
           !jsonResponse["message"].is_null())
         return QueueManager::Message{
             true, jsonResponse["message"].get<std::string>()};
-      else
-        std::cerr << "message field is missing or null in response!"
-                  << std::endl;
 
     } catch (const std::exception &e) {
       std::cerr << "Failed to parse JSON response: " << e.what() << std::endl;

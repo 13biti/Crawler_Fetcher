@@ -1,14 +1,13 @@
 #ifndef DOWNLOADER_H
 #define DOWNLOADER_H
-
-#include <curl/curl.h>
-#include <string>
-#include <vector>
-
 #include <chrono>
+#include <curl/curl.h>
 #include <iomanip>
+#include <nlohmann/json.hpp>
 #include <sstream>
 #include <string>
+#include <vector>
+using json = nlohmann::json;
 
 struct DownloadResult {
   std::string url;
@@ -17,6 +16,27 @@ struct DownloadResult {
   CURLcode result;
   std::string error_message;
   std::string timestamp;
+
+  json to_json() const {
+    return {{"url", url},
+            {"html_content", html_content},
+            {"http_code", http_code},
+            {"result", result}, // CURLcode is an enum, will be stored as int
+            {"error_message", error_message},
+            {"timestamp", timestamp}};
+  }
+
+  // Parse JSON into DownloadResult
+  static DownloadResult from_json(const json &j) {
+    DownloadResult res;
+    res.url = j.value("url", "");
+    res.html_content = j.value("html_content", "");
+    res.http_code = j.value("http_code", 0L);
+    res.result = static_cast<CURLcode>(j.value("result", 0));
+    res.error_message = j.value("error_message", "");
+    res.timestamp = j.value("timestamp", "");
+    return res;
+  }
 };
 class Downloader {
 public:

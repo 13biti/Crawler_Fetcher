@@ -20,9 +20,11 @@ void downloader() {
   auto getLink = [newLinksQueue, &readtoken]() -> QueueManager::Message {
     auto msg = newLinksQueue->receiveMessage(Config::downloadLinksQueueName,
                                              readtoken, Config::apiReceive);
+
     if (msg.status)
       return msg;
-    return QueueManager::Message{false, ""};
+    else
+      return QueueManager::Message{false, ""};
   };
   auto sendResutl = [newLinksQueue,
                      writetoken](const DownloadResult &res) -> void {
@@ -35,10 +37,7 @@ void downloader() {
   while (true) {
     QueueManager::Message message = getLink();
     if (message.status) {
-      std::cout << "here is the message " << message.message;
       DownloadResult result = downloader.DownloadSingle(message.message);
-      std::cout << "here is the result code  " << result.error_message
-                << result.http_code;
       sendResutl(result);
     } else {
       std::this_thread::sleep_for(

@@ -82,12 +82,15 @@ public:
   using StrHandle = StrHeap::handle_type;
   void setTimerVal(int sec) { timerVal = sec; }
   void AckJob(int jobId) {
-    updateStrJob(jobId, getCurrentTimestampInSeconds());
+    std::cout << "updatingthis fucking shit" << jobId << std::endl;
+    std::cout << "whgen this is heap " << std::endl;
+    displayStrHeap();
+    updateStrJob(jobId, getCurrentTimestampInMilliseconds());
   }
 
   void NAckJob(int jobId) {
     updateStrJob(jobId,
-                 (getCurrentTimestampInSeconds() + secondsToMilliseconds(20)));
+                 (getCurrentTimestampInSeconds() + secondsToMilliseconds(10)));
   }
 
 private:

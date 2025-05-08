@@ -39,7 +39,7 @@ DownloadResult Downloader::DownloadSingle(const std::string &url) {
   result.result = curl_easy_perform(curl);
   if (result.result == CURLE_OK) {
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &result.http_code);
-    result.html_content = buffer;
+    result.html_content_base64 = result.get_encoded_html(buffer);
   } else {
     result.error_message = curl_easy_strerror(result.result);
   }
@@ -93,7 +93,8 @@ Downloader::DownloadMultiple(const std::vector<std::string> &urls,
         curl_easy_getinfo(handle, CURLINFO_PRIVATE, &index);
         results[index].result = msg->data.result;
         if (msg->data.result == CURLE_OK) {
-          results[index].html_content = buffers[index];
+          results[index].html_content_base64 =
+              results[index].get_encoded_html(buffers[index]);
           curl_easy_getinfo(handle, CURLINFO_RESPONSE_CODE,
                             &results[index].http_code);
         } else {

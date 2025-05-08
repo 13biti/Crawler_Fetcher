@@ -66,16 +66,16 @@ Politeness::JotDto Politeness::getReadyJobStr() {
   //                    : "no")
   //            << std::endl;
   // lord have mercy i make big mistkae , i wrote this if in reverce !!
-  if (readyOne.timestamp + secondsToMilliseconds(timerVal) >
-      getCurrentTimestampInMilliseconds())
-    return Politeness::JotDto{0, "", false};
+  bool isWaited = getCurrentTimestampInMilliseconds() <
+                  readyOne.timestamp + secondsToMilliseconds(timerVal);
+
+  if (isWaited)
+    return Politeness::JotDto{readyOne.id, readyOne.nodeName, true};
   //  std::cout << "change time stemp from "
   //            << std::to_string(readyOne.timestamp) + "to" +
   //                   std::to_string(getCurrentTimestampInMilliseconds())
   //            << std::endl;
-  updateStrJob(readyOne.id, getCurrentTimestampInMilliseconds());
-
-  return Politeness::JotDto{readyOne.id, readyOne.nodeName, true};
+  return Politeness::JotDto{0, "", false};
 }
 
 void Politeness::displayStrHeap() const {

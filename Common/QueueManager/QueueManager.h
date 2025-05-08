@@ -38,7 +38,7 @@ public:
   };
 
   Message receiveMessage(const std::string &queue_name,
-                         const std::string &token, std::string api = "read");
+                         const std::string &token, std::string api);
 
   Message receiveMessage(const std::string &queue_name,
                          std::string api = "read") {

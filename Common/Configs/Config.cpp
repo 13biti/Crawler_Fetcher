@@ -1,7 +1,5 @@
 #include "Config.h"
 #include <cstdlib>
-
-#define NEW_LINKS_QUEUE_BASE_URL "http://127.0.0.1:5000"
 std::string Config::getenvOrDefault(const char *name, const char *defaultVal) {
   const char *val = std::getenv(name);
   return val ? val : defaultVal;
@@ -36,3 +34,5 @@ const std::string Config::mongoUrlsDb =
     Config::getenvOrDefault("MONGO_URLS_DB", "");
 const std::string Config::mongoUrlsClient =
     Config::getenvOrDefault("MONGO_URLS_CLIENT", "");
+const std::string Config::mongoHandlerClient =
+    Config::getenvOrDefault("MONGO_HANDLER_CLIENT", "");

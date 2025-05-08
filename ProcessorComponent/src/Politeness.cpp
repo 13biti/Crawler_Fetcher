@@ -17,6 +17,7 @@ void Politeness::addJob(int id, const std::string &nodeName,
 }
 
 void Politeness::addJob(const std::string &nodeName, uint64_t timestamp) {
+  std::cout << "add some fuking job !" + nodeName << std::endl;
   int id = nextId++;
   addJob(id, nodeName, timestamp);
 }

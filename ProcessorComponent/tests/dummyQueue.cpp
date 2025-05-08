@@ -1,4 +1,4 @@
-#include "../include/QueueManager.h"
+#include "../../Common/QueueManager/QueueManager.h"
 #include <cstddef>
 #include <iostream>
 #include <string>
@@ -7,7 +7,7 @@
 int main() {
   // Configuration
   const std::string BASE_URL = "http://127.0.0.1:5000";
-  const std::string WRITE_USERNAME = "u2";
+  const std::string WRITE_USERNAME = "u3";
   const std::string READ_USERNAME = "u1";
   const std::string PASSWORD = "123";
   const std::string API_LOGIN = "login";

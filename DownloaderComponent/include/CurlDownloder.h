@@ -1,6 +1,7 @@
 #ifndef DOWNLOADER_H
 #define DOWNLOADER_H
 #include <chrono>
+#include <cppcodec/base64_default_rfc4648.hpp>
 #include <curl/curl.h>
 #include <iomanip>
 #include <nlohmann/json.hpp>
@@ -11,7 +12,7 @@ using json = nlohmann::json;
 
 struct DownloadResult {
   std::string url;
-  std::string html_content;
+  std::string html_content_base64; // Only store base64
   long http_code = 0;
   CURLcode result;
   std::string error_message;
@@ -19,18 +20,21 @@ struct DownloadResult {
 
   json to_json() const {
     return {{"url", url},
-            {"html_content", html_content},
+            {"html_content_base64", html_content_base64}, // Consistent naming
             {"http_code", http_code},
-            {"result", result}, // CURLcode is an enum, will be stored as int
+            {"result", result},
             {"error_message", error_message},
             {"timestamp", timestamp}};
   }
 
-  // Parse JSON into DownloadResult
+  std::string get_decoded_html() const {
+    return cppcodec::base64_rfc4648::decode<std::string>(html_content_base64);
+  }
+
   static DownloadResult from_json(const json &j) {
     DownloadResult res;
     res.url = j.value("url", "");
-    res.html_content = j.value("html_content", "");
+    res.html_content_base64 = j.value("html_content_base64", "");
     res.http_code = j.value("http_code", 0L);
     res.result = static_cast<CURLcode>(j.value("result", 0));
     res.error_message = j.value("error_message", "");

@@ -13,7 +13,7 @@ public:
   struct result {
     std::string url;
     std::string base_url;
-    std::string html_content;
+    std::string html_content_base64;
     std::string timestamp;
     bool status = false;
   };

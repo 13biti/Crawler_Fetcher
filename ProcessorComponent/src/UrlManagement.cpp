@@ -198,6 +198,7 @@ std::vector<Result_read> UrlManager::getUrl(std::vector<std::string> domains) {
   return results;
 }
 void UrlManager::updateMap(std::set<std::string> &target, std::string key) {
+  std::cout << "trying to update map -----------\n";
   if (!map_initiated)
     return;
   else if (target.find(key) == target.end()) {

@@ -16,12 +16,12 @@
 #include <iostream>
 #include <mutex>
 #include <nlohmann/json.hpp>
-#include <set>
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
+#include <unordered_set>
 #include <vector>
 
 #define NEW_LINK_PEER_SORT 10
@@ -97,11 +97,13 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     auto token = newLinksQueue->returnToken();
 
     auto sendLink = [newLinksQueue, token](std::string downloadbleUrl) -> void {
+      std::cout << "i wnat to send this link in doble queue  " + downloadbleUrl
+                << std::endl;
       newLinksQueue->sendMessage(Config::downloadLinksQueueName, downloadbleUrl,
                                  token, Config::apiSend);
     };
-    // you may ask why i have this conditions ? for not reading database every
-    // time someting happen there !!
+    // you mayfor  ask why i have this conditions ? for not reading database
+    // every time someting happen there !!
     auto updateCollectionMap = [&]() -> bool {
       if (!urlManager->map_initiated || urlManager->map_updated) {
         _urlMap = urlManager->getBaseMap();
@@ -127,17 +129,20 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     while (true) {
       // i may need to call this function in periods , like in loop :
       updateCollectionMap();
+      std::cout << "before endless loop ";
       while (true) {
         newjob = politeness->getReadyJobStr();
         if (newjob.status)
           break;
         sleep(1);
       }
+      std::cout << "[info] polite give me job" + newjob.base_url + " \n";
       auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
       if (downloadbleUrl.status) {
         politeness->AckJob(newjob.id);
         sendLink(downloadbleUrl.message);
       } else {
+        std::cout << "[info] there is no link for " + newjob.base_url + " \n";
         politeness->NAckJob(newjob.id);
         counter++;
       }
@@ -153,74 +158,103 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
   std::cout << "[reader] Thread exiting\n";
 }
 void threadDownloadResltHandler(DownloadResultStorage *storage) {
+  std::cout << "threadDownloadResltHandler is initiated\n";
 
-  std::cout << "threadDownloadResltHandler is initiated " << std::endl;
   try {
-    LinkExtractor *linkExec = new LinkExtractor();
-    QueueManager *newLinksQueue;
-    newLinksQueue = new QueueManager(Config::queueBaseUrl);
-    auto readToken = newLinksQueue->getToken(
+    LinkExtractor linkExtractor; // No need for dynamic allocation
+    QueueManager newLinksQueue(Config::queueBaseUrl);
+
+    auto readToken = newLinksQueue.getToken(
         Config::processorReadUsername, Config::queuePassword, Config::apiLogin);
+
     auto writeToken =
-        newLinksQueue->getToken(Config::processorWriteUsername,
-                                Config::queuePassword, Config::apiLogin);
+        newLinksQueue.getToken(Config::processorWriteUsername,
+                               Config::queuePassword, Config::apiLogin);
 
-    auto getResult = [newLinksQueue,
+    auto getResult = [&newLinksQueue,
                       &readToken]() -> DownloadResultStorage::result {
-      QueueManager::Message msg = newLinksQueue->receiveMessage(
-          Config::downloadedQueueName, readToken, Config::apiReceive);
-      if (msg.status) {
-        try {
-          json j = json::parse(msg.message);
-          DownloadResult res = DownloadResult::from_json(j);
-          if (res.http_code == 200)
-            return DownloadResultStorage::result{
-                res.url, "", res.html_content_base64, res.timestamp, true};
-
-        } catch (const json::exception &e) {
-          std::cerr << "JSON parsing error: " << e.what() << std::endl;
-        }
+      auto msg = newLinksQueue.receiveMessage(Config::downloadedQueueName,
+                                              readToken, Config::apiReceive);
+      if (!msg.status) {
+        return DownloadResultStorage::result();
       }
+      try {
+        auto j = json::parse(msg.message);
+        DownloadResult res = DownloadResult::from_json(j);
+        if (res.http_code == 200) {
+          std::string decoded_html;
+          try {
+            decoded_html = res.get_decoded_html();
+          } catch (const std::exception &e) {
+            std::cerr << "Base64 decode error for URL " << res.url << ": "
+                      << e.what() << "\n";
+            decoded_html = "";
+          }
+
+          return DownloadResultStorage::result{
+              res.url,       "",  res.html_content_base64, decoded_html,
+              res.timestamp, true};
+        }
+      } catch (const json::exception &e) {
+        std::cerr << "JSON parsing error: " << e.what()
+                  << "\nMessage: " << msg.message << "\n";
+      }
+
       return DownloadResultStorage::result();
     };
-    auto sendRawLinks =
-        [newLinksQueue, &writeToken](std::vector<std::string> rawUrls) -> void {
-      for (const auto url : rawUrls) {
-        newLinksQueue->sendMessage(Config::rawLinksQueueName, url, writeToken,
-                                   Config::apiSend);
+
+    auto sendRawLinks = [&newLinksQueue,
+                         &writeToken](const std::vector<std::string> &rawUrls) {
+      for (const auto &url : rawUrls) {
+        bool stat = newLinksQueue.sendMessage(Config::rawLinksQueueName, url,
+                                              writeToken, Config::apiSend);
+        if (!stat) {
+          std::cerr << "Failed to send: " << url << std::endl;
+        } else {
+          std::cout << "Sent: " << url << std::endl;
+        }
       }
     };
-    int counter = 0;
+
+    int errorCounter = 0;
+    const int maxErrorsBeforeBackoff = 10;
+    const std::chrono::milliseconds shortSleep(1000);
+    const std::chrono::milliseconds longSleep(10000);
+
     while (true) {
       auto res = getResult();
+
       if (res.status) {
-        auto baseurl = linkExec->GetBaseUrl(res.url);
-        auto rawLinks =
-            linkExec->ExtractRedirectLinks(res.html_content_base64, baseurl);
-        std::vector<std::string> filteredLinks;
-        for (const auto &link : rawLinks) {
-          if (std::find(filteredLinks.begin(), filteredLinks.end(), link) ==
-              filteredLinks.end()) {
-            filteredLinks.push_back(link);
-          }
+        errorCounter = 0; // Reset error counter on success
+
+        try {
+          auto baseurl = linkExtractor.GetBaseUrl(res.url);
+          auto rawLinks =
+              linkExtractor.ExtractRedirectLinks(res.html_content, baseurl);
+
+          // Remove duplicates more efficiently
+          std::unordered_set<std::string> uniqueLinks(rawLinks.begin(),
+                                                      rawLinks.end());
+          sendRawLinks(
+              std::vector<std::string>(uniqueLinks.begin(), uniqueLinks.end()));
+          res.base_url = baseurl;
+          storage->storeDownloadResult(res);
+        } catch (const std::exception &e) {
+          std::cerr << "Error processing URL " << res.url << ": " << e.what()
+                    << "\n";
         }
-        sendRawLinks(filteredLinks);
-        res.base_url = baseurl;
-        storage->storeDownloadResult(res);
       } else {
-        counter++;
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(1000)); // brief backoff on error
-      }
-      if (counter > 10) {
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(10000)); // brief backoff on error
+        errorCounter++;
+        auto sleepDuration =
+            errorCounter > maxErrorsBeforeBackoff ? longSleep : shortSleep;
+        std::this_thread::sleep_for(sleepDuration);
       }
     }
   } catch (const std::exception &e) {
-    std::cerr << "[reader] CRASH: " << e.what() << std::endl;
-    std::abort(); // Force core dump
+    std::cerr << "[reader] CRASH: " << e.what() << "\n";
+    std::abort();
   }
+
   std::cout << "[reader] Thread exiting\n";
 }
 // iam use threading for simplisity , case if i fork them , i need to have

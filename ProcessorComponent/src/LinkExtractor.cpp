@@ -1,5 +1,6 @@
 #include "../include/LinkExtractor.h"
 #include <algorithm>
+#include <iostream>
 #include <libxml2/libxml/HTMLparser.h>
 #include <libxml2/libxml/uri.h>
 #include <libxml2/libxml/xpath.h>
@@ -9,7 +10,7 @@ std::vector<std::string>
 LinkExtractor::ExtractRedirectLinks(const std::string &html_content,
                                     const std::string &base_url) {
   std::vector<std::string> links;
-
+  std::cout << "sorry but here is html_content" << html_content << std::endl;
   // Parse HTML document
   htmlDocPtr doc = htmlReadMemory(html_content.c_str(), html_content.size(),
                                   base_url.c_str(), NULL,

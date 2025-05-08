@@ -12,7 +12,7 @@ using json = nlohmann::json;
 
 struct DownloadResult {
   std::string url;
-  std::string html_content_base64; // Only store base64
+  std::string html_content_base64;
   long http_code = 0;
   CURLcode result;
   std::string error_message;
@@ -20,15 +20,21 @@ struct DownloadResult {
 
   json to_json() const {
     return {{"url", url},
-            {"html_content_base64", html_content_base64}, // Consistent naming
+            {"html_content_base64", html_content_base64},
             {"http_code", http_code},
             {"result", result},
             {"error_message", error_message},
             {"timestamp", timestamp}};
   }
 
+  auto get_encoded_html(std::string html_content) const {
+    return cppcodec::base64_rfc4648::encode(html_content.data(),
+                                            html_content.size());
+  }
   std::string get_decoded_html() const {
-    return cppcodec::base64_rfc4648::decode<std::string>(html_content_base64);
+    auto decoded =
+        cppcodec::base64_rfc4648::decode<std::string>(html_content_base64);
+    return decoded;
   }
 
   static DownloadResult from_json(const json &j) {

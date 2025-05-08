@@ -51,11 +51,6 @@ void threadRead(UrlManager *urlManager) {
       for (int i = 0; i < NEW_LINK_PEER_SORT; i++) {
         auto newLink = newLinksQueue->receiveMessage(Config::rawLinksQueueName,
                                                      token, Config::apiReceive);
-        std::cout << "work on getting link with this info : "
-                  << Config::rawLinksQueueName + Config::apiReceive +
-                         Config::processorReadUsername
-                  << "and i get this " << newLink.message << newLink.status
-                  << std::endl;
         if (newLink.status)
           newLinks.push_back(newLink.message);
         else
@@ -69,15 +64,12 @@ void threadRead(UrlManager *urlManager) {
         getLink();
 
         if (newLinks.empty()) {
-          std::cout << "[reader] No new links, sleeping 10s..." << std::endl;
           std::this_thread::sleep_for(std::chrono::milliseconds(5000));
           continue;
         }
         // Synchronously call sortingUrls
         bool result = urlManager->sortingUrls(newLinks);
         // Optional: log result if needed
-        std::cout << "[reader] sortingUrls returned: " << std::boolalpha
-                  << result << std::endl;
         // Sleep briefly to avoid hammering system
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
@@ -135,7 +127,6 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     while (true) {
       // i may need to call this function in periods , like in loop :
       updateCollectionMap();
-      std::cout << "here waiting in while !\n";
       while (true) {
         newjob = politeness->getReadyJobStr();
         if (newjob.status)

@@ -61,29 +61,24 @@ void threadRead(UrlManager *urlManager) {
     while (true) {
       try {
         getLink();
-        if (futureResult.valid()) {
-          result = futureResult
-                       .get(); // Get the result of the previous async operation
-        }
 
         if (newLinks.empty()) {
+          std::cout << "[reader] No new links, sleeping 10s..." << std::endl;
           std::this_thread::sleep_for(std::chrono::milliseconds(10000));
           continue;
         }
-        // static_cast<bool
-        // (UrlManager::*)(std::vector<std::string>)>(&UrlManager::sortingUrls)
-        // this line is trying to specefiy which one of sortingUrls is to use ,
-        // case i have 2 of them , base on this , i tell it the one that get
-        // vector of string and return bool
-        futureResult = std::async(
-            std::launch::async,
-            static_cast<bool (UrlManager::*)(std::vector<std::string>)>(
-                &UrlManager::sortingUrls),
-            urlManager, newLinks);
+        // Synchronously call sortingUrls
+        bool result = urlManager->sortingUrls(newLinks);
+        // Optional: log result if needed
+        std::cout << "[reader] sortingUrls returned: " << std::boolalpha
+                  << result << std::endl;
+        // Sleep briefly to avoid hammering system
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-      } catch (const std::future_error &ex) {
-        std::cerr << "Future error: " << ex.what() << std::endl;
-        futureResult = std::async(std::launch::async, []() { return true; });
+      } catch (const std::exception &ex) {
+        std::cerr << "[reader] Exception: " << ex.what() << std::endl;
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(1000)); // brief backoff on error
       }
     }
   } catch (const std::exception &e) {
@@ -208,7 +203,9 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
         sendRawLinks(filteredLinks);
         res.base_url = baseurl;
         storage->storeDownloadResult(res);
-      }
+      } else
+        std::this_thread::sleep_for(
+            std::chrono::milliseconds(1000)); // brief backoff on error
     }
   } catch (const std::exception &e) {
     std::cerr << "[reader] CRASH: " << e.what() << std::endl;

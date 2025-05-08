@@ -97,8 +97,6 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     auto token = newLinksQueue->returnToken();
 
     auto sendLink = [newLinksQueue, token](std::string downloadbleUrl) -> void {
-      std::cout << "i wnat to send this link in doble queue  " + downloadbleUrl
-                << std::endl;
       newLinksQueue->sendMessage(Config::downloadLinksQueueName, downloadbleUrl,
                                  token, Config::apiSend);
     };
@@ -106,6 +104,7 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     // every time someting happen there !!
     auto updateCollectionMap = [&]() -> bool {
       if (!urlManager->map_initiated || urlManager->map_updated) {
+        std::cout << "-------------------------------if" << std::endl;
         _urlMap = urlManager->getBaseMap();
         if (!_urlMap.empty())
           politeness->addJobs(_urlMap);
@@ -129,20 +128,17 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     while (true) {
       // i may need to call this function in periods , like in loop :
       updateCollectionMap();
-      std::cout << "before endless loop ";
       while (true) {
         newjob = politeness->getReadyJobStr();
         if (newjob.status)
           break;
         sleep(1);
       }
-      std::cout << "[info] polite give me job" + newjob.base_url + " \n";
       auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
       if (downloadbleUrl.status) {
         politeness->AckJob(newjob.id);
         sendLink(downloadbleUrl.message);
       } else {
-        std::cout << "[info] there is no link for " + newjob.base_url + " \n";
         politeness->NAckJob(newjob.id);
         counter++;
       }

@@ -83,14 +83,13 @@ public:
   void setTimerVal(int sec) { timerVal = sec; }
   void AckJob(int jobId) {
     std::cout << "updatingthis fucking shit" << jobId << std::endl;
-    std::cout << "whgen this is heap " << std::endl;
-    displayStrHeap();
     updateStrJob(jobId, getCurrentTimestampInMilliseconds());
   }
 
   void NAckJob(int jobId) {
-    updateStrJob(jobId,
-                 (getCurrentTimestampInSeconds() + secondsToMilliseconds(10)));
+    std::cout << "naking this " << jobId << std::endl;
+    updateStrJob(jobId, (getCurrentTimestampInMilliseconds() +
+                         secondsToMilliseconds(10)));
   }
 
 private:

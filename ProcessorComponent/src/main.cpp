@@ -103,6 +103,7 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     // you mayfor  ask why i have this conditions ? for not reading database
     // every time someting happen there !!
     auto updateCollectionMap = [&]() -> bool {
+      std::cout << "-------------------------------if" << std::endl;
       if (!urlManager->map_initiated || urlManager->map_updated) {
         std::cout << "-------------------------------if" << std::endl;
         _urlMap = urlManager->getBaseMap();
@@ -129,22 +130,25 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
       // i may need to call this function in periods , like in loop :
       updateCollectionMap();
       while (true) {
+        std::cout << "-------------------------------endless while ? "
+                  << std::endl;
         newjob = politeness->getReadyJobStr();
         if (newjob.status)
           break;
         sleep(1);
       }
+      std::cout << "[wait] polit giving ..." << newjob.base_url << std::endl;
       auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
+      std::cout << "[wait] db giving ..." << downloadbleUrl.message
+                << std::endl;
       if (downloadbleUrl.status) {
+        std::cout << "[wait] db giving ..." << downloadbleUrl.message
+                  << std::endl;
         politeness->AckJob(newjob.id);
         sendLink(downloadbleUrl.message);
       } else {
         politeness->NAckJob(newjob.id);
         counter++;
-      }
-      if (counter > 10) {
-        std::this_thread::sleep_for(
-            std::chrono::milliseconds(10000)); // brief backoff on error
       }
     }
   } catch (const std::exception &e) {

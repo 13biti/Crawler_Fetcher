@@ -66,8 +66,8 @@ Politeness::JotDto Politeness::getReadyJobStr() {
   //                    : "no")
   //            << std::endl;
   // lord have mercy i make big mistkae , i wrote this if in reverce !!
-  bool isWaited = getCurrentTimestampInMilliseconds() <
-                  readyOne.timestamp + secondsToMilliseconds(timerVal);
+  bool isWaited = getCurrentTimestampInMilliseconds() - readyOne.timestamp >=
+                  +secondsToMilliseconds(timerVal);
 
   if (isWaited)
     return Politeness::JotDto{readyOne.id, readyOne.nodeName, true};

@@ -4,9 +4,8 @@
 #include <netdb.h>
 #include <sys/socket.h>
 
-DomainResolver::DomainResolver(const std::string &domain) : domain_(domain) {}
-
-std::vector<std::string> DomainResolver::getIPv4Addresses() const {
+std::vector<std::string>
+DomainResolver::getIPv4Addresses(const std::string &domain) {
   std::vector<std::string> ipAddresses;
   struct addrinfo hints{}, *res, *p;
   hints.ai_family = AF_INET;

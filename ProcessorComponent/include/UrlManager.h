@@ -1,5 +1,6 @@
 #ifndef URL_MANAGER_H
 #define URL_MANAGER_H
+#include "ResolverHelper.h"
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/builder/stream/helpers.hpp>
 #include <bsoncxx/json.hpp>
@@ -42,6 +43,7 @@ public:
 
 private:
   std::mutex _mutex;
+  ResolverHelper resolverHelper;
   bool connectionValidator() {
     std::lock_guard<std::mutex> lock(_mutex);
     try {

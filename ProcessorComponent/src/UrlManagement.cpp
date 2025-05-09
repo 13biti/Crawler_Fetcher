@@ -1,3 +1,4 @@
+#include "../include/ResolverHelper.h"
 #include "../include/UrlManager.h"
 #include <bsoncxx/array/view.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
@@ -20,57 +21,39 @@
 // chose second method
 // ofter changin schema , this map is useless , i change it to set
 // std::unordered_map<std::string, std::string> collection_map;
-std::string extractBaseUrl(const std::string &url) {
-  std::smatch result;
-
-  // First try to match with protocol
-  std::regex with_protocol(R"(^(https?://)([^/]+))");
-  if (std::regex_search(url, result, with_protocol)) {
-    return result.str(2); // Return domain part only
-  }
-
-  // If no protocol, try to match just the domain
-  std::regex without_protocol(R"(^([^/]+))");
-  if (std::regex_search(url, result, without_protocol)) {
-    return result.str(1);
-  }
-
-  return ""; // Return empty string if no match
-}
 bool UrlManager::sortingUrls(const std::string &url) {
   if (!connectionValidator()) {
-    std::cerr << "--Connection is not established!A" << std::endl;
+    std::cerr << "--Connection is not established!" << std::endl;
     return false;
   }
 
-  std::string base_url = extractBaseUrl(url);
-  if (base_url.empty()) {
-    std::cerr << "Invalid URL format: " << url << std::endl;
+  auto [resolverSuccess, resolverGroupId] =
+      resolverHelper.processDomain(database_, url);
+  if (!resolverSuccess) { // Fixed condition
+    std::cerr << "Domain processing failed for URL: " << url << std::endl;
     return false;
   }
 
   try {
     std::unique_lock<std::mutex> lock(_mutex);
-
     auto collection = database_["urls"];
+
+    // Check for duplicate URL (simplified)
     auto duplicate_filter = bsoncxx::builder::stream::document{}
-                            << "base_url" << base_url << "url" << url
+                            << "url" << url
                             << bsoncxx::builder::stream::finalize;
-    auto duplicate_result = collection.find_one(duplicate_filter.view());
-    if (duplicate_result) {
-      std::cerr << "Duplicate URL detected. Skipping insertion: " << url
-                << std::endl;
+    if (collection.find_one(duplicate_filter.view())) {
+      std::cerr << "Duplicate URL detected: " << url << std::endl;
       return false;
     }
 
-    // Find the latest batch_id document for this base_url
-    auto cursor = collection.find(bsoncxx::builder::stream::document{}
-                                  << "base_url" << base_url
-                                  << bsoncxx::builder::stream::finalize);
+    auto batch_filter = bsoncxx::builder::stream::document{}
+                        << "base_url" << resolverGroupId
+                        << bsoncxx::builder::stream::finalize;
+    auto cursor = collection.find(batch_filter.view());
 
     int batch_id = 0;
     int url_count = 0;
-
     for (const auto &doc : cursor) {
       int current_batch_id = doc["batch_id"].get_int32().value;
       if (current_batch_id > batch_id) {
@@ -82,33 +65,28 @@ bool UrlManager::sortingUrls(const std::string &url) {
     }
 
     if (url_count >= 100) {
-      batch_id++; // create new batch if current has 100 URLs
-      url_count = 0;
+      batch_id++;
     }
 
-    bsoncxx::builder::stream::document url_doc;
-    url_doc << "base_url" << base_url << "batch_id" << batch_id << "url" << url
-            << "hasBeenRead" << false;
+    // Insert new document
+    auto url_doc = bsoncxx::builder::stream::document{}
+                   << "base_url" << resolverGroupId << "original_domain"
+                   << resolverHelper.extractBaseUrl(url) << "batch_id"
+                   << batch_id << "url" << url << "hasBeenRead" << false
+                   << bsoncxx::builder::stream::finalize;
 
-    auto insert_result = collection.insert_one(url_doc.view());
-    if (insert_result &&
-        insert_result->inserted_id().type() == bsoncxx::type::k_oid) {
-      std::string inserted_id =
-          insert_result->inserted_id().get_oid().value.to_string();
-      lock.unlock();
-      updateMap(collection_map, base_url);
-
-      std::cout << "Inserted URL into batch " << batch_id << ": " << url
-                << std::endl;
-    } else {
-      std::cerr << "Failed to insert URL into database." << std::endl;
-      return false;
+    if (auto result = collection.insert_one(url_doc.view())) {
+      updateMap(collection_map, resolverGroupId);
+      std::cout << "Inserted URL into group " << resolverGroupId << ", batch "
+                << batch_id << ": " << url << std::endl;
+      return true;
     }
 
-    return true;
+    std::cerr << "Failed to insert URL" << std::endl;
+    return false;
 
   } catch (const mongocxx::exception &e) {
-    std::cerr << "An exception occurred: " << e.what() << std::endl;
+    std::cerr << "Database exception: " << e.what() << std::endl;
     return false;
   }
 }
@@ -318,7 +296,8 @@ Result_read UrlManager::getUrl(std::string domain) {
 
   try {
     // agian i like this : auto results =
-    // collection.find(make_document(kvp("<field name>", "<value>"))); but seems
+    // collection.find(make_document(kvp("<field name>", "<value>"))); but
+seems
     // ...
     auto collection = database_[domain];
     auto cursor = collection.find_one(bsoncxx::builder::stream::document{}
@@ -349,8 +328,8 @@ Result_read UrlManager::getUrl(std::string domain) {
 */
 /*
 smatchd::unordered_map<std::string, std::string>
-UrlManager::getCollectionNames() { std::unordered_map<std::string, std::string>
-collection_map;
+UrlManager::getCollectionNames() { std::unordered_map<std::string,
+std::string> collection_map;
 
   try {
     auto collection = database_["urls"];
@@ -379,10 +358,9 @@ collection_map;
 */
 
 /*
-std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
-  try {
-    auto collection_names = database_["collection_names"];
-    auto cursor = collection_names.find({});
+std::unordered_map<std::string, std::string> UrlManager::getCollectionNames()
+{ try { auto collection_names = database_["collection_names"]; auto cursor =
+collection_names.find({});
 
     for (auto &&doc : cursor) {
       std::string collection_name =
@@ -428,7 +406,8 @@ UrlManagerl::sortingUrls(std::string url) {
         auto insert_name_result =
             collection_names.insert_one(bsoncxx::builder::stream::document{}
                                         << "collection_name" << target
-                                        << bsoncxx::builder::stream::finalize);
+                                        <<
+bsoncxx::builder::stream::finalize);
 
         if (insert_name_result) {
           std::cout << "Collection name inserted successfully: " << target
@@ -505,7 +484,8 @@ bool UrlManager::sortingUrls(const std::string &url) {
 
       if (create_new_batch) {
         bsoncxx::builder::stream::document batch_doc;
-        batch_doc << "base_url" << base_url << "batch_id" << batch_id << "urls"
+        batch_doc << "base_url" << base_url << "batch_id" << batch_id <<
+"urls"
                   << bsoncxx::builder::stream::open_array << url_doc
                   << bsoncxx::builder::stream::close_array;
 

@@ -130,8 +130,6 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
       // i may need to call this function in periods , like in loop :
       updateCollectionMap();
       while (true) {
-        std::cout << "-------------------------------endless while ? "
-                  << std::endl;
         newjob = politeness->getReadyJobStr();
         if (newjob.status)
           break;

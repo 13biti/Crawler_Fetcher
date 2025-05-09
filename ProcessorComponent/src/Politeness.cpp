@@ -51,30 +51,11 @@ Politeness::JotDto Politeness::getReadyJobStr() {
     throw std::runtime_error("Heap is empty");
   }
   StrJob readyOne = strHeap.top();
-  //  std::cout << "readyOne is " << std::to_string(readyOne.timestamp) << " "
-  //            << readyOne.nodeName << " timerval "
-  //            << std::to_string(secondsToMilliseconds(timerVal))
-  //            << " sum of timeval and timestamp "
-  //            << std::to_string(readyOne.timestamp +
-  //                              secondsToMilliseconds(timerVal))
-  //            << " current time "
-  //            << std::to_string(getCurrentTimestampInMilliseconds())
-  //            << " is it bigger? "
-  //            << ((readyOne.timestamp + secondsToMilliseconds(timerVal)) <
-  //                        getCurrentTimestampInMilliseconds()
-  //                    ? "yes"
-  //                    : "no")
-  //            << std::endl;
-  // lord have mercy i make big mistkae , i wrote this if in reverce !!
   bool isWaited = getCurrentTimestampInMilliseconds() - readyOne.timestamp >=
                   +secondsToMilliseconds(timerVal);
 
   if (isWaited)
     return Politeness::JotDto{readyOne.id, readyOne.nodeName, true};
-  //  std::cout << "change time stemp from "
-  //            << std::to_string(readyOne.timestamp) + "to" +
-  //                   std::to_string(getCurrentTimestampInMilliseconds())
-  //            << std::endl;
   return Politeness::JotDto{0, "", false};
 }
 

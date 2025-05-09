@@ -7,8 +7,7 @@
 
 class DomainResolver {
 public:
-  explicit DomainResolver(const std::string &domain);
-  std::vector<std::string> getIPv4Addresses() const;
+  std::vector<std::string> getIPv4Addresses(const std::string &domain);
 
 private:
   std::string domain_;

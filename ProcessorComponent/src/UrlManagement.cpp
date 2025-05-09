@@ -20,86 +20,98 @@
 // chose second method
 // ofter changin schema , this map is useless , i change it to set
 // std::unordered_map<std::string, std::string> collection_map;
+std::string extractBaseUrl(const std::string &url) {
+  std::smatch result;
+
+  // First try to match with protocol
+  std::regex with_protocol(R"(^(https?://)([^/]+))");
+  if (std::regex_search(url, result, with_protocol)) {
+    return result.str(2); // Return domain part only
+  }
+
+  // If no protocol, try to match just the domain
+  std::regex without_protocol(R"(^([^/]+))");
+  if (std::regex_search(url, result, without_protocol)) {
+    return result.str(1);
+  }
+
+  return ""; // Return empty string if no match
+}
 bool UrlManager::sortingUrls(const std::string &url) {
   if (!connectionValidator()) {
     std::cerr << "--Connection is not established!A" << std::endl;
     return false;
   }
 
-  std::smatch result;
-  std::regex pattern(R"((?:https?://)?([^/]+))");
-  if (std::regex_search(url, result, pattern)) {
-    std::string base_url = result.str(1);
-
-    try {
-      std::unique_lock<std::mutex> lock(_mutex);
-
-      auto collection = database_["urls"];
-      auto duplicate_filter = bsoncxx::builder::stream::document{}
-                              << "base_url" << base_url << "url" << url
-                              << bsoncxx::builder::stream::finalize;
-      auto duplicate_result = collection.find_one(duplicate_filter.view());
-      if (duplicate_result) {
-        std::cerr << "Duplicate URL detected. Skipping insertion: " << url
-                  << std::endl;
-        return false;
-      }
-
-      // Find the latest batch_id document for this base_url
-      auto cursor = collection.find(bsoncxx::builder::stream::document{}
-                                    << "base_url" << base_url
-                                    << bsoncxx::builder::stream::finalize);
-
-      int batch_id = 0;
-      int url_count = 0;
-
-      for (const auto &doc : cursor) {
-        int current_batch_id = doc["batch_id"].get_int32().value;
-        if (current_batch_id > batch_id) {
-          batch_id = current_batch_id;
-          url_count = 1;
-        } else if (current_batch_id == batch_id) {
-          url_count++;
-        }
-      }
-
-      if (url_count >= 100) {
-        batch_id++; // create new batch if current has 100 URLs
-        url_count = 0;
-      }
-
-      bsoncxx::builder::stream::document url_doc;
-      url_doc << "base_url" << base_url << "batch_id" << batch_id << "url"
-              << url << "hasBeenRead" << false;
-
-      auto insert_result = collection.insert_one(url_doc.view());
-      if (insert_result &&
-          insert_result->inserted_id().type() == bsoncxx::type::k_oid) {
-        std::string inserted_id =
-            insert_result->inserted_id().get_oid().value.to_string();
-        lock.unlock();
-        updateMap(collection_map, base_url);
-
-        std::cout << "Inserted URL into batch " << batch_id << ": " << url
-                  << std::endl;
-      } else {
-        std::cerr << "Failed to insert URL into database." << std::endl;
-        return false;
-      }
-
-      return true;
-
-    } catch (const mongocxx::exception &e) {
-      std::cerr << "An exception occurred: " << e.what() << std::endl;
-      return false;
-    }
-
-  } else {
+  std::string base_url = extractBaseUrl(url);
+  if (base_url.empty()) {
     std::cerr << "Invalid URL format: " << url << std::endl;
     return false;
   }
-}
 
+  try {
+    std::unique_lock<std::mutex> lock(_mutex);
+
+    auto collection = database_["urls"];
+    auto duplicate_filter = bsoncxx::builder::stream::document{}
+                            << "base_url" << base_url << "url" << url
+                            << bsoncxx::builder::stream::finalize;
+    auto duplicate_result = collection.find_one(duplicate_filter.view());
+    if (duplicate_result) {
+      std::cerr << "Duplicate URL detected. Skipping insertion: " << url
+                << std::endl;
+      return false;
+    }
+
+    // Find the latest batch_id document for this base_url
+    auto cursor = collection.find(bsoncxx::builder::stream::document{}
+                                  << "base_url" << base_url
+                                  << bsoncxx::builder::stream::finalize);
+
+    int batch_id = 0;
+    int url_count = 0;
+
+    for (const auto &doc : cursor) {
+      int current_batch_id = doc["batch_id"].get_int32().value;
+      if (current_batch_id > batch_id) {
+        batch_id = current_batch_id;
+        url_count = 1;
+      } else if (current_batch_id == batch_id) {
+        url_count++;
+      }
+    }
+
+    if (url_count >= 100) {
+      batch_id++; // create new batch if current has 100 URLs
+      url_count = 0;
+    }
+
+    bsoncxx::builder::stream::document url_doc;
+    url_doc << "base_url" << base_url << "batch_id" << batch_id << "url" << url
+            << "hasBeenRead" << false;
+
+    auto insert_result = collection.insert_one(url_doc.view());
+    if (insert_result &&
+        insert_result->inserted_id().type() == bsoncxx::type::k_oid) {
+      std::string inserted_id =
+          insert_result->inserted_id().get_oid().value.to_string();
+      lock.unlock();
+      updateMap(collection_map, base_url);
+
+      std::cout << "Inserted URL into batch " << batch_id << ": " << url
+                << std::endl;
+    } else {
+      std::cerr << "Failed to insert URL into database." << std::endl;
+      return false;
+    }
+
+    return true;
+
+  } catch (const mongocxx::exception &e) {
+    std::cerr << "An exception occurred: " << e.what() << std::endl;
+    return false;
+  }
+}
 bool UrlManager::sortingUrls(std::vector<std::string> urls) {
   if (!connectionValidator()) {
     std::cerr << "connection is not established !" << std::endl;

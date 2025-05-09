@@ -89,7 +89,7 @@ public:
   void NAckJob(int jobId) {
     std::cout << "naking this " << jobId << std::endl;
     updateStrJob(jobId, (getCurrentTimestampInMilliseconds() +
-                         secondsToMilliseconds(10)));
+                         secondsToMilliseconds(timerVal)));
   }
 
 private:

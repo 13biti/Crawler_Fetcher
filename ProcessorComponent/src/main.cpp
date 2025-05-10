@@ -24,6 +24,7 @@
 #include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -89,7 +90,8 @@ void threadRead(UrlManager *urlManager) {
   }
   std::cout << "[reader] Thread exiting\n";
 }
-void threadWrite(UrlManager *urlManager, Politeness *politeness) {
+void threadWrite(UrlManager *urlManager, Politeness *politeness,
+                 int linkPerTrun) {
   std::cout << "threadWrite is initiated " << std::endl;
   try {
     Politeness::JotDto newjob;
@@ -157,15 +159,30 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
           break;
         sleep(1);
       }
-      auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
-      if (downloadbleUrl.status) {
-        std::cout << "doable job statuss " << downloadbleUrl.status
-                  << downloadbleUrl.message << std::endl;
+
+      auto downloadbleUrls = urlManager->getUrl(
+          std::vector<std::string>(linkPerTrun, newjob.base_url));
+      std::cout << "[writer][sender] enless while , here is linkPerTrun"
+                << linkPerTrun << "and here is downloadbleUrls from getter : "
+                << downloadbleUrls.status << " "
+                << (downloadbleUrls.status
+                        ? downloadbleUrls.result_read[0].message
+                        : "it was empty ")
+                << "here is what i sende "
+                << std::vector<std::string>(linkPerTrun, newjob.base_url)[0]
+                << std::endl;
+      if (downloadbleUrls.status) {
+        std::cout << "[writer][sender] enless while try to suspend this job "
+                  << newjob.id << std::endl;
         politeness->SuspendJob(newjob.id);
-        sendLink(downloadbleUrl.message, newjob.base_url);
+        for (const auto it : downloadbleUrls.result_read) {
+          if (it.status) {
+            sendLink(it.message, newjob.base_url);
+          }
+        }
       } else {
-        std::cout << "doable job statuss " << downloadbleUrl.status
-                  << downloadbleUrl.message << "so nacking this " << newjob.id
+        std::cout << "[writer][sender] enless while , here is linkPerTrun"
+                  << linkPerTrun << "here is the base_url" << newjob.base_url
                   << std::endl;
         politeness->NAckJob(newjob.id);
         counter++;
@@ -178,13 +195,37 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
   std::cout << "[writer] Thread exiting\n";
 }
 void threadDownloadResultHandler(DownloadResultStorage *storage,
-                                 Politeness &politeness) {
+                                 Politeness &politeness, int linkPerTrun) {
   std::cout << "threadDownloadResltHandler is initiated\n";
-
+  std::unordered_map<int, int> DownloadedPerWindow;
+  // everything in try becase of the thread
   try {
     LinkExtractor linkExtractor; // No need for dynamic allocation
     QueueManager newLinksQueue(Config::queueBaseUrl);
 
+    auto updatehelper = [](bool &var, bool stat) -> int {
+      var = stat;
+      // this 0 here , toke me about 1 hour to find and solve !!
+      //  return 0;
+      return 1;
+    };
+    auto update_DPW_map = [&DownloadedPerWindow, linkPerTrun,
+                           updatehelper](int jobId) -> bool {
+      bool ackTheJob = false;
+      auto it = DownloadedPerWindow.find(jobId);
+      if (it == DownloadedPerWindow.end())
+        DownloadedPerWindow.insert({jobId, 1});
+      else
+        it->second = (it->second >= (linkPerTrun - 1))
+                         ? updatehelper(ackTheJob, true)
+                         : it->second + 1;
+      for (const auto iu : DownloadedPerWindow) {
+        std::cout << "[getResult] updating window like this :" << jobId
+                  << "and " << iu.first << " here is secondg " << iu.second
+                  << std::endl;
+      }
+      return ackTheJob;
+    };
     auto readToken = newLinksQueue.getToken(
         Config::processorReadUsername, Config::queuePassword, Config::apiLogin);
 
@@ -192,8 +233,8 @@ void threadDownloadResultHandler(DownloadResultStorage *storage,
         newLinksQueue.getToken(Config::processorWriteUsername,
                                Config::queuePassword, Config::apiLogin);
 
-    auto getResult = [&newLinksQueue, &readToken,
-                      &politeness]() -> DownloadResultStorage::result {
+    auto getResult = [&newLinksQueue, &readToken, &politeness, update_DPW_map,
+                      &DownloadedPerWindow]() -> DownloadResultStorage::result {
       auto msg = newLinksQueue.receiveMessage(Config::downloadedQueueName,
                                               readToken, Config::apiReceive);
       if (!msg.status) {
@@ -202,16 +243,17 @@ void threadDownloadResultHandler(DownloadResultStorage *storage,
       try {
         auto j = json::parse(msg.message);
         DownloadResult res = DownloadResult::from_json(j);
-        // update job anyway
         std::cout << "[getResult] of resulthandler , here is doresult  : "
                   << res.url << res.error_message << "hereis jobid "
                   << res.base_url << std::endl;
         int jobId = politeness.getIdByNodeName(res.base_url);
-        if (jobId != -1)
+        bool ackTheJob = update_DPW_map(jobId);
+        auto it = DownloadedPerWindow.find(jobId);
+        std::cout << "[getResult][dpw] update dwp_map : " << jobId << " "
+                  << it->first << "and here is value " << it->second
+                  << "ack is " << ackTheJob << std::endl;
+        if (ackTheJob)
           politeness.AckJob(jobId);
-        else
-          throw std::invalid_argument(
-              "something went wrong , getting out of range baseurl ");
         if (res.http_code == 200) {
           std::string decoded_html;
           try {
@@ -287,12 +329,30 @@ void threadDownloadResultHandler(DownloadResultStorage *storage,
 }
 // iam use threading for simplisity , case if i fork them , i need to have
 // shared memory and stuff to share the urlManager between this two method
-// several problem here : first , i remove everything in queue after i read it ,
-// which wrong , i sholud acknowledgeMessage insted second : is token condition
-// , as you know thy have expireion time,but i never recreate them , thred : i
-// am using same username and pass for them all , but what if thy start to
-// change each other token and stuff ?
-int main() {
+// several problem here : first , i remove everything in queue after i read it
+// , which wrong , i sholud acknowledgeMessage insted second : is token
+// condition , as you know thy have expireion time,but i never recreate them ,
+// thred : i am using same username and pass for them all , but what if thy
+// start to change each other token and stuff ?
+int main(int argc, char *argv[]) {
+  std::vector<std::string> allowedUrls;
+  int linkPerTrun = 1;
+
+  for (int i = 1; i < argc; ++i) {
+    std::string arg(argv[i]);
+    if (arg.rfind("--allowed-url=", 0) == 0) {
+      std::string url = arg.substr(strlen("--allowed-url="));
+      allowedUrls.push_back(url);
+    }
+    if (arg.rfind("--LPT=", 0) == 0) {
+      linkPerTrun = std::stoi(arg.substr(strlen("--LPT=")));
+    }
+  }
+
+  for (const auto &url : allowedUrls) {
+    std::cout << "Allowed URL: " << url << std::endl;
+  }
+  std::cout << "Allowed ltp : " << linkPerTrun << std::endl;
   // Print configuration values
   std::cout << Config::mongoUrlsDb << Config::mongoUrlsClient
             << Config::mongoHandlerClient << Config::mongoUrlsUri
@@ -330,15 +390,15 @@ int main() {
   }
 
   // Create managers with the connection pool
-  UrlManager urlManager(pool, Config::mongoUrlsDb, "urls");
+  UrlManager urlManager(pool, Config::mongoUrlsDb, "urls", allowedUrls);
   DownloadResultStorage storage(pool, Config::mongoUrlsDb, "DownloadedContent");
   Politeness politeness;
 
   // Start threads
   std::thread reader(threadRead, &urlManager);
-  std::thread writer(threadWrite, &urlManager, &politeness);
-  std::thread handler([&storage, &politeness] {
-    threadDownloadResultHandler(&storage, politeness);
+  std::thread writer(threadWrite, &urlManager, &politeness, linkPerTrun);
+  std::thread handler([&storage, &politeness, linkPerTrun] {
+    threadDownloadResultHandler(&storage, politeness, linkPerTrun);
   });
 
   // Wait for threads to complete

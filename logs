@@ -1,0 +1,2229 @@
+Allowed URL: znu.ac.ir
+Allowed URL: nahad.ir
+Allowed ltp : 4
+linksprocessor_urlmanagerprocessor_storagemongodb://0.0.0.0:8099/downloadedContenthttp://127.0.0.1:5000
+MongoDB connection successful.
+threadRead is initiated 
+threadWrite is initiated 
+threadDownloadResltHandler is initiated
+[updateCollectionMap] why i am here 10
+it was empty -- [wait] No URLs to process yet. Retrying in 5s...
+[updateCollectionMap] why i am here 10
+it was empty -- [wait] No URLs to process yet. Retrying in 5s...
+[urlmanager][allowed] this is my url: www.google.com
+[urlmanager][allowed] extracted base url: www.google.com
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: znu.ac.ir
+[urlmanager][allowed] extracted base url: znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: znu.ac.ir
+[urlmanager][allowed] this is my url: news.znu.ac.ir
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: news.znu.ac.ir
+[urlmanager][allowed] this is my url: food.znu.ac.ir
+[urlmanager][allowed] extracted base url: food.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here food.znu.ac.ir
+iam here -- here is ips 185.67.12.6
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: food.znu.ac.ir
+[urlmanager][allowed] this is my url: cert.znu.ac.ir
+[urlmanager][allowed] extracted base url: cert.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here cert.znu.ac.ir
+iam here -- here is ips 185.67.12.33
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: cert.znu.ac.ir
+[urlmanager][allowed] this is my url: www.nasa.gov/news
+[urlmanager][allowed] extracted base url: www.nasa.gov
+[urlmanager][allowed] this url is NOT accepted
+[updateCollectionMap] why i am here 10
+it was empty -- Base URLs loaded successfully. Found: 1 domains.
+ac.ir
+[updateCollectionMap] i want to update polite here is before :  
+[updateCollectionMap] i want to update polite here is after :  
+StrJob ID: 0 | Node: ac.ir | Timestamp: 1746903515132
+new job statuss ac.ir01
+[UrlManager][getUrl] here is domain  ac.ir
+URL retrieved and marked as read: znu.ac.ir
+[UrlManager][getUrl] here is domain  ac.ir
+URL retrieved and marked as read: news.znu.ac.ir
+[UrlManager][getUrl] here is domain  ac.ir
+URL retrieved and marked as read: food.znu.ac.ir
+[UrlManager][getUrl] here is domain  ac.ir
+URL retrieved and marked as read: cert.znu.ac.ir
+[writer][sender] enless while , here is linkPerTrun4and here is downloadbleUrls from getter : 1 znu.ac.irhere is what i sende ac.ir
+[writer][sender] enless while try to suspend this job 0
+[suspend] , suspending this 0
+[writer] i am sending this url and jobid znu.ac.ir 	 ac.ir
+[writer] i am sending this url and jobid news.znu.ac.ir 	 ac.ir
+[writer] i am sending this url and jobid food.znu.ac.ir 	 ac.ir
+[writer] i am sending this url and jobid cert.znu.ac.ir 	 ac.ir
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+[getResult] of resulthandler , here is doresult  : znu.ac.irhereis jobid ac.ir
+[getResult] updating window like this :0and 0 here is secondg 1
+[getResult][dpw] update dwp_map : 0 0and here is value 1ack is 0
+Sent: https://zti.znu.ac.ir/
+Sent: https://zpaleo.znu.ac.ir/
+Sent: https://znu.nahad.ir
+Sent: https://www.znu.ac.ir/weather/
+Sent: https://www.znu.ac.ir/nezarat
+Sent: https://www.znu.ac.ir/newsArchive
+Sent: https://www.znu.ac.ir/museum/
+Sent: https://www.znu.ac.ir/members/adminmenu
+Sent: https://www.znu.ac.ir/links/universities
+Sent: https://www.znu.ac.ir/allNews/view/id/113/
+Sent: https://www.znu.ac.ir/allNews
+Sent: https://www.znu.ac.ir/album/1403/
+Sent: https://www.znu.ac.ir/about/privacy-statement
+Sent: https://www.znu.ac.ir/118/
+Sent: https://www.znu.ac.ir
+Sent: https://www.saamad.ir/portal/Home/Default.aspx
+Sent: https://www.president.ir/
+Sent: https://www.aparat.com/ZNUresearch/%DA%A9%D8%A7%D9%86%D8%A7%D9%84%20%D8%B1%D8%B3%D9%85%DB%8C%20%D9%85%D8%B9%D8%A7%D9%88%D9%86%D8%AA%20%D9%BE%DA%98%D9%88%D9%87%D8%B4%20%D9%88%20%D9%81%D9%86%D8%A7%D9%88%D8%B1%DB%8C%20%D8%AF%D8%A7%D9%86%D8%B4%DA%AF%D8%A7%D9%87%20%D8%B2%D9%86%D8%AC%D8%A7%D9%86
+Sent: https://tc.znu.ac.ir/
+Sent: https://tacs.znu.ac.ir/
+Sent: https://systems.znu.ac.ir/
+Sent: https://std.znu.ac.ir/services
+Sent: https://std.znu.ac.ir/rules
+Sent: https://www.znu.ac.ir/newsArchive/searchNews
+Sent: https://shahed.znu.ac.ir/
+Sent: https://samp.znu.ac.ir/
+Sent: https://rules.znu.ac.ir/
+Sent: https://research.znu.ac.ir
+Sent: https://rccp.znu.ac.ir
+Sent: https://pr.znu.ac.ir
+Sent: https://planning.znu.ac.ir/site/login
+Sent: https://plan.znu.ac.ir/
+Sent: https://pgrad.znu.ac.ir/
+Sent: https://ostandari-zn.ir/pishkhan/%D8%AF%D9%81%D8%A7%D8%AA%D8%B1%D9%BE%DB%8C%D8%B4%D8%AE%D9%88%D8%A7%D9%86%D8%B4%D9%87%D8%B1%D8%B2%D9%86%D8%AC%D8%A7%D9%86.aspx
+Sent: https://omrani.znu.ac.ir/
+Sent: https://omana.znu.ac.ir/
+Sent: http://sport.znu.ac.ir
+Sent: http://acc.znu.ac.ir
+Sent: http://scn.znu.ac.ir
+Sent: https://rimbt.znu.ac.ir/
+Sent: http://refahstd.znu.ac.ir
+Sent: http://library.znu.ac.ir
+Sent: http://psychology.znu.ac.ir
+Sent: http://cert.znu.ac.ir/
+Sent: https://research.znu.ac.ir/rules
+Sent: http://plant-protect.znu.ac.ir
+Sent: https://krd.swf.ir/
+Sent: https://news.znu.ac.ir
+Sent: http://sm.znu.ac.ir/
+Sent: https://education.znu.ac.ir/services
+Sent: https://resmng.znu.ac.ir/
+Sent: http://physics.znu.ac.ir
+Sent: http://library.znu.ac.ir/simorghportal/tabid/39/Default.aspx
+Sent: http://philosophy.znu.ac.ir
+Sent: https://www.leader.ir/
+Sent: http://soileng.znu.ac.ir
+Sent: https://isco.znu.ac.ir/
+Sent: http://plantgen.znu.ac.ir
+Sent: https://adm.znu.ac.ir/
+Sent: http://meteng.znu.ac.ir
+Sent: http://dormitory.znu.ac.ir
+Sent: https://www.znu.ac.ir/greenmng/
+Sent: http://salon.znu.ac.ir/
+Sent: http://mech.znu.ac.ir
+Sent: http://math.znu.ac.ir
+Sent: http://economy.znu.ac.ir
+Sent: http://sportedu.znu.ac.ir
+Sent: http://law.znu.ac.ir
+Sent: http://labsnet.ir
+Sent: http://it.znu.ac.ir/
+Sent: http://statistics.znu.ac.ir
+Sent: http://islam.znu.ac.ir
+Sent: https://education.znu.ac.ir/
+Sent: https://www.msrt.ir/fa/Pages/MainMenuPages/ResearchAssistant.aspx
+Sent: http://counsel.znu.ac.ir
+Sent: https://jazb.znu.ac.ir/
+Sent: http://chemeng.znu.ac.ir
+Sent: https://services.znu.ac.ir/
+Sent: http://mine.znu.ac.ir
+Sent: https://research.znu.ac.ir/services
+Sent: https://phm.znu.ac.ir/
+Sent: http://horticul.znu.ac.ir
+Sent: https://www.znu.ac.ir/znujrnls/
+Sent: http://ee.znu.ac.ir
+Sent: http://health.znu.ac.ir
+Sent: https://labs.znu.ac.ir
+Sent: http://chem.znu.ac.ir
+Sent: http://arch.znu.ac.ir
+Sent: https://jmpb.znu.ac.ir/
+Sent: http://persian.znu.ac.ir
+Sent: http://animaledu.znu.ac.ir
+Sent: http://www.znu.ac.ir/118
+Sent: https://erp.znu.ac.ir/Dashboard
+Sent: http://civileng.znu.ac.ir
+Sent: http://agr.znu.ac.ir
+Sent: http://library.znu.ac.ir/
+Sent: http://eng.znu.ac.ir
+Sent: http://food.znu.ac.ir/
+Sent: https://www.znu.ac.ir/members/adminmenu/
+Sent: http://foodsci.znu.ac.ir
+Sent: http://biology.znu.ac.ir
+Sent: http://ce.znu.ac.ir
+Sent: https://education.znu.ac.ir/page/rules
+Sent: http://geography.znu.ac.ir
+Sent: http://indeng.znu.ac.ir
+Sent: https://lms.znu.ac.ir/
+Sent: http://english.znu.ac.ir
+Sent: http://hcin.znu.ac.ir
+Sent: https://www.znu.ac.ir/znumng
+Sent: https://www.msrt.ir/fa/page/877/%D8%A7%D8%B1%D8%AA%D8%A8%D8%A7%D8%B7-%D9%85%D8%B3%D8%AA%D9%82%DB%8C%D9%85-%D8%A8%D8%A7-%D9%82%D8%A7%D8%A6%D9%85-%D9%85%D9%82%D8%A7%D9%85-%D9%88%D8%B2%DB%8C%D8%B1-%D9%88-%D8%B1%D8%A6%DB%8C%D8%B3-%D9%85%D8%B1%DA%A9%D8%B2-%D9%87%DB%8C%D8%A7%D8%AA-%D9%87%D8%A7%DB%8C-%D8%A7%D9%85%D9%86%D8%A7-%D9%88-%D9%87%DB%8C%D8%A7%D8%AA-%D9%85%D9%85%DB%8C%D8%B2%D9%87-%D9%85%D8%B1%DA%A9%D8%B2%DB%8C
+Sent: http://geology.znu.ac.ir
+Sent: https://edumng.znu.ac.ir/
+Sent: http://www.znu.ac.ir/about/privacy-statement
+Sent: http://hmn.znu.ac.ir
+Sent: http://www.znu.ac.ir/about/about-znu
+Sent: http://feeding.znu.ac.ir
+Sent: http://www.znu.ac.ir/about/contact-informaion
+Sent: https://mail.znu.ac.ir/
+Sent: http://www.znu.ac.ir/about/google-map-university-zanjan
+Sent: https://food.znu.ac.ir/
+Sent: https://farhangi.znu.ac.ir/services
+Sent: http://www.znu.ac.ir/about/the-city-zanjan
+Sent: https://www.msrt.ir/fa/
+Sent: http://www.znu.ac.ir/about/university-3d-map
+Sent: https://eitaa.com/znupur 
+Sent: http://www.znu.ac.ir/about/university-map-building-streets
+Sent: https://refah.znu.ac.ir/
+Sent: http://www.znu.ac.ir/about/university-structural-chart
+Sent: https://isti.ir/
+Sent: https://cpc.znu.ac.ir/
+Sent: https://www.znu.ac.ir/rtweek
+Sent: http://www.znu.ac.ir/en
+Sent: http://www.znu.ac.ir/opinion
+Sent: https://account.znu.ac.ir/
+Sent: https://www.znu.ac.ir/znuhonors/
+Sent: https://dorm.znu.ac.ir/
+Sent: https://adm.znu.ac.ir/rules
+Sent: http://watereng.znu.ac.ir
+Sent: http://art.znu.ac.ir
+Sent: https://education.znu.ac.ir/page/academic-calendar/
+Sent: https://www.znu.ac.ir/data/prmovie/1394/znu-Mobilefinal.rar
+Sent: http://promotion.znu.ac.ir
+Sent: https://adm.znu.ac.ir/services
+Sent: https://alumni.znu.ac.ir/after-pro/
+Sent: https://epd.znu.ac.ir/
+Sent: https://cccd.znu.ac.ir/
+Sent: https://farhangi.znu.ac.ir/rules
+Sent: https://clab.znu.ac.ir/
+Sent: https://contacts.znu.ac.ir
+Sent: https://www.setadiran.ir/
+Sent: http://www.znu.ac.ir/album/1403
+Sent: https://dolat.ir/
+Sent: https://www.znu.ac.ir/members
+Sent: https://edu.znu.ac.ir/
+Sent: https://farhangi.znu.ac.ir/page/politics-org
+Sent: https://education.znu.ac.ir/page/academic-calendar
+Sent: https://www.znu.ac.ir/gozinesh
+Sent: https://education.znu.ac.ir/systems/
+Sent: https://epay.znu.ac.ir
+Sent: https://epay.znu.ac.ir/
+Sent: https://erp.znu.ac.ir
+Sent: https://erp.znu.ac.ir/
+Sent: https://farhangi.znu.ac.ir/
+Sent: https://farhangi.znu.ac.ir/page/art-kanoon
+Sent: https://isc.ac/Default.aspx?lan=fa
+Sent: https://farhangi.znu.ac.ir/page/scn-society
+Sent: https://farhangi.znu.ac.ir/page/std-pub
+Sent: http://etebar.znu.ac.ir/
+Sent: https://geonot.znu.ac.ir/
+Sent: https://herasat.znu.ac.ir/
+Sent: http://geodesy.znu.ac.ir
+Sent: https://irelc.znu.ac.ir/
+Sent: https://it.znu.ac.ir/
+Sent: https://jabssh.znu.ac.ir/
+Sent: https://jaer.znu.ac.ir/
+Sent: http://env.znu.ac.ir
+Sent: https://jer.znu.ac.ir/
+Sent: https://www.znu.ac.ir/pg/16767
+Sent: https://jrdes.znu.ac.ir/
+Sent: https://jurs.znu.ac.ir/
+Sent: https://jrmt.znu.ac.ir/
+Sent: https://jsp.znu.ac.ir/
+Sent: https://mail.znu.ac.ir/login/
+Sent: https://std.znu.ac.ir/
+Sent: http://mng.znu.ac.ir
+Sent: https://mrtg.znu.ac.ir//
+Sent: https://znu.site24x7statusiq.com//
+Sent: https://msrt.ir/fa/shaa/pages/home.aspx
+Stored download result for URL: znu.ac.ir with ID: 681fa1e53f8349bc96001dd7
+new job statuss 00
+[urlmanager][allowed] this is my url: https://zti.znu.ac.ir/
+[urlmanager][allowed] extracted base url: zti.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here zti.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://zti.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://zpaleo.znu.ac.ir/
+[urlmanager][allowed] extracted base url: zpaleo.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here zpaleo.znu.ac.ir
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://zpaleo.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://znu.nahad.ir
+[urlmanager][allowed] extracted base url: znu.nahad.ir
+[urlmanager][allowed] this url is accepted: nahad.ir
+iam here znu.nahad.ir
+iam here -- here is ips 212.16.88.80
+trying to update map -----------
+Inserted URL into group nahad.ir, batch 0: https://znu.nahad.ir
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/weather/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/weather/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/nezarat
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/nezarat
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/newsArchive
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+[getResult] of resulthandler , here is doresult  : news.znu.ac.irhereis jobid ac.ir
+[getResult] updating window like this :0and 0 here is secondg 2
+[getResult][dpw] update dwp_map : 0 0and here is value 2ack is 0
+Sent: https://www.znu.ac.ir/znuhonors/
+Sent: https://www.znu.ac.ir/links/universities
+Sent: https://www.znu.ac.ir/
+Sent: https://www.znu.ac.ir
+Sent: https://www.setadiran.ir/
+Sent: https://www.saamad.ir/portal/Home/Default.aspx
+Sent: https://www.msrt.ir/fa/page/877/%D8%A7%D8%B1%D8%AA%D8%A8%D8%A7%D8%B7-%D9%85%D8%B3%D8%AA%D9%82%DB%8C%D9%85-%D8%A8%D8%A7-%D9%82%D8%A7%D8%A6%D9%85-%D9%85%D9%82%D8%A7%D9%85-%D9%88%D8%B2%DB%8C%D8%B1-%D9%88-%D8%B1%D8%A6%DB%8C%D8%B3-%D9%85%D8%B1%DA%A9%D8%B2-%D9%87%DB%8C%D8%A7%D8%AA-%D9%87%D8%A7%DB%8C-%D8%A7%D9%85%D9%86%D8%A7-%D9%88-%D9%87%DB%8C%D8%A7%D8%AA-%D9%85%D9%85%DB%8C%D8%B2%D9%87-%D9%85%D8%B1%DA%A9%D8%B2%DB%8C
+Sent: https://www.msrt.ir/fa/Pages/MainMenuPages/ResearchAssistant.aspx
+Sent: https://www.leader.ir/
+iam here -- here is ips 185.67.12.66
+Sent: https://www.aparat.com/ZNUresearch/%DA%A9%D8%A7%D9%86%D8%A7%D9%84%20%D8%B1%D8%B3%D9%85%DB%8C%20%D9%85%D8%B9%D8%A7%D9%88%D9%86%D8%AA%20%D9%BE%DA%98%D9%88%D9%87%D8%B4%20%D9%88%20%D9%81%D9%86%D8%A7%D9%88%D8%B1%DB%8C%20%D8%AF%D8%A7%D9%86%D8%B4%DA%AF%D8%A7%D9%87%20%D8%B2%D9%86%D8%AC%D8%A7%D9%86
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/newsArchive
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/museum/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+Sent: https://sport.znu.ac.ir/page/topiccontent/95/
+Sent: https://news.znu.ac.ir/pg/24877
+Sent: https://news.znu.ac.ir/pg/24876
+Sent: https://news.znu.ac.ir/pg/24875
+Sent: https://news.znu.ac.ir/pg/24873
+Sent: https://news.znu.ac.ir/pg/24872
+Sent: https://news.znu.ac.ir/pg/24871
+Sent: https://news.znu.ac.ir/pg/24867
+Sent: https://news.znu.ac.ir/pg/24870
+Sent: https://news.znu.ac.ir/pg/24853
+Sent: https://news.znu.ac.ir/pg/24874
+Sent: https://news.znu.ac.ir/pg/24831
+Sent: https://news.znu.ac.ir/pg/24799
+Sent: https://news.znu.ac.ir/pg/24798
+Sent: https://news.znu.ac.ir/pg/24797
+Sent: https://news.znu.ac.ir/allNews/19
+Sent: https://news.znu.ac.ir/allNews
+Sent: https://www.president.ir/
+Sent: https://news.znu.ac.ir/allNews/22
+Sent: https://news.znu.ac.ir/allNews/32
+Sent: https://news.znu.ac.ir/allNews/83
+Sent: https://msrt.ir/fa/shaa/pages/home.aspx
+Sent: https://www.msrt.ir/fa/
+Sent: https://eitaa.com/znupur 
+Sent: https://ostandari-zn.ir/pishkhan/%D8%AF%D9%81%D8%A7%D8%AA%D8%B1%D9%BE%DB%8C%D8%B4%D8%AE%D9%88%D8%A7%D9%86%D8%B4%D9%87%D8%B1%D8%B2%D9%86%D8%AC%D8%A7%D9%86.aspx
+Sent: https://news.znu.ac.ir/allNews/86
+Sent: http://news.znu.ac.ir/pg/24868
+Sent: https://news.znu.ac.ir/allNews/72
+Sent: https://news.znu.ac.ir/allNews/20
+Sent: https://news.znu.ac.ir/allNews/13
+Sent: https://news.znu.ac.ir/allNews/74
+Sent: https://news.znu.ac.ir/allNews/68
+Sent: http://etebar.znu.ac.ir/
+Sent: http://hotspot.znu.ac.ir/
+Sent: http://news.znu.ac.ir/pg/24861
+iam here -- here is ips 185.67.12.66
+Sent: http://news.znu.ac.ir/pg/24856
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/museum/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/members/adminmenu
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+Sent: https://www.znu.ac.ir/118/
+Sent: http://news.znu.ac.ir/pg/24869
+Sent: http://news.znu.ac.ir/pg/24857
+Sent: http://sm.znu.ac.ir/
+Sent: http://news.znu.ac.ir/pg/24859
+Sent: http://news.znu.ac.ir/pg/24860
+Sent: https://krd.swf.ir/
+Sent: https://dolat.ir/
+Sent: https://isti.ir/
+Sent: http://labsnet.ir
+Sent: http://news.znu.ac.ir/pg/24858
+Sent: https://news.znu.ac.ir/allNews/29
+Sent: http://news.znu.ac.ir/pg/24863
+Sent: https://isc.ac/Default.aspx?lan=fa
+Sent: https://news.znu.ac.ir
+Sent: http://news.znu.ac.ir/pg/24866
+Sent: https://news.znu.ac.ir/allNews/31
+Sent: https://news.znu.ac.ir/allNews/24
+Sent: https://news.znu.ac.ir/allNews/41
+Sent: https://news.znu.ac.ir/allNews/102
+Sent: https://news.znu.ac.ir/allNews/3
+Sent: https://news.znu.ac.ir/allNews/33
+Sent: http://news.znu.ac.ir/pg/24864
+Sent: https://news.znu.ac.ir/pg/24796
+Sent: https://news.znu.ac.ir/allNews/35
+Sent: https://news.znu.ac.ir/allNews/37
+Sent: http://news.znu.ac.ir/pg/24855
+Sent: https://news.znu.ac.ir/allNews/38
+Sent: https://news.znu.ac.ir/allNews/111
+Sent: https://news.znu.ac.ir/allNews/39
+Sent: https://news.znu.ac.ir/allNews/40
+Sent: https://news.znu.ac.ir/pg/24849
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/members/adminmenu
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/links/universities
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/links/universities
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/allNews/view/id/113/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/allNews/view/id/113/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/allNews
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/allNews
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/album/1403/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/album/1403/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/about/privacy-statement
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/about/privacy-statement
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/118/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/118/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir
+[urlmanager][allowed] this is my url: https://www.saamad.ir/portal/Home/Default.aspx
+[urlmanager][allowed] extracted base url: www.saamad.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.president.ir/
+[urlmanager][allowed] extracted base url: www.president.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.aparat.com/ZNUresearch/%DA%A9%D8%A7%D9%86%D8%A7%D9%84%20%D8%B1%D8%B3%D9%85%DB%8C%20%D9%85%D8%B9%D8%A7%D9%88%D9%86%D8%AA%20%D9%BE%DA%98%D9%88%D9%87%D8%B4%20%D9%88%20%D9%81%D9%86%D8%A7%D9%88%D8%B1%DB%8C%20%D8%AF%D8%A7%D9%86%D8%B4%DA%AF%D8%A7%D9%87%20%D8%B2%D9%86%D8%AC%D8%A7%D9%86
+[urlmanager][allowed] extracted base url: www.aparat.com
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://tc.znu.ac.ir/
+[urlmanager][allowed] extracted base url: tc.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here tc.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://tc.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://tacs.znu.ac.ir/
+[urlmanager][allowed] extracted base url: tacs.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here tacs.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://tacs.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://systems.znu.ac.ir/
+[urlmanager][allowed] extracted base url: systems.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here systems.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://systems.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://std.znu.ac.ir/services
+[urlmanager][allowed] extracted base url: std.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here std.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://std.znu.ac.ir/services
+[urlmanager][allowed] this is my url: https://std.znu.ac.ir/rules
+[urlmanager][allowed] extracted base url: std.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here std.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://std.znu.ac.ir/rules
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/newsArchive/searchNews
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/newsArchive/searchNews
+[urlmanager][allowed] this is my url: https://shahed.znu.ac.ir/
+[urlmanager][allowed] extracted base url: shahed.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here shahed.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://shahed.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://samp.znu.ac.ir/
+[urlmanager][allowed] extracted base url: samp.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here samp.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.32
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://samp.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://rules.znu.ac.ir/
+[urlmanager][allowed] extracted base url: rules.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here rules.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://rules.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://research.znu.ac.ir
+[urlmanager][allowed] extracted base url: research.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here research.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://research.znu.ac.ir
+[urlmanager][allowed] this is my url: https://rccp.znu.ac.ir
+[urlmanager][allowed] extracted base url: rccp.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here rccp.znu.ac.ir
+getaddrinfo error: Name or service not known
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://rccp.znu.ac.ir
+[urlmanager][allowed] this is my url: https://pr.znu.ac.ir
+[urlmanager][allowed] extracted base url: pr.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here pr.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://pr.znu.ac.ir
+new job statuss 00
+[urlmanager][allowed] this is my url: https://planning.znu.ac.ir/site/login
+[urlmanager][allowed] extracted base url: planning.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here planning.znu.ac.ir
+iam here -- here is ips 185.67.12.32
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://planning.znu.ac.ir/site/login
+[urlmanager][allowed] this is my url: https://plan.znu.ac.ir/
+[urlmanager][allowed] extracted base url: plan.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here plan.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://plan.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://pgrad.znu.ac.ir/
+[urlmanager][allowed] extracted base url: pgrad.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here pgrad.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://pgrad.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://ostandari-zn.ir/pishkhan/%D8%AF%D9%81%D8%A7%D8%AA%D8%B1%D9%BE%DB%8C%D8%B4%D8%AE%D9%88%D8%A7%D9%86%D8%B4%D9%87%D8%B1%D8%B2%D9%86%D8%AC%D8%A7%D9%86.aspx
+[urlmanager][allowed] extracted base url: ostandari-zn.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://omrani.znu.ac.ir/
+[urlmanager][allowed] extracted base url: omrani.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here omrani.znu.ac.ir
+Sent: https://news.znu.ac.ir/allNews/89
+Sent: https://news.znu.ac.ir/allNews/70
+Sent: https://news.znu.ac.ir/allNews/75
+Sent: https://news.znu.ac.ir/allNews/88
+Sent: https://news.znu.ac.ir/allNews/92
+Sent: https://www.znu.ac.ir/weather/
+Sent: https://news.znu.ac.ir/newsArchive
+Sent: https://news.znu.ac.ir/newsArchive/searchNews
+Sent: https://news.znu.ac.ir/allNews/81
+Sent: https://news.znu.ac.ir/pg/24725
+Sent: https://news.znu.ac.ir/allNews/69
+Sent: https://news.znu.ac.ir/pg/24787
+Stored download result for URL: news.znu.ac.ir with ID: 681fa1ed3f8349bc96001df7
+[getResult] of resulthandler , here is doresult  : cert.znu.ac.irTimeout was reachedhereis jobid ac.ir
+[getResult] updating window like this :0and 0 here is secondg 3
+[getResult][dpw] update dwp_map : 0 0and here is value 3ack is 0
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://omrani.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://omana.znu.ac.ir/
+[urlmanager][allowed] extracted base url: omana.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here omana.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://omana.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://sport.znu.ac.ir
+[urlmanager][allowed] extracted base url: sport.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here sport.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://sport.znu.ac.ir
+[urlmanager][allowed] this is my url: http://acc.znu.ac.ir
+[urlmanager][allowed] extracted base url: acc.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here acc.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://acc.znu.ac.ir
+[urlmanager][allowed] this is my url: http://scn.znu.ac.ir
+[urlmanager][allowed] extracted base url: scn.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here scn.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://scn.znu.ac.ir
+[urlmanager][allowed] this is my url: https://rimbt.znu.ac.ir/
+[urlmanager][allowed] extracted base url: rimbt.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here rimbt.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://rimbt.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://refahstd.znu.ac.ir
+[urlmanager][allowed] extracted base url: refahstd.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here refahstd.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://refahstd.znu.ac.ir
+[urlmanager][allowed] this is my url: http://library.znu.ac.ir
+[urlmanager][allowed] extracted base url: library.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here library.znu.ac.ir
+iam here -- here is ips 185.67.12.70
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://library.znu.ac.ir
+[urlmanager][allowed] this is my url: http://psychology.znu.ac.ir
+[urlmanager][allowed] extracted base url: psychology.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here psychology.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://psychology.znu.ac.ir
+[urlmanager][allowed] this is my url: http://cert.znu.ac.ir/
+[urlmanager][allowed] extracted base url: cert.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here cert.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.33
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://cert.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://research.znu.ac.ir/rules
+[urlmanager][allowed] extracted base url: research.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here research.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://research.znu.ac.ir/rules
+[urlmanager][allowed] this is my url: http://plant-protect.znu.ac.ir
+[urlmanager][allowed] extracted base url: plant-protect.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here plant-protect.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://plant-protect.znu.ac.ir
+[urlmanager][allowed] this is my url: https://krd.swf.ir/
+[urlmanager][allowed] extracted base url: krd.swf.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://news.znu.ac.ir
+[urlmanager][allowed] this is my url: http://sm.znu.ac.ir/
+[urlmanager][allowed] extracted base url: sm.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here sm.znu.ac.ir
+iam here -- here is ips 185.67.12.10
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://sm.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://education.znu.ac.ir/services
+[urlmanager][allowed] extracted base url: education.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here education.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://education.znu.ac.ir/services
+[urlmanager][allowed] this is my url: https://resmng.znu.ac.ir/
+[urlmanager][allowed] extracted base url: resmng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here resmng.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://resmng.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://physics.znu.ac.ir
+[urlmanager][allowed] extracted base url: physics.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here physics.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://physics.znu.ac.ir
+[urlmanager][allowed] this is my url: http://library.znu.ac.ir/simorghportal/tabid/39/Default.aspx
+[urlmanager][allowed] extracted base url: library.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here library.znu.ac.ir
+iam here -- here is ips 185.67.12.70
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://library.znu.ac.ir/simorghportal/tabid/39/Default.aspx
+[urlmanager][allowed] this is my url: http://philosophy.znu.ac.ir
+[urlmanager][allowed] extracted base url: philosophy.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here philosophy.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://philosophy.znu.ac.ir
+[urlmanager][allowed] this is my url: https://www.leader.ir/
+[urlmanager][allowed] extracted base url: www.leader.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: http://soileng.znu.ac.ir
+[urlmanager][allowed] extracted base url: soileng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here soileng.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://soileng.znu.ac.ir
+[urlmanager][allowed] this is my url: https://isco.znu.ac.ir/
+[urlmanager][allowed] extracted base url: isco.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here isco.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://isco.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://plantgen.znu.ac.ir
+[urlmanager][allowed] extracted base url: plantgen.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here plantgen.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://plantgen.znu.ac.ir
+[urlmanager][allowed] this is my url: https://adm.znu.ac.ir/
+[urlmanager][allowed] extracted base url: adm.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here adm.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://adm.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://meteng.znu.ac.ir
+[urlmanager][allowed] extracted base url: meteng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here meteng.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://meteng.znu.ac.ir
+new job statuss 00
+[urlmanager][allowed] this is my url: http://dormitory.znu.ac.ir
+[urlmanager][allowed] extracted base url: dormitory.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here dormitory.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://dormitory.znu.ac.ir
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/greenmng/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/greenmng/
+[urlmanager][allowed] this is my url: http://salon.znu.ac.ir/
+[urlmanager][allowed] extracted base url: salon.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here salon.znu.ac.ir
+iam here -- here is ips 185.67.12.52
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://salon.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://mech.znu.ac.ir
+[urlmanager][allowed] extracted base url: mech.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here mech.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://mech.znu.ac.ir
+[urlmanager][allowed] this is my url: http://math.znu.ac.ir
+[urlmanager][allowed] extracted base url: math.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here math.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://math.znu.ac.ir
+[urlmanager][allowed] this is my url: http://economy.znu.ac.ir
+[urlmanager][allowed] extracted base url: economy.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here economy.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://economy.znu.ac.ir
+[urlmanager][allowed] this is my url: http://sportedu.znu.ac.ir
+[urlmanager][allowed] extracted base url: sportedu.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here sportedu.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://sportedu.znu.ac.ir
+[urlmanager][allowed] this is my url: http://law.znu.ac.ir
+[urlmanager][allowed] extracted base url: law.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here law.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://law.znu.ac.ir
+[urlmanager][allowed] this is my url: http://labsnet.ir
+[urlmanager][allowed] extracted base url: labsnet.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: http://it.znu.ac.ir/
+[urlmanager][allowed] extracted base url: it.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here it.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://it.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://statistics.znu.ac.ir
+[urlmanager][allowed] extracted base url: statistics.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here statistics.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://statistics.znu.ac.ir
+[urlmanager][allowed] this is my url: http://islam.znu.ac.ir
+[urlmanager][allowed] extracted base url: islam.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here islam.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://islam.znu.ac.ir
+[urlmanager][allowed] this is my url: https://education.znu.ac.ir/
+[urlmanager][allowed] extracted base url: education.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here education.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://education.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://www.msrt.ir/fa/Pages/MainMenuPages/ResearchAssistant.aspx
+[urlmanager][allowed] extracted base url: www.msrt.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: http://counsel.znu.ac.ir
+[urlmanager][allowed] extracted base url: counsel.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here counsel.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://counsel.znu.ac.ir
+[urlmanager][allowed] this is my url: https://jazb.znu.ac.ir/
+[urlmanager][allowed] extracted base url: jazb.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here jazb.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://jazb.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://chemeng.znu.ac.ir
+[urlmanager][allowed] extracted base url: chemeng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here chemeng.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://chemeng.znu.ac.ir
+[urlmanager][allowed] this is my url: https://services.znu.ac.ir/
+[urlmanager][allowed] extracted base url: services.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here services.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://services.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://mine.znu.ac.ir
+[urlmanager][allowed] extracted base url: mine.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here mine.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://mine.znu.ac.ir
+[urlmanager][allowed] this is my url: https://research.znu.ac.ir/services
+[urlmanager][allowed] extracted base url: research.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here research.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://research.znu.ac.ir/services
+[urlmanager][allowed] this is my url: https://phm.znu.ac.ir/
+[urlmanager][allowed] extracted base url: phm.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here phm.znu.ac.ir
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://phm.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://horticul.znu.ac.ir
+[urlmanager][allowed] extracted base url: horticul.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here horticul.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://horticul.znu.ac.ir
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/znujrnls/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/znujrnls/
+[urlmanager][allowed] this is my url: http://ee.znu.ac.ir
+[urlmanager][allowed] extracted base url: ee.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here ee.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://ee.znu.ac.ir
+[urlmanager][allowed] this is my url: http://health.znu.ac.ir
+[urlmanager][allowed] extracted base url: health.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here health.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://health.znu.ac.ir
+[urlmanager][allowed] this is my url: https://labs.znu.ac.ir
+[urlmanager][allowed] extracted base url: labs.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here labs.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://labs.znu.ac.ir
+[urlmanager][allowed] this is my url: http://chem.znu.ac.ir
+[urlmanager][allowed] extracted base url: chem.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here chem.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://chem.znu.ac.ir
+[urlmanager][allowed] this is my url: http://arch.znu.ac.ir
+[urlmanager][allowed] extracted base url: arch.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here arch.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://arch.znu.ac.ir
+[urlmanager][allowed] this is my url: https://jmpb.znu.ac.ir/
+[urlmanager][allowed] extracted base url: jmpb.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here jmpb.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://jmpb.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://persian.znu.ac.ir
+[urlmanager][allowed] extracted base url: persian.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here persian.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://persian.znu.ac.ir
+[urlmanager][allowed] this is my url: http://animaledu.znu.ac.ir
+[urlmanager][allowed] extracted base url: animaledu.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here animaledu.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+new job statuss 00
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://animaledu.znu.ac.ir
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/118
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://www.znu.ac.ir/118
+[urlmanager][allowed] this is my url: https://erp.znu.ac.ir/Dashboard
+[urlmanager][allowed] extracted base url: erp.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here erp.znu.ac.ir
+iam here -- here is ips 185.67.12.67
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://erp.znu.ac.ir/Dashboard
+[urlmanager][allowed] this is my url: http://civileng.znu.ac.ir
+[urlmanager][allowed] extracted base url: civileng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here civileng.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://civileng.znu.ac.ir
+[urlmanager][allowed] this is my url: http://agr.znu.ac.ir
+[urlmanager][allowed] extracted base url: agr.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here agr.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://agr.znu.ac.ir
+[urlmanager][allowed] this is my url: http://library.znu.ac.ir/
+[urlmanager][allowed] extracted base url: library.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here library.znu.ac.ir
+iam here -- here is ips 185.67.12.70
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://library.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://eng.znu.ac.ir
+[urlmanager][allowed] extracted base url: eng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here eng.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://eng.znu.ac.ir
+[urlmanager][allowed] this is my url: http://food.znu.ac.ir/
+[urlmanager][allowed] extracted base url: food.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here food.znu.ac.ir
+iam here -- here is ips 185.67.12.6
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://food.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/members/adminmenu/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://www.znu.ac.ir/members/adminmenu/
+[urlmanager][allowed] this is my url: http://foodsci.znu.ac.ir
+[urlmanager][allowed] extracted base url: foodsci.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here foodsci.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://foodsci.znu.ac.ir
+[urlmanager][allowed] this is my url: http://biology.znu.ac.ir
+[urlmanager][allowed] extracted base url: biology.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here biology.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://biology.znu.ac.ir
+[urlmanager][allowed] this is my url: http://ce.znu.ac.ir
+[urlmanager][allowed] extracted base url: ce.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here ce.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://ce.znu.ac.ir
+[urlmanager][allowed] this is my url: https://education.znu.ac.ir/page/rules
+[urlmanager][allowed] extracted base url: education.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here education.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: https://education.znu.ac.ir/page/rules
+[urlmanager][allowed] this is my url: http://geography.znu.ac.ir
+[urlmanager][allowed] extracted base url: geography.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here geography.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://geography.znu.ac.ir
+[urlmanager][allowed] this is my url: http://indeng.znu.ac.ir
+[urlmanager][allowed] extracted base url: indeng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here indeng.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 0: http://indeng.znu.ac.ir
+[urlmanager][allowed] this is my url: https://lms.znu.ac.ir/
+[urlmanager][allowed] extracted base url: lms.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here lms.znu.ac.ir
+iam here -- here is ips 194.62.43.182
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://lms.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://english.znu.ac.ir
+[urlmanager][allowed] extracted base url: english.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here english.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://english.znu.ac.ir
+[urlmanager][allowed] this is my url: http://hcin.znu.ac.ir
+[urlmanager][allowed] extracted base url: hcin.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here hcin.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://hcin.znu.ac.ir
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/znumng
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://www.znu.ac.ir/znumng
+[urlmanager][allowed] this is my url: https://www.msrt.ir/fa/page/877/%D8%A7%D8%B1%D8%AA%D8%A8%D8%A7%D8%B7-%D9%85%D8%B3%D8%AA%D9%82%DB%8C%D9%85-%D8%A8%D8%A7-%D9%82%D8%A7%D8%A6%D9%85-%D9%85%D9%82%D8%A7%D9%85-%D9%88%D8%B2%DB%8C%D8%B1-%D9%88-%D8%B1%D8%A6%DB%8C%D8%B3-%D9%85%D8%B1%DA%A9%D8%B2-%D9%87%DB%8C%D8%A7%D8%AA-%D9%87%D8%A7%DB%8C-%D8%A7%D9%85%D9%86%D8%A7-%D9%88-%D9%87%DB%8C%D8%A7%D8%AA-%D9%85%D9%85%DB%8C%D8%B2%D9%87-%D9%85%D8%B1%DA%A9%D8%B2%DB%8C
+[urlmanager][allowed] extracted base url: www.msrt.ir
+[urlmanager][allowed] this url is NOT accepted
+new job statuss 00
+[urlmanager][allowed] this is my url: http://geology.znu.ac.ir
+[urlmanager][allowed] extracted base url: geology.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here geology.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://geology.znu.ac.ir
+[urlmanager][allowed] this is my url: https://edumng.znu.ac.ir/
+[urlmanager][allowed] extracted base url: edumng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here edumng.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://edumng.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/about/privacy-statement
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/about/privacy-statement
+[urlmanager][allowed] this is my url: http://hmn.znu.ac.ir
+[urlmanager][allowed] extracted base url: hmn.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here hmn.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://hmn.znu.ac.ir
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/about/about-znu
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/about/about-znu
+[urlmanager][allowed] this is my url: http://feeding.znu.ac.ir
+[urlmanager][allowed] extracted base url: feeding.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here feeding.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://feeding.znu.ac.ir
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/about/contact-informaion
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/about/contact-informaion
+[urlmanager][allowed] this is my url: https://mail.znu.ac.ir/
+[urlmanager][allowed] extracted base url: mail.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here mail.znu.ac.ir
+iam here -- here is ips 185.67.12.133
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://mail.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/about/google-map-university-zanjan
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/about/google-map-university-zanjan
+[urlmanager][allowed] this is my url: https://food.znu.ac.ir/
+[urlmanager][allowed] extracted base url: food.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here food.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.6
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://food.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://farhangi.znu.ac.ir/services
+[urlmanager][allowed] extracted base url: farhangi.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here farhangi.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://farhangi.znu.ac.ir/services
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/about/the-city-zanjan
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/about/the-city-zanjan
+[urlmanager][allowed] this is my url: https://www.msrt.ir/fa/
+[urlmanager][allowed] extracted base url: www.msrt.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/about/university-3d-map
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/about/university-3d-map
+[urlmanager][allowed] this is my url: https://eitaa.com/znupur 
+[urlmanager][allowed] extracted base url: eitaa.com
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/about/university-map-building-streets
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/about/university-map-building-streets
+[urlmanager][allowed] this is my url: https://refah.znu.ac.ir/
+[urlmanager][allowed] extracted base url: refah.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here refah.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://refah.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/about/university-structural-chart
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/about/university-structural-chart
+[urlmanager][allowed] this is my url: https://isti.ir/
+[urlmanager][allowed] extracted base url: isti.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://cpc.znu.ac.ir/
+[urlmanager][allowed] extracted base url: cpc.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here cpc.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://cpc.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/rtweek
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://www.znu.ac.ir/rtweek
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/en
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/en
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/opinion
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/opinion
+[urlmanager][allowed] this is my url: https://account.znu.ac.ir/
+[urlmanager][allowed] extracted base url: account.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here account.znu.ac.ir
+iam here -- here is ips 185.67.12.17
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://account.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/znuhonors/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://www.znu.ac.ir/znuhonors/
+[urlmanager][allowed] this is my url: https://dorm.znu.ac.ir/
+[urlmanager][allowed] extracted base url: dorm.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here dorm.znu.ac.ir
+iam here -- here is ips 78.38.35.33
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://dorm.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://adm.znu.ac.ir/rules
+[urlmanager][allowed] extracted base url: adm.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here adm.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://adm.znu.ac.ir/rules
+[urlmanager][allowed] this is my url: http://watereng.znu.ac.ir
+[urlmanager][allowed] extracted base url: watereng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here watereng.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://watereng.znu.ac.ir
+[urlmanager][allowed] this is my url: http://art.znu.ac.ir
+[urlmanager][allowed] extracted base url: art.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here art.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://art.znu.ac.ir
+[urlmanager][allowed] this is my url: https://education.znu.ac.ir/page/academic-calendar/
+[urlmanager][allowed] extracted base url: education.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here education.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://education.znu.ac.ir/page/academic-calendar/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/data/prmovie/1394/znu-Mobilefinal.rar
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://www.znu.ac.ir/data/prmovie/1394/znu-Mobilefinal.rar
+[urlmanager][allowed] this is my url: http://promotion.znu.ac.ir
+[urlmanager][allowed] extracted base url: promotion.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here promotion.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://promotion.znu.ac.ir
+[urlmanager][allowed] this is my url: https://adm.znu.ac.ir/services
+[urlmanager][allowed] extracted base url: adm.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here adm.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://adm.znu.ac.ir/services
+[urlmanager][allowed] this is my url: https://alumni.znu.ac.ir/after-pro/
+[urlmanager][allowed] extracted base url: alumni.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here alumni.znu.ac.ir
+iam here -- here is ips 185.67.12.30
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://alumni.znu.ac.ir/after-pro/
+[urlmanager][allowed] this is my url: https://epd.znu.ac.ir/
+[urlmanager][allowed] extracted base url: epd.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here epd.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://epd.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://cccd.znu.ac.ir/
+[urlmanager][allowed] extracted base url: cccd.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here cccd.znu.ac.ir
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://cccd.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://farhangi.znu.ac.ir/rules
+[urlmanager][allowed] extracted base url: farhangi.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here farhangi.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://farhangi.znu.ac.ir/rules
+[urlmanager][allowed] this is my url: https://clab.znu.ac.ir/
+[urlmanager][allowed] extracted base url: clab.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here clab.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://clab.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://contacts.znu.ac.ir
+[urlmanager][allowed] extracted base url: contacts.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here contacts.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://contacts.znu.ac.ir
+[urlmanager][allowed] this is my url: https://www.setadiran.ir/
+[urlmanager][allowed] extracted base url: www.setadiran.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: http://www.znu.ac.ir/album/1403
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://www.znu.ac.ir/album/1403
+[urlmanager][allowed] this is my url: https://dolat.ir/
+[urlmanager][allowed] extracted base url: dolat.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/members
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://www.znu.ac.ir/members
+[urlmanager][allowed] this is my url: https://edu.znu.ac.ir/
+[urlmanager][allowed] extracted base url: edu.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here edu.znu.ac.ir
+iam here -- here is ips 185.67.12.4
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://edu.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://farhangi.znu.ac.ir/page/politics-org
+[urlmanager][allowed] extracted base url: farhangi.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here farhangi.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://farhangi.znu.ac.ir/page/politics-org
+[urlmanager][allowed] this is my url: https://education.znu.ac.ir/page/academic-calendar
+[urlmanager][allowed] extracted base url: education.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here education.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://education.znu.ac.ir/page/academic-calendar
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/gozinesh
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://www.znu.ac.ir/gozinesh
+[urlmanager][allowed] this is my url: https://education.znu.ac.ir/systems/
+[urlmanager][allowed] extracted base url: education.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here education.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://education.znu.ac.ir/systems/
+[urlmanager][allowed] this is my url: https://epay.znu.ac.ir
+[urlmanager][allowed] extracted base url: epay.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here epay.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 130.185.76.103
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://epay.znu.ac.ir
+[urlmanager][allowed] this is my url: https://epay.znu.ac.ir/
+[urlmanager][allowed] extracted base url: epay.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here epay.znu.ac.ir
+iam here -- here is ips 130.185.76.103
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://epay.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://erp.znu.ac.ir
+[urlmanager][allowed] extracted base url: erp.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here erp.znu.ac.ir
+iam here -- here is ips 185.67.12.67
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://erp.znu.ac.ir
+[urlmanager][allowed] this is my url: https://erp.znu.ac.ir/
+[urlmanager][allowed] extracted base url: erp.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here erp.znu.ac.ir
+iam here -- here is ips 185.67.12.67
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://erp.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://farhangi.znu.ac.ir/
+[urlmanager][allowed] extracted base url: farhangi.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here farhangi.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://farhangi.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://farhangi.znu.ac.ir/page/art-kanoon
+[urlmanager][allowed] extracted base url: farhangi.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here farhangi.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://farhangi.znu.ac.ir/page/art-kanoon
+[urlmanager][allowed] this is my url: https://isc.ac/Default.aspx?lan=fa
+[urlmanager][allowed] extracted base url: isc.ac
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://farhangi.znu.ac.ir/page/scn-society
+[urlmanager][allowed] extracted base url: farhangi.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here farhangi.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://farhangi.znu.ac.ir/page/scn-society
+[urlmanager][allowed] this is my url: https://farhangi.znu.ac.ir/page/std-pub
+[urlmanager][allowed] extracted base url: farhangi.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here farhangi.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://farhangi.znu.ac.ir/page/std-pub
+[urlmanager][allowed] this is my url: http://etebar.znu.ac.ir/
+[urlmanager][allowed] extracted base url: etebar.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here etebar.znu.ac.ir
+getaddrinfo error: Name or service not known
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://etebar.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://geonot.znu.ac.ir/
+[urlmanager][allowed] extracted base url: geonot.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here geonot.znu.ac.ir
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://geonot.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://herasat.znu.ac.ir/
+[urlmanager][allowed] extracted base url: herasat.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here herasat.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://herasat.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://geodesy.znu.ac.ir
+[urlmanager][allowed] extracted base url: geodesy.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here geodesy.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://geodesy.znu.ac.ir
+[urlmanager][allowed] this is my url: https://irelc.znu.ac.ir/
+[urlmanager][allowed] extracted base url: irelc.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here irelc.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://irelc.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://it.znu.ac.ir/
+[urlmanager][allowed] extracted base url: it.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here it.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://it.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://jabssh.znu.ac.ir/
+[urlmanager][allowed] extracted base url: jabssh.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here jabssh.znu.ac.ir
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://jabssh.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://jaer.znu.ac.ir/
+[urlmanager][allowed] extracted base url: jaer.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here jaer.znu.ac.ir
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://jaer.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://env.znu.ac.ir
+[urlmanager][allowed] extracted base url: env.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here env.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://env.znu.ac.ir
+[urlmanager][allowed] this is my url: https://jer.znu.ac.ir/
+[urlmanager][allowed] extracted base url: jer.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here jer.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://jer.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/pg/16767
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://www.znu.ac.ir/pg/16767
+[urlmanager][allowed] this is my url: https://jrdes.znu.ac.ir/
+[urlmanager][allowed] extracted base url: jrdes.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here jrdes.znu.ac.ir
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://jrdes.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://jurs.znu.ac.ir/
+[urlmanager][allowed] extracted base url: jurs.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here jurs.znu.ac.ir
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://jurs.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://jrmt.znu.ac.ir/
+[urlmanager][allowed] extracted base url: jrmt.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here jrmt.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://jrmt.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://jsp.znu.ac.ir/
+[urlmanager][allowed] extracted base url: jsp.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here jsp.znu.ac.ir
+iam here -- here is ips 51.195.105.193
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://jsp.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://mail.znu.ac.ir/login/
+[urlmanager][allowed] extracted base url: mail.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here mail.znu.ac.ir
+iam here -- here is ips 185.67.12.133
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://mail.znu.ac.ir/login/
+[urlmanager][allowed] this is my url: https://std.znu.ac.ir/
+[urlmanager][allowed] extracted base url: std.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here std.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://std.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://mng.znu.ac.ir
+[urlmanager][allowed] extracted base url: mng.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here mng.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://mng.znu.ac.ir
+[urlmanager][allowed] this is my url: https://mrtg.znu.ac.ir//
+[urlmanager][allowed] extracted base url: mrtg.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here mrtg.znu.ac.ir
+new job statuss 00
+getaddrinfo error: Name or service not known
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://mrtg.znu.ac.ir//
+[urlmanager][allowed] this is my url: https://znu.site24x7statusiq.com//
+[urlmanager][allowed] extracted base url: znu.site24x7statusiq.com
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://msrt.ir/fa/shaa/pages/home.aspx
+[urlmanager][allowed] extracted base url: msrt.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/znuhonors/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+Duplicate URL detected: https://www.znu.ac.ir/znuhonors/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/links/universities
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+Duplicate URL detected: https://www.znu.ac.ir/links/universities
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://www.znu.ac.ir/
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+Duplicate URL detected: https://www.znu.ac.ir
+[urlmanager][allowed] this is my url: https://www.setadiran.ir/
+[urlmanager][allowed] extracted base url: www.setadiran.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.saamad.ir/portal/Home/Default.aspx
+[urlmanager][allowed] extracted base url: www.saamad.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.msrt.ir/fa/page/877/%D8%A7%D8%B1%D8%AA%D8%A8%D8%A7%D8%B7-%D9%85%D8%B3%D8%AA%D9%82%DB%8C%D9%85-%D8%A8%D8%A7-%D9%82%D8%A7%D8%A6%D9%85-%D9%85%D9%82%D8%A7%D9%85-%D9%88%D8%B2%DB%8C%D8%B1-%D9%88-%D8%B1%D8%A6%DB%8C%D8%B3-%D9%85%D8%B1%DA%A9%D8%B2-%D9%87%DB%8C%D8%A7%D8%AA-%D9%87%D8%A7%DB%8C-%D8%A7%D9%85%D9%86%D8%A7-%D9%88-%D9%87%DB%8C%D8%A7%D8%AA-%D9%85%D9%85%DB%8C%D8%B2%D9%87-%D9%85%D8%B1%DA%A9%D8%B2%DB%8C
+[urlmanager][allowed] extracted base url: www.msrt.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.msrt.ir/fa/Pages/MainMenuPages/ResearchAssistant.aspx
+[urlmanager][allowed] extracted base url: www.msrt.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.leader.ir/
+[urlmanager][allowed] extracted base url: www.leader.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.aparat.com/ZNUresearch/%DA%A9%D8%A7%D9%86%D8%A7%D9%84%20%D8%B1%D8%B3%D9%85%DB%8C%20%D9%85%D8%B9%D8%A7%D9%88%D9%86%D8%AA%20%D9%BE%DA%98%D9%88%D9%87%D8%B4%20%D9%88%20%D9%81%D9%86%D8%A7%D9%88%D8%B1%DB%8C%20%D8%AF%D8%A7%D9%86%D8%B4%DA%AF%D8%A7%D9%87%20%D8%B2%D9%86%D8%AC%D8%A7%D9%86
+[urlmanager][allowed] extracted base url: www.aparat.com
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://sport.znu.ac.ir/page/topiccontent/95/
+[urlmanager][allowed] extracted base url: sport.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here sport.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://sport.znu.ac.ir/page/topiccontent/95/
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24877
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24877
+new job statuss 00
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24876
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24876
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24875
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24875
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24873
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24873
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24872
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24872
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24871
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24871
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24867
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24867
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24870
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24870
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24853
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24853
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24874
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24874
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24831
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24831
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24799
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24799
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24798
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24798
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24797
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/pg/24797
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/19
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/allNews/19
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/allNews
+[urlmanager][allowed] this is my url: https://www.president.ir/
+[urlmanager][allowed] extracted base url: www.president.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/22
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/allNews/22
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/32
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/allNews/32
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/83
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/allNews/83
+[urlmanager][allowed] this is my url: https://msrt.ir/fa/shaa/pages/home.aspx
+[urlmanager][allowed] extracted base url: msrt.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://www.msrt.ir/fa/
+[urlmanager][allowed] extracted base url: www.msrt.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://eitaa.com/znupur 
+[urlmanager][allowed] extracted base url: eitaa.com
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://ostandari-zn.ir/pishkhan/%D8%AF%D9%81%D8%A7%D8%AA%D8%B1%D9%BE%DB%8C%D8%B4%D8%AE%D9%88%D8%A7%D9%86%D8%B4%D9%87%D8%B1%D8%B2%D9%86%D8%AC%D8%A7%D9%86.aspx
+[urlmanager][allowed] extracted base url: ostandari-zn.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/86
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/allNews/86
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24868
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: http://news.znu.ac.ir/pg/24868
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/72
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/allNews/72
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/20
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/allNews/20
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/13
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 1: https://news.znu.ac.ir/allNews/13
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/74
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/74
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/68
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/68
+[urlmanager][allowed] this is my url: http://etebar.znu.ac.ir/
+[urlmanager][allowed] extracted base url: etebar.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here etebar.znu.ac.ir
+getaddrinfo error: Name or service not known
+Duplicate URL detected: http://etebar.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://hotspot.znu.ac.ir/
+[urlmanager][allowed] extracted base url: hotspot.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here hotspot.znu.ac.ir
+new job statuss 00
+getaddrinfo error: Name or service not known
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://hotspot.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24861
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24861
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24856
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24856
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/118/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+Duplicate URL detected: https://www.znu.ac.ir/118/
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24869
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24869
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24857
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24857
+[urlmanager][allowed] this is my url: http://sm.znu.ac.ir/
+[urlmanager][allowed] extracted base url: sm.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here sm.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.10
+Duplicate URL detected: http://sm.znu.ac.ir/
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24859
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24859
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24860
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24860
+[urlmanager][allowed] this is my url: https://krd.swf.ir/
+[urlmanager][allowed] extracted base url: krd.swf.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://dolat.ir/
+[urlmanager][allowed] extracted base url: dolat.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://isti.ir/
+[urlmanager][allowed] extracted base url: isti.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: http://labsnet.ir
+[urlmanager][allowed] extracted base url: labsnet.ir
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24858
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24858
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/29
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/29
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24863
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24863
+[urlmanager][allowed] this is my url: https://isc.ac/Default.aspx?lan=fa
+[urlmanager][allowed] extracted base url: isc.ac
+[urlmanager][allowed] this url is NOT accepted
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+Duplicate URL detected: https://news.znu.ac.ir
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24866
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24866
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/31
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/31
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/24
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/24
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/41
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/41
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/102
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/102
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/3
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/3
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/33
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/33
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24864
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24864
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24796
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/pg/24796
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/35
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/35
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/37
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/37
+[urlmanager][allowed] this is my url: http://news.znu.ac.ir/pg/24855
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: http://news.znu.ac.ir/pg/24855
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/38
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/38
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/111
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/111
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/39
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/39
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/40
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/40
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24849
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/pg/24849
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/89
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/89
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/88
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/88
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/92
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/92
+[urlmanager][allowed] this is my url: https://www.znu.ac.ir/weather/
+[urlmanager][allowed] extracted base url: www.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here www.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+Duplicate URL detected: https://www.znu.ac.ir/weather/
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/newsArchive
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/newsArchive
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/newsArchive/searchNews
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/newsArchive/searchNews
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/81
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/81
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24725
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+new job statuss 00
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/pg/24725
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/allNews/69
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/allNews/69
+[urlmanager][allowed] this is my url: https://news.znu.ac.ir/pg/24787
+[urlmanager][allowed] extracted base url: news.znu.ac.ir
+[urlmanager][allowed] this url is accepted: znu.ac.ir
+iam here news.znu.ac.ir
+iam here -- here is ips 185.67.12.66
+trying to update map -----------
+Inserted URL into group ac.ir, batch 2: https://news.znu.ac.ir/pg/24787
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00
+new job statuss 00

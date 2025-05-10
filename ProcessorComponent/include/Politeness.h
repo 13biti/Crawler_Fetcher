@@ -56,6 +56,8 @@ public:
       return a.timestamp > b.timestamp;
     }
   };
+
+  int getIdByNodeName(std::string nodeName);
   // adding string jobs :
   void addJob(int id, const std::string &nodeName, uint64_t timestamp);
   void addJob(const std::string &nodeName, uint64_t timestamp);
@@ -88,12 +90,13 @@ public:
   // assuming the each entity in queue last of 10 min , ( but still dont know
   // how to setpu this )
   void AckJob(int jobId) {
-    std::cout << "updatingthis fucking shit" << jobId << std::endl;
+    std::cout << "[updat] updating this " << jobId << std::endl;
+    displayStrHeap();
     updateStrJob(jobId, getCurrentTimestampInMilliseconds() +
                             secondsToMilliseconds(timerVal));
   }
   void SuspendJob(int jobId) {
-    std::cout << "updatingthis fucking shit" << jobId << std::endl;
+    std::cout << "[suspend] , suspending this " << jobId << std::endl;
     updateStrJob(jobId, getCurrentTimestampInMilliseconds() +
                             secondsToMilliseconds(600));
   }
@@ -113,6 +116,7 @@ private:
   StrHeap strHeap;
   std::unordered_map<int, Handle> jobHandles;
   std::unordered_map<int, StrHandle> strJobHandles;
+  std::unordered_map<std::string, int> nodeNameToId;
   int nextId = 0;
 };
 #endif // POLITENESS_H

@@ -26,8 +26,10 @@ void downloader() {
     if (msg.status) {
       json jsonPayload = json::parse(msg.message);
       std::string downloadbleUrl = jsonPayload["Url"];
-      int jobId = jsonPayload["jobId"];
-      return UrlPack{jobId, downloadbleUrl, true};
+      std::string base_url = jsonPayload["base_url"];
+      std::cout << "[main][downloader][getlink] unpacking URLPACK resutl : "
+                << base_url + " \t " << downloadbleUrl << std::endl;
+      return UrlPack{base_url, downloadbleUrl, true};
     } else
       return UrlPack();
   };
@@ -39,17 +41,14 @@ void downloader() {
                                writetoken, Config::apiSend);
   };
 
+  std::cout << "lord have mercy \n";
   while (true) {
     UrlPack message = getLink();
     std::cout << "message ready to downloaded " << message.status << message.Url
-              << message.JobId << "\n";
+              << message.base_url << "\n";
     if (message.status) {
-      std::cout << "message ready to downloaded " << message.Url
-                << message.JobId << "\n";
       DownloadResult result = downloader.DownloadSingle(message.Url);
-      std::cout << "download complited ,  here is the result :  "
-                << result.http_code << result.error_message << "\n";
-      result.JobId = message.JobId;
+      result.base_url = message.base_url;
       sendResutl(result);
     } else {
       std::this_thread::sleep_for(

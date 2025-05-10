@@ -9,14 +9,28 @@ void Politeness::addJob(int id, uint64_t timestamp) {
 }
 
 // string jobs ------------------------------------------------- :
+int Politeness::getIdByNodeName(std::string nodeName) {
+  auto it = nodeNameToId.find(nodeName);
+  if (it != nodeNameToId.end())
+    return it->second;
+  return -1;
+}
 void Politeness::addJob(int id, const std::string &nodeName,
                         uint64_t timestamp) {
+  if (nodeNameToId.find(nodeName) != nodeNameToId.end()) {
+    // Job already exists, don't insert
+    return;
+  }
   StrJob job{id, nodeName, timestamp};
   auto handle = strHeap.push(job);
   strJobHandles[id] = handle;
+  nodeNameToId[nodeName] = id;
 }
 
 void Politeness::addJob(const std::string &nodeName, uint64_t timestamp) {
+  if (nodeNameToId.find(nodeName) != nodeNameToId.end()) {
+    return;
+  }
   int id = nextId++;
   addJob(id, nodeName, timestamp);
 }
@@ -38,11 +52,9 @@ void Politeness::deleteStrJob(int id) {
 void Politeness::updateStrJob(int id, uint64_t newTimestamp) {
   auto it = strJobHandles.find(id);
   if (it != strJobHandles.end()) {
-    // Remove and reinsert to force heap reorder
-    StrJob job = *(it->second);
-    strHeap.erase(it->second);             // Remove old entry
-    job.timestamp = newTimestamp;          // Update time
-    strJobHandles[id] = strHeap.push(job); // Reinsert
+    StrJob updatedJob = *(it->second);
+    updatedJob.timestamp = newTimestamp;
+    strHeap.update(it->second, updatedJob); // Use built-in update
   } else {
     throw std::runtime_error("Job not found");
   }

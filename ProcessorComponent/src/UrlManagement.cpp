@@ -1,3 +1,4 @@
+#include "../include/ResolverHelper.h"
 #include "../include/UrlManager.h"
 #include <bsoncxx/array/view.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
@@ -21,88 +22,81 @@
 // ofter changin schema , this map is useless , i change it to set
 // std::unordered_map<std::string, std::string> collection_map;
 bool UrlManager::sortingUrls(const std::string &url) {
-  if (!connectionValidator()) {
-    std::cerr << "--Connection is not established!A" << std::endl;
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
+  if (!connectionValidator(*client)) {
+    std::cerr << "--Connection is not established!" << std::endl;
     return false;
   }
 
-  std::smatch result;
-  std::regex pattern(R"((?:https?://)?([^/]+))");
-  if (std::regex_search(url, result, pattern)) {
-    std::string base_url = result.str(1);
+  auto [resolverSuccess, resolverGroupId] =
+      resolverHelper.processDomain(database, url);
+  if (!resolverSuccess) { // Fixed condition
+    std::cerr << "Domain processing failed for URL: " << url << std::endl;
+    return false;
+  }
 
-    try {
-      std::unique_lock<std::mutex> lock(_mutex);
+  try {
+    std::unique_lock<std::mutex> lock(_mutex);
+    auto collection = getCollection();
 
-      auto collection = database_["urls"];
-      auto duplicate_filter = bsoncxx::builder::stream::document{}
-                              << "base_url" << base_url << "url" << url
-                              << bsoncxx::builder::stream::finalize;
-      auto duplicate_result = collection.find_one(duplicate_filter.view());
-      if (duplicate_result) {
-        std::cerr << "Duplicate URL detected. Skipping insertion: " << url
-                  << std::endl;
-        return false;
-      }
-
-      // Find the latest batch_id document for this base_url
-      auto cursor = collection.find(bsoncxx::builder::stream::document{}
-                                    << "base_url" << base_url
-                                    << bsoncxx::builder::stream::finalize);
-
-      int batch_id = 0;
-      int url_count = 0;
-
-      for (const auto &doc : cursor) {
-        int current_batch_id = doc["batch_id"].get_int32().value;
-        if (current_batch_id > batch_id) {
-          batch_id = current_batch_id;
-          url_count = 1;
-        } else if (current_batch_id == batch_id) {
-          url_count++;
-        }
-      }
-
-      if (url_count >= 100) {
-        batch_id++; // create new batch if current has 100 URLs
-        url_count = 0;
-      }
-
-      bsoncxx::builder::stream::document url_doc;
-      url_doc << "base_url" << base_url << "batch_id" << batch_id << "url"
-              << url << "hasBeenRead" << false;
-
-      auto insert_result = collection.insert_one(url_doc.view());
-      if (insert_result &&
-          insert_result->inserted_id().type() == bsoncxx::type::k_oid) {
-        std::string inserted_id =
-            insert_result->inserted_id().get_oid().value.to_string();
-        lock.unlock();
-        updateMap(collection_map, base_url);
-
-        std::cout << "Inserted URL into batch " << batch_id << ": " << url
-                  << std::endl;
-      } else {
-        std::cerr << "Failed to insert URL into database." << std::endl;
-        return false;
-      }
-
-      return true;
-
-    } catch (const mongocxx::exception &e) {
-      std::cerr << "An exception occurred: " << e.what() << std::endl;
+    // Check for duplicate URL (simplified)
+    auto duplicate_filter = bsoncxx::builder::stream::document{}
+                            << "url" << url
+                            << bsoncxx::builder::stream::finalize;
+    if (collection.find_one(duplicate_filter.view())) {
+      std::cerr << "Duplicate URL detected: " << url << std::endl;
       return false;
     }
 
-  } else {
-    std::cerr << "Invalid URL format: " << url << std::endl;
+    auto batch_filter = bsoncxx::builder::stream::document{}
+                        << "base_url" << resolverGroupId
+                        << bsoncxx::builder::stream::finalize;
+    auto cursor = collection.find(batch_filter.view());
+
+    int batch_id = 0;
+    int url_count = 0;
+    for (const auto &doc : cursor) {
+      int current_batch_id = doc["batch_id"].get_int32().value;
+      if (current_batch_id > batch_id) {
+        batch_id = current_batch_id;
+        url_count = 1;
+      } else if (current_batch_id == batch_id) {
+        url_count++;
+      }
+    }
+
+    if (url_count >= 100) {
+      batch_id++;
+    }
+
+    // Insert new document
+    auto url_doc = bsoncxx::builder::stream::document{}
+                   << "base_url" << resolverGroupId << "original_domain"
+                   << resolverHelper.extractBaseUrl(url) << "batch_id"
+                   << batch_id << "url" << url << "hasBeenRead" << false
+                   << bsoncxx::builder::stream::finalize;
+
+    if (auto result = collection.insert_one(url_doc.view())) {
+      updateMap(collection_map, resolverGroupId);
+      std::cout << "Inserted URL into group " << resolverGroupId << ", batch "
+                << batch_id << ": " << url << std::endl;
+      return true;
+    }
+
+    std::cerr << "Failed to insert URL" << std::endl;
+    return false;
+
+  } catch (const mongocxx::exception &e) {
+    std::cerr << "Database exception: " << e.what() << std::endl;
     return false;
   }
 }
-
 bool UrlManager::sortingUrls(std::vector<std::string> urls) {
-  if (!connectionValidator()) {
-    std::cerr << "connection is not established !" << std::endl;
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
+  if (!connectionValidator(*client)) {
+    std::cerr << "--Connection is not established!" << std::endl;
     return false;
   }
   bool all_success = true;
@@ -118,13 +112,15 @@ bool UrlManager::sortingUrls(std::vector<std::string> urls) {
   return all_success;
 }
 Result_read UrlManager::getUrl(std::string domain) {
-  if (!connectionValidator()) {
-    std::cerr << "--Connection is not established!B" << std::endl;
-    return Result_read{false, "--Connection is not established!C"};
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
+  if (!connectionValidator(*client)) {
+    std::cerr << "--Connection is not established!" << std::endl;
+    return Result_read{false, "database connectoin failed" + domain};
   }
   try {
     std::unique_lock<std::mutex> lock(_mutex);
-    auto collection = database_["urls"];
+    auto collection = database["urls"];
 
     // Find the unread URL with the lowest batch_id (earliest batches first)
     auto filter = bsoncxx::builder::stream::document{}
@@ -174,10 +170,11 @@ Result_read UrlManager::getUrl(std::string domain) {
 std::vector<Result_read> UrlManager::getUrl(std::vector<std::string> domains) {
   std::vector<Result_read> results;
 
-  if (!connectionValidator()) {
-    std::cerr << "--Connection is not established!D" << std::endl;
-    results.push_back(Result_read{false, "--Connection is not established!E"});
-    return results;
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
+  if (!connectionValidator(*client)) {
+    std::cerr << "--Connection is not established!" << std::endl;
+    return std::vector<Result_read>();
   }
 
   bool all_success = true;
@@ -208,10 +205,12 @@ void UrlManager::updateMap(std::set<std::string> &target, std::string key) {
 }
 // if i return back to map
 std::set<std::string> UrlManager::getBaseUrls() {
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
   std::set<std::string> temp_map;
   try {
     std::unique_lock<std::mutex> lock(_mutex);
-    auto collection = database_["urls"];
+    auto collection = database["urls"];
 
     bsoncxx::builder::stream::document filter_builder;
     auto filter = filter_builder << bsoncxx::builder::stream::finalize;
@@ -260,8 +259,10 @@ std::set<std::string> UrlManager::getBaseUrls() {
 }
 std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
   std::unordered_map<std::string, std::string> collection_map;
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
   try {
-    auto collection = database_["urls"];
+    auto collection = database["domain_groups"];
     auto cursor = collection.distinct("base_url", bsoncxx::document::view{});
 
     for (const auto &doc : cursor) {
@@ -306,7 +307,8 @@ Result_read UrlManager::getUrl(std::string domain) {
 
   try {
     // agian i like this : auto results =
-    // collection.find(make_document(kvp("<field name>", "<value>"))); but seems
+    // collection.find(make_document(kvp("<field name>", "<value>"))); but
+seems
     // ...
     auto collection = database_[domain];
     auto cursor = collection.find_one(bsoncxx::builder::stream::document{}
@@ -337,8 +339,8 @@ Result_read UrlManager::getUrl(std::string domain) {
 */
 /*
 smatchd::unordered_map<std::string, std::string>
-UrlManager::getCollectionNames() { std::unordered_map<std::string, std::string>
-collection_map;
+UrlManager::getCollectionNames() { std::unordered_map<std::string,
+std::string> collection_map;
 
   try {
     auto collection = database_["urls"];
@@ -367,10 +369,9 @@ collection_map;
 */
 
 /*
-std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
-  try {
-    auto collection_names = database_["collection_names"];
-    auto cursor = collection_names.find({});
+std::unordered_map<std::string, std::string> UrlManager::getCollectionNames()
+{ try { auto collection_names = database_["collection_names"]; auto cursor =
+collection_names.find({});
 
     for (auto &&doc : cursor) {
       std::string collection_name =
@@ -416,7 +417,8 @@ UrlManagerl::sortingUrls(std::string url) {
         auto insert_name_result =
             collection_names.insert_one(bsoncxx::builder::stream::document{}
                                         << "collection_name" << target
-                                        << bsoncxx::builder::stream::finalize);
+                                        <<
+bsoncxx::builder::stream::finalize);
 
         if (insert_name_result) {
           std::cout << "Collection name inserted successfully: " << target
@@ -493,7 +495,8 @@ bool UrlManager::sortingUrls(const std::string &url) {
 
       if (create_new_batch) {
         bsoncxx::builder::stream::document batch_doc;
-        batch_doc << "base_url" << base_url << "batch_id" << batch_id << "urls"
+        batch_doc << "base_url" << base_url << "batch_id" << batch_id <<
+"urls"
                   << bsoncxx::builder::stream::open_array << url_doc
                   << bsoncxx::builder::stream::close_array;
 

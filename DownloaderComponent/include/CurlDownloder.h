@@ -12,6 +12,7 @@ using json = nlohmann::json;
 
 struct DownloadResult {
   std::string url;
+  std::string base_url;
   std::string html_content_base64;
   long http_code = 0;
   CURLcode result;
@@ -20,6 +21,7 @@ struct DownloadResult {
 
   json to_json() const {
     return {{"url", url},
+            {"base_url", base_url},
             {"html_content_base64", html_content_base64},
             {"http_code", http_code},
             {"result", result},
@@ -39,7 +41,8 @@ struct DownloadResult {
 
   static DownloadResult from_json(const json &j) {
     DownloadResult res;
-    res.url = j.value("url", "");
+    res.url = j.value("url", "URL NOT EXIT ! ");
+    res.base_url = j.value("base_url", "BASE_URL NOT EXIT!");
     res.html_content_base64 = j.value("html_content_base64", "");
     res.http_code = j.value("http_code", 0L);
     res.result = static_cast<CURLcode>(j.value("result", 0));
@@ -47,6 +50,11 @@ struct DownloadResult {
     res.timestamp = j.value("timestamp", "");
     return res;
   }
+};
+struct UrlPack {
+  std::string base_url;
+  std::string Url;
+  bool status = false;
 };
 class Downloader {
 public:

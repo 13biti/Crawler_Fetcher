@@ -1,7 +1,8 @@
 from registry.docker.ir/library/python:3.11
 
 WORKDIR /app 
-
+env http_proxy=http://192.168.46.238:8080/
+env https_proxy=http://192.168.46.238:8080/
 copy ./requirements.txt .
 run pip install --no-cache-dir -r ./requirements.txt
 

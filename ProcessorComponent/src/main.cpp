@@ -6,7 +6,6 @@
 #include "../include/Mongo.h"
 #include "../include/Politeness.h"
 #include "../include/UrlManager.h"
-#include <algorithm> // For std::find
 #include <cerrno>
 #include <chrono>
 #include <cstdio>
@@ -14,8 +13,12 @@
 #include <cstring>
 #include <future>
 #include <iostream>
+#include <mongocxx/instance.hpp>
+#include <mongocxx/pool.hpp>
 #include <mutex>
 #include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
+#include <stdexcept>
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -26,6 +29,7 @@
 
 #define NEW_LINK_PEER_SORT 10
 
+using json = nlohmann::json;
 UrlManager *urlManager;
 Politeness *politeness;
 std::mutex UrlManagerMutex;
@@ -96,22 +100,38 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
                             Config::queuePassword, Config::apiLogin);
     auto token = newLinksQueue->returnToken();
 
-    auto sendLink = [newLinksQueue, token](std::string downloadbleUrl) -> void {
-      newLinksQueue->sendMessage(Config::downloadLinksQueueName, downloadbleUrl,
+    auto sendLink = [newLinksQueue, token](std::string downloadbleUrl,
+                                           std::string base_url) -> void {
+      json jsonPayload;
+      jsonPayload["Url"] = downloadbleUrl;
+      jsonPayload["base_url"] = base_url;
+      std::string jsonString = jsonPayload.dump();
+      std::cout << "[writer] i am sending this url and jobid " << downloadbleUrl
+                << " \t " + base_url << std::endl;
+      newLinksQueue->sendMessage(Config::downloadLinksQueueName, jsonString,
                                  token, Config::apiSend);
     };
     // you mayfor  ask why i have this conditions ? for not reading database
     // every time someting happen there !!
     auto updateCollectionMap = [&]() -> bool {
-      std::cout << "-------------------------------if" << std::endl;
       if (!urlManager->map_initiated || urlManager->map_updated) {
-        std::cout << "-------------------------------if" << std::endl;
+        std::cout << "[updateCollectionMap] why i am here "
+                  << !urlManager->map_initiated << urlManager->map_updated
+                  << std::endl;
         _urlMap = urlManager->getBaseMap();
-        if (!_urlMap.empty())
+        if (!_urlMap.empty()) {
+          std::cout << "[updateCollectionMap] i want to update polite here is "
+                       "before :  "
+                    << std::endl;
+          politeness->displayStrHeap();
+          urlManager->newMapReaded();
           politeness->addJobs(_urlMap);
-        else
+          std::cout << "[updateCollectionMap] i want to update polite here is "
+                       "after :  "
+                    << std::endl;
+          politeness->displayStrHeap();
+        } else
           return false;
-
         return true;
       }
       return false;
@@ -130,34 +150,35 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
       // i may need to call this function in periods , like in loop :
       updateCollectionMap();
       while (true) {
-        std::cout << "-------------------------------endless while ? "
-                  << std::endl;
         newjob = politeness->getReadyJobStr();
+        std::cout << "new job statuss " << newjob.base_url << newjob.id
+                  << newjob.status << std::endl;
         if (newjob.status)
           break;
         sleep(1);
       }
-      std::cout << "[wait] polit giving ..." << newjob.base_url << std::endl;
       auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
-      std::cout << "[wait] db giving ..." << downloadbleUrl.message
-                << std::endl;
       if (downloadbleUrl.status) {
-        std::cout << "[wait] db giving ..." << downloadbleUrl.message
-                  << std::endl;
-        politeness->AckJob(newjob.id);
-        sendLink(downloadbleUrl.message);
+        std::cout << "doable job statuss " << downloadbleUrl.status
+                  << downloadbleUrl.message << std::endl;
+        politeness->SuspendJob(newjob.id);
+        sendLink(downloadbleUrl.message, newjob.base_url);
       } else {
+        std::cout << "doable job statuss " << downloadbleUrl.status
+                  << downloadbleUrl.message << "so nacking this " << newjob.id
+                  << std::endl;
         politeness->NAckJob(newjob.id);
         counter++;
       }
     }
   } catch (const std::exception &e) {
-    std::cerr << "[reader] CRASH: " << e.what() << std::endl;
+    std::cerr << "[writer] CRASH: " << e.what() << std::endl;
     std::abort(); // Force core dump
   }
-  std::cout << "[reader] Thread exiting\n";
+  std::cout << "[writer] Thread exiting\n";
 }
-void threadDownloadResltHandler(DownloadResultStorage *storage) {
+void threadDownloadResultHandler(DownloadResultStorage *storage,
+                                 Politeness &politeness) {
   std::cout << "threadDownloadResltHandler is initiated\n";
 
   try {
@@ -171,8 +192,8 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
         newLinksQueue.getToken(Config::processorWriteUsername,
                                Config::queuePassword, Config::apiLogin);
 
-    auto getResult = [&newLinksQueue,
-                      &readToken]() -> DownloadResultStorage::result {
+    auto getResult = [&newLinksQueue, &readToken,
+                      &politeness]() -> DownloadResultStorage::result {
       auto msg = newLinksQueue.receiveMessage(Config::downloadedQueueName,
                                               readToken, Config::apiReceive);
       if (!msg.status) {
@@ -181,6 +202,16 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
       try {
         auto j = json::parse(msg.message);
         DownloadResult res = DownloadResult::from_json(j);
+        // update job anyway
+        std::cout << "[getResult] of resulthandler , here is doresult  : "
+                  << res.url << res.error_message << "hereis jobid "
+                  << res.base_url << std::endl;
+        int jobId = politeness.getIdByNodeName(res.base_url);
+        if (jobId != -1)
+          politeness.AckJob(jobId);
+        else
+          throw std::invalid_argument(
+              "something went wrong , getting out of range baseurl ");
         if (res.http_code == 200) {
           std::string decoded_html;
           try {
@@ -192,8 +223,8 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
           }
 
           return DownloadResultStorage::result{
-              res.url,       "",  res.html_content_base64, decoded_html,
-              res.timestamp, true};
+              res.url,      res.base_url,  res.html_content_base64,
+              decoded_html, res.timestamp, true};
         }
       } catch (const json::exception &e) {
         std::cerr << "JSON parsing error: " << e.what()
@@ -226,18 +257,15 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
 
       if (res.status) {
         errorCounter = 0; // Reset error counter on success
-
         try {
-          auto baseurl = linkExtractor.GetBaseUrl(res.url);
-          auto rawLinks =
-              linkExtractor.ExtractRedirectLinks(res.html_content, baseurl);
+          auto rawLinks = linkExtractor.ExtractRedirectLinks(res.html_content,
+                                                             res.base_url);
 
           // Remove duplicates more efficiently
           std::unordered_set<std::string> uniqueLinks(rawLinks.begin(),
                                                       rawLinks.end());
           sendRawLinks(
               std::vector<std::string>(uniqueLinks.begin(), uniqueLinks.end()));
-          res.base_url = baseurl;
           storage->storeDownloadResult(res);
         } catch (const std::exception &e) {
           std::cerr << "Error processing URL " << res.url << ": " << e.what()
@@ -251,11 +279,11 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
       }
     }
   } catch (const std::exception &e) {
-    std::cerr << "[reader] CRASH: " << e.what() << "\n";
+    std::cerr << "[resulthandler] CRASH: " << e.what() << "\n";
     std::abort();
   }
 
-  std::cout << "[reader] Thread exiting\n";
+  std::cout << "[resulthandler] Thread exiting\n";
 }
 // iam use threading for simplisity , case if i fork them , i need to have
 // shared memory and stuff to share the urlManager between this two method
@@ -265,18 +293,25 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
 // am using same username and pass for them all , but what if thy start to
 // change each other token and stuff ?
 int main() {
+  // Print configuration values
   std::cout << Config::mongoUrlsDb << Config::mongoUrlsClient
             << Config::mongoHandlerClient << Config::mongoUrlsUri
             << Config::downloadedQueueName << Config::queueBaseUrl << std::endl;
-  auto &mongoInstance = MongoDB::getInstance(); // Now correctly static
+
+  // MongoDB instance (must be created before any other MongoDB operations)
+  auto &mongoInstance = MongoDB::getInstance();
   (void)mongoInstance;
-  std::vector<mongocxx::client> clients;
+
+  // Create connection pool
+  mongocxx::pool pool{mongocxx::uri{Config::mongoUrlsUri}};
+
+  // Function to validate a client connection
   auto validate_client = [](mongocxx::client &client) {
     try {
       auto admin_db = client["admin"];
       auto ping_cmd = bsoncxx::builder::stream::document{}
                       << "ping" << 1 << bsoncxx::builder::stream::finalize;
-      admin_db.run_command(ping_cmd.view()); // Throws if connection fails
+      admin_db.run_command(ping_cmd.view());
       std::cout << "MongoDB connection successful." << std::endl;
       return true;
     } catch (const mongocxx::exception &e) {
@@ -284,23 +319,32 @@ int main() {
       return false;
     }
   };
-  for (int i = 0; i < 3; ++i) {
-    clients.emplace_back(mongocxx::uri{Config::mongoUrlsUri});
-    if (!validate_client(clients.back())) {
-      std::cerr << "Failed to initialize MongoDB client " << i << std::endl;
+
+  // Test the pool by getting and validating a client
+  {
+    auto client = pool.acquire();
+    if (!validate_client(*client)) {
+      std::cerr << "Failed to initialize MongoDB connection pool" << std::endl;
       return EXIT_FAILURE;
     }
   }
-  UrlManager urlManager(std::move(clients[0]), Config::mongoUrlsDb, "urls");
-  DownloadResultStorage storage(std::move(clients[2]), Config::mongoUrlsDb,
-                                "DownloadedContent");
+
+  // Create managers with the connection pool
+  UrlManager urlManager(pool, Config::mongoUrlsDb, "urls");
+  DownloadResultStorage storage(pool, Config::mongoUrlsDb, "DownloadedContent");
   Politeness politeness;
 
+  // Start threads
   std::thread reader(threadRead, &urlManager);
   std::thread writer(threadWrite, &urlManager, &politeness);
-  std::thread handler([&storage] { threadDownloadResltHandler(&storage); });
+  std::thread handler([&storage, &politeness] {
+    threadDownloadResultHandler(&storage, politeness);
+  });
+
+  // Wait for threads to complete
   writer.join();
   reader.join();
   handler.join();
+
   return EXIT_SUCCESS;
 }

@@ -56,6 +56,8 @@ public:
       return a.timestamp > b.timestamp;
     }
   };
+
+  int getIdByNodeName(std::string nodeName);
   // adding string jobs :
   void addJob(int id, const std::string &nodeName, uint64_t timestamp);
   void addJob(const std::string &nodeName, uint64_t timestamp);
@@ -81,15 +83,31 @@ public:
                                   boost::heap::compare<Comparator<StrJob>>>;
   using StrHandle = StrHeap::handle_type;
   void setTimerVal(int sec) { timerVal = sec; }
-  void AckJob(int jobId) {
-    std::cout << "updatingthis fucking shit" << jobId << std::endl;
-    updateStrJob(jobId, getCurrentTimestampInMilliseconds());
-  }
 
+  // there are tree main stage , ether link is downloaded ,which ack the job ,
+  // or there is no link for this domainGroup which nack happen , and suspend
+  // happening when domainGroup represent is in the queue
+  // assuming the each entity in queue last of 10 min , ( but still dont know
+  // how to setpu this )
+  void AckJob(int jobId) {
+    std::cout << "[updat] updating this " << jobId << std::endl;
+    displayStrHeap();
+    updateStrJob(jobId, getCurrentTimestampInMilliseconds() +
+                            secondsToMilliseconds(timerVal));
+  }
+  void SuspendJob(int jobId) {
+    std::cout << "[suspend] , suspending this " << jobId << std::endl;
+    updateStrJob(jobId, getCurrentTimestampInMilliseconds() +
+                            secondsToMilliseconds(600));
+  }
   void NAckJob(int jobId) {
-    std::cout << "naking this " << jobId << std::endl;
-    updateStrJob(jobId, (getCurrentTimestampInMilliseconds() +
-                         secondsToMilliseconds(10)));
+    uint64_t currentTime = getCurrentTimestampInMilliseconds();
+    uint64_t delay = secondsToMilliseconds(timerVal * 5);
+    uint64_t newTime = currentTime + delay;
+    std::cout << "NAckJob - ID: " << jobId << " | Current Time: " << currentTime
+              << " | New Time: " << newTime << " | Delay: " << delay
+              << std::endl;
+    updateStrJob(jobId, newTime);
   }
 
 private:
@@ -98,6 +116,7 @@ private:
   StrHeap strHeap;
   std::unordered_map<int, Handle> jobHandles;
   std::unordered_map<int, StrHandle> strJobHandles;
+  std::unordered_map<std::string, int> nodeNameToId;
   int nextId = 0;
 };
 #endif // POLITENESS_H

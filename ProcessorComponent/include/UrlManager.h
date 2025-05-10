@@ -1,5 +1,7 @@
 #ifndef URL_MANAGER_H
 #define URL_MANAGER_H
+
+#include "../include/ResolverHelper.h"
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/builder/stream/helpers.hpp>
 #include <bsoncxx/json.hpp>
@@ -8,6 +10,7 @@
 #include <mongocxx/client.hpp>
 #include <mongocxx/exception/exception.hpp>
 #include <mongocxx/instance.hpp>
+#include <mongocxx/pool.hpp>
 #include <mongocxx/uri.hpp>
 #include <mutex>
 #include <regex>
@@ -16,61 +19,72 @@
 #include <thread>
 #include <unordered_map>
 #include <vector>
+
 struct Result_read {
   bool status;
   std::string message = "";
 };
+
 class UrlManager {
 public:
-  UrlManager(mongocxx::client client, // Takes ownership
+  UrlManager(mongocxx::pool &pool, // Takes reference to connection pool
              const std::string &database_name,
              const std::string &collection_name = "urls")
-      : client_(std::move(client)), database_(client_[database_name]),
-        collection_(database_[collection_name]) {}
+      : pool_(pool), database_name_(database_name),
+        collection_name_(collection_name) {}
+
   bool sortingUrls(const std::string &url);
   bool sortingUrls(std::vector<std::string> urls);
   std::vector<Result_read> getUrl(std::vector<std::string> domains);
   Result_read getUrl(std::string domain);
+
   std::set<std::string> getBaseMap() {
     if (collection_map.empty())
       initiateMap();
     return collection_map;
   }
+  void newMapReaded() { map_updated = false; }
   ~UrlManager() {}
   bool map_initiated = false;
   bool map_updated = false;
 
 private:
+  ResolverHelper resolverHelper;
   std::mutex _mutex;
-  bool connectionValidator() {
+  DomainResolver domainResolver;
+  mongocxx::pool &pool_; // Reference to connection pool
+  std::string database_name_;
+  std::string collection_name_;
+  bool connectionValidator(mongocxx::client &client) {
     std::lock_guard<std::mutex> lock(_mutex);
     try {
-      // Check client connection status (correct way)
-      if (!client_) { // Removed the () - client_ is an object, not callable
-        std::cerr << "MongoDB client is invalid!" << std::endl;
-        return false;
-      }
-
       // Get admin database and run ping command
-      auto admin_db = client_["admin"];
+      auto admin_db = client["admin"];
       auto ping_cmd = bsoncxx::builder::stream::document{}
                       << "ping" << 1 << bsoncxx::builder::stream::finalize;
 
-      // Correct way to run command (on database, not collection)
-      auto result = admin_db.run_command(
-          ping_cmd.view()); // This is correct for mongocxx v3.7.0+
+      auto result = admin_db.run_command(ping_cmd.view());
       return true;
     } catch (const std::exception &e) {
       std::cerr << "Connection validation failed: " << e.what() << std::endl;
       return false;
     }
   }
-  mongocxx::client client_;
-  mongocxx::database database_;
-  mongocxx::collection collection_;
-  bool is_connected_ = false;
+
+  mongocxx::collection getCollection() {
+    auto client = pool_.acquire();
+    return (*client)[database_name_][collection_name_];
+  }
+
+  mongocxx::database getDatabase() {
+    auto client = pool_.acquire();
+    return (*client)[database_name_];
+  }
+
   std::set<std::string> collection_map;
+
   void retryConnection(int interval_seconds);
+
   void initiateMap() {
     printf("it was empty -- ");
     auto result = getBaseUrls();
@@ -80,6 +94,7 @@ private:
       collection_map.clear();
     }
   }
+
   void updateMap(std::set<std::string> &target, std::string key);
   void updateMap(std::unordered_map<std::string, std::string> &target,
                  std::string key, std::string value);

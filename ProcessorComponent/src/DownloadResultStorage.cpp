@@ -6,28 +6,11 @@
 // Use the basic builder's kvp
 using bsoncxx::builder::basic::kvp;
 
-void DownloadResultStorage::connectToMongoDB(const std::string &mongo_uri,
-                                             const std::string &database_name,
-                                             const std::string &client_name) {
-  try {
-    // Ping the database to check connection
-    auto admin_db = client_["admin"];
-    auto ping_cmd = bsoncxx::builder::basic::make_document(kvp("ping", 1));
-    admin_db.run_command(ping_cmd.view());
-
-    database_ = client_[database_name];
-    is_connected_ = true;
-    std::cout << "Successfully connected to MongoDB: " << mongo_uri
-              << std::endl;
-  } catch (const std::exception &e) {
-    std::cerr << "MongoDB connection error: " << e.what() << std::endl;
-    is_connected_ = false;
-  }
-}
-
 bool DownloadResultStorage::storeDownloadResult(const result &download_result) {
+  auto client = pool_.acquire();
+  auto database = client[database_name_];
   try {
-    auto collection = database_["DownloadedContent"];
+    auto collection = database["DownloadedContent"];
 
     // Build the document using the basic builder
     auto doc = bsoncxx::builder::basic::document{};

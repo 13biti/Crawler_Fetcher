@@ -9,14 +9,28 @@ void Politeness::addJob(int id, uint64_t timestamp) {
 }
 
 // string jobs ------------------------------------------------- :
+int Politeness::getIdByNodeName(std::string nodeName) {
+  auto it = nodeNameToId.find(nodeName);
+  if (it != nodeNameToId.end())
+    return it->second;
+  return -1;
+}
 void Politeness::addJob(int id, const std::string &nodeName,
                         uint64_t timestamp) {
+  if (nodeNameToId.find(nodeName) != nodeNameToId.end()) {
+    // Job already exists, don't insert
+    return;
+  }
   StrJob job{id, nodeName, timestamp};
   auto handle = strHeap.push(job);
   strJobHandles[id] = handle;
+  nodeNameToId[nodeName] = id;
 }
 
 void Politeness::addJob(const std::string &nodeName, uint64_t timestamp) {
+  if (nodeNameToId.find(nodeName) != nodeNameToId.end()) {
+    return;
+  }
   int id = nextId++;
   addJob(id, nodeName, timestamp);
 }
@@ -35,15 +49,14 @@ void Politeness::deleteStrJob(int id) {
     throw std::runtime_error("StrJob not found");
   }
 }
-
 void Politeness::updateStrJob(int id, uint64_t newTimestamp) {
   auto it = strJobHandles.find(id);
   if (it != strJobHandles.end()) {
     StrJob updatedJob = *(it->second);
     updatedJob.timestamp = newTimestamp;
-    strHeap.update(it->second, updatedJob);
+    strHeap.update(it->second, updatedJob); // Use built-in update
   } else {
-    throw std::runtime_error("StrJob not found");
+    throw std::runtime_error("Job not found");
   }
 }
 Politeness::JotDto Politeness::getReadyJobStr() {
@@ -51,30 +64,10 @@ Politeness::JotDto Politeness::getReadyJobStr() {
     throw std::runtime_error("Heap is empty");
   }
   StrJob readyOne = strHeap.top();
-  //  std::cout << "readyOne is " << std::to_string(readyOne.timestamp) << " "
-  //            << readyOne.nodeName << " timerval "
-  //            << std::to_string(secondsToMilliseconds(timerVal))
-  //            << " sum of timeval and timestamp "
-  //            << std::to_string(readyOne.timestamp +
-  //                              secondsToMilliseconds(timerVal))
-  //            << " current time "
-  //            << std::to_string(getCurrentTimestampInMilliseconds())
-  //            << " is it bigger? "
-  //            << ((readyOne.timestamp + secondsToMilliseconds(timerVal)) <
-  //                        getCurrentTimestampInMilliseconds()
-  //                    ? "yes"
-  //                    : "no")
-  //            << std::endl;
-  // lord have mercy i make big mistkae , i wrote this if in reverce !!
-  bool isWaited = getCurrentTimestampInMilliseconds() - readyOne.timestamp >=
-                  +secondsToMilliseconds(timerVal);
+  bool isWaited = getCurrentTimestampInMilliseconds() >= readyOne.timestamp;
 
   if (isWaited)
     return Politeness::JotDto{readyOne.id, readyOne.nodeName, true};
-  //  std::cout << "change time stemp from "
-  //            << std::to_string(readyOne.timestamp) + "to" +
-  //                   std::to_string(getCurrentTimestampInMilliseconds())
-  //            << std::endl;
   return Politeness::JotDto{0, "", false};
 }
 

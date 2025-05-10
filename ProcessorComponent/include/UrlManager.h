@@ -24,18 +24,22 @@ struct Result_read {
   bool status;
   std::string message = "";
 };
-
+struct Bulk_Read {
+  std::vector<Result_read> result_read;
+  bool status = false;
+};
 class UrlManager {
 public:
   UrlManager(mongocxx::pool &pool, // Takes reference to connection pool
              const std::string &database_name,
-             const std::string &collection_name = "urls")
+             const std::string &collection_name = "urls",
+             const std::vector<std::string> allowedUrls = {})
       : pool_(pool), database_name_(database_name),
-        collection_name_(collection_name) {}
+        collection_name_(collection_name), _allowedUrls(allowedUrls) {}
 
   bool sortingUrls(const std::string &url);
   bool sortingUrls(std::vector<std::string> urls);
-  std::vector<Result_read> getUrl(std::vector<std::string> domains);
+  Bulk_Read getUrl(std::vector<std::string> domains);
   Result_read getUrl(std::string domain);
 
   std::set<std::string> getBaseMap() {
@@ -49,6 +53,7 @@ public:
   bool map_updated = false;
 
 private:
+  std::vector<std::string> _allowedUrls;
   ResolverHelper resolverHelper;
   std::mutex _mutex;
   DomainResolver domainResolver;
@@ -71,6 +76,7 @@ private:
     }
   }
 
+  bool allowed(const std::string &url);
   mongocxx::collection getCollection() {
     auto client = pool_.acquire();
     return (*client)[database_name_][collection_name_];

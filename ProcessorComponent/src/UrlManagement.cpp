@@ -21,7 +21,48 @@
 // chose second method
 // ofter changin schema , this map is useless , i change it to set
 // std::unordered_map<std::string, std::string> collection_map;
+// bool UrlManager::allowed(const std::string &url) {
+//  std::cout << "[urlmanager][allowed] this is my url " << url << std::endl;
+//  if (!_allowedUrls.empty()) {
+//    auto base_url = resolverHelper.extractBaseUrl(url);
+//    auto it = find(_allowedUrls.begin(), _allowedUrls.end(), base_url);
+//    if (it != _allowedUrls.end()) {
+//      std::cout << "[urlmanager][allowed] this url is accepted  " << it.base()
+//                << std::endl;
+//      return true;
+//    }
+//    return false;
+//  }
+//  return true;
+//}
+bool UrlManager::allowed(const std::string &url) {
+  std::cout << "[urlmanager][allowed] this is my url: " << url << std::endl;
+  if (!_allowedUrls.empty()) {
+    auto base_url = resolverHelper.extractBaseUrl(url);
+    std::cout << "[urlmanager][allowed] extracted base url: " << base_url
+              << std::endl;
+
+    for (const auto &allowed : _allowedUrls) {
+      if (base_url == allowed ||
+          (base_url.length() > allowed.length() &&
+           base_url.compare(base_url.length() - allowed.length(),
+                            allowed.length(), allowed) == 0 &&
+           base_url[base_url.length() - allowed.length() - 1] == '.')) {
+        std::cout << "[urlmanager][allowed] this url is accepted: " << allowed
+                  << std::endl;
+        return true;
+      }
+    }
+    std::cout << "[urlmanager][allowed] this url is NOT accepted" << std::endl;
+    return false;
+  }
+  return true; // No allowed list means everything is allowed
+}
+
 bool UrlManager::sortingUrls(const std::string &url) {
+  if (!allowed(url))
+    return false;
+
   auto client = pool_.acquire();
   auto database = (*client)[database_name_];
   if (!connectionValidator(*client)) {
@@ -93,6 +134,8 @@ bool UrlManager::sortingUrls(const std::string &url) {
   }
 }
 bool UrlManager::sortingUrls(std::vector<std::string> urls) {
+  for (const auto it : urls) {
+  }
   auto client = pool_.acquire();
   auto database = (*client)[database_name_];
   if (!connectionValidator(*client)) {
@@ -103,7 +146,7 @@ bool UrlManager::sortingUrls(std::vector<std::string> urls) {
   for (const std::string &url : urls) {
     if (url.empty()) {
       std::cerr << "Skipping empty URL." << std::endl;
-      continue; // Skip empty URLs
+      continue;
     }
     if (!sortingUrls(url)) {
       all_success = false;
@@ -167,32 +210,19 @@ Result_read UrlManager::getUrl(std::string domain) {
                                   domain + " - " + e.what()};
   }
 }
-std::vector<Result_read> UrlManager::getUrl(std::vector<std::string> domains) {
-  std::vector<Result_read> results;
-
-  auto client = pool_.acquire();
-  auto database = (*client)[database_name_];
-  if (!connectionValidator(*client)) {
-    std::cerr << "--Connection is not established!" << std::endl;
-    return std::vector<Result_read>();
-  }
-
-  bool all_success = true;
+Bulk_Read UrlManager::getUrl(std::vector<std::string> domains) {
+  Bulk_Read results;
   for (const std::string &domain : domains) {
+    std::cout << "[UrlManager][getUrl] here is domain  " << domain << std::endl;
     Result_read result = getUrl(domain);
-    if (!result.status) {
-      all_success = false;
+    if (result.status) {
+      results.status = true;
     }
-    results.push_back(result);
+    results.result_read.push_back(result);
   }
-
-  if (all_success) {
-    std::cout << "All URLs retrieved successfully!" << std::endl;
-  } else {
-    std::cerr << "Some URLs could not be retrieved." << std::endl;
-  }
-
-  return results;
+  if (results.status)
+    return results;
+  return Bulk_Read();
 }
 void UrlManager::updateMap(std::set<std::string> &target, std::string key) {
   std::cout << "trying to update map -----------\n";

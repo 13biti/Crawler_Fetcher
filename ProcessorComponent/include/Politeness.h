@@ -98,11 +98,11 @@ public:
   void SuspendJob(int jobId) {
     std::cout << "[suspend] , suspending this " << jobId << std::endl;
     updateStrJob(jobId, getCurrentTimestampInMilliseconds() +
-                            secondsToMilliseconds(600));
+                            secondsToMilliseconds(60));
   }
   void NAckJob(int jobId) {
     uint64_t currentTime = getCurrentTimestampInMilliseconds();
-    uint64_t delay = secondsToMilliseconds(timerVal * 5);
+    uint64_t delay = secondsToMilliseconds(timerVal * 2);
     uint64_t newTime = currentTime + delay;
     std::cout << "NAckJob - ID: " << jobId << " | Current Time: " << currentTime
               << " | New Time: " << newTime << " | Delay: " << delay

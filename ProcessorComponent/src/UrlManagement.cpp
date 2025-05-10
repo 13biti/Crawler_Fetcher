@@ -262,7 +262,7 @@ std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
   auto client = pool_.acquire();
   auto database = (*client)[database_name_];
   try {
-    auto collection = database["urls"];
+    auto collection = database["domain_groups"];
     auto cursor = collection.distinct("base_url", bsoncxx::document::view{});
 
     for (const auto &doc : cursor) {

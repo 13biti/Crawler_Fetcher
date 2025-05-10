@@ -18,6 +18,7 @@
 #include <mutex>
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
+#include <stdexcept>
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -100,11 +101,13 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     auto token = newLinksQueue->returnToken();
 
     auto sendLink = [newLinksQueue, token](std::string downloadbleUrl,
-                                           int jobId) -> void {
+                                           std::string base_url) -> void {
       json jsonPayload;
       jsonPayload["Url"] = downloadbleUrl;
-      jsonPayload["jobId"] = jobId;
+      jsonPayload["base_url"] = base_url;
       std::string jsonString = jsonPayload.dump();
+      std::cout << "[writer] i am sending this url and jobid " << downloadbleUrl
+                << " \t " + base_url << std::endl;
       newLinksQueue->sendMessage(Config::downloadLinksQueueName, jsonString,
                                  token, Config::apiSend);
     };
@@ -112,11 +115,20 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
     // every time someting happen there !!
     auto updateCollectionMap = [&]() -> bool {
       if (!urlManager->map_initiated || urlManager->map_updated) {
+        std::cout << "[updateCollectionMap] why i am here "
+                  << !urlManager->map_initiated << urlManager->map_updated
+                  << std::endl;
         _urlMap = urlManager->getBaseMap();
         if (!_urlMap.empty()) {
+          std::cout << "[updateCollectionMap] i want to update polite here is "
+                       "before :  "
+                    << std::endl;
+          politeness->displayStrHeap();
           urlManager->newMapReaded();
           politeness->addJobs(_urlMap);
-          std::cout << "new politeness- is \n";
+          std::cout << "[updateCollectionMap] i want to update polite here is "
+                       "after :  "
+                    << std::endl;
           politeness->displayStrHeap();
         } else
           return false;
@@ -139,15 +151,22 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
       updateCollectionMap();
       while (true) {
         newjob = politeness->getReadyJobStr();
+        std::cout << "new job statuss " << newjob.base_url << newjob.id
+                  << newjob.status << std::endl;
         if (newjob.status)
           break;
         sleep(1);
       }
       auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
       if (downloadbleUrl.status) {
+        std::cout << "doable job statuss " << downloadbleUrl.status
+                  << downloadbleUrl.message << std::endl;
         politeness->SuspendJob(newjob.id);
-        sendLink(downloadbleUrl.message, newjob.id);
+        sendLink(downloadbleUrl.message, newjob.base_url);
       } else {
+        std::cout << "doable job statuss " << downloadbleUrl.status
+                  << downloadbleUrl.message << "so nacking this " << newjob.id
+                  << std::endl;
         politeness->NAckJob(newjob.id);
         counter++;
       }
@@ -184,7 +203,15 @@ void threadDownloadResultHandler(DownloadResultStorage *storage,
         auto j = json::parse(msg.message);
         DownloadResult res = DownloadResult::from_json(j);
         // update job anyway
-        politeness.AckJob(res.JobId);
+        std::cout << "[getResult] of resulthandler , here is doresult  : "
+                  << res.url << res.error_message << "hereis jobid "
+                  << res.base_url << std::endl;
+        int jobId = politeness.getIdByNodeName(res.base_url);
+        if (jobId != -1)
+          politeness.AckJob(jobId);
+        else
+          throw std::invalid_argument(
+              "something went wrong , getting out of range baseurl ");
         if (res.http_code == 200) {
           std::string decoded_html;
           try {
@@ -196,7 +223,7 @@ void threadDownloadResultHandler(DownloadResultStorage *storage,
           }
 
           return DownloadResultStorage::result{
-              res.url,      res.JobId,     "",  res.html_content_base64,
+              res.url,      res.base_url,  res.html_content_base64,
               decoded_html, res.timestamp, true};
         }
       } catch (const json::exception &e) {
@@ -231,16 +258,14 @@ void threadDownloadResultHandler(DownloadResultStorage *storage,
       if (res.status) {
         errorCounter = 0; // Reset error counter on success
         try {
-          auto baseurl = linkExtractor.GetBaseUrl(res.url);
-          auto rawLinks =
-              linkExtractor.ExtractRedirectLinks(res.html_content, baseurl);
+          auto rawLinks = linkExtractor.ExtractRedirectLinks(res.html_content,
+                                                             res.base_url);
 
           // Remove duplicates more efficiently
           std::unordered_set<std::string> uniqueLinks(rawLinks.begin(),
                                                       rawLinks.end());
           sendRawLinks(
               std::vector<std::string>(uniqueLinks.begin(), uniqueLinks.end()));
-          res.base_url = baseurl;
           storage->storeDownloadResult(res);
         } catch (const std::exception &e) {
           std::cerr << "Error processing URL " << res.url << ": " << e.what()
@@ -254,11 +279,11 @@ void threadDownloadResultHandler(DownloadResultStorage *storage,
       }
     }
   } catch (const std::exception &e) {
-    std::cerr << "[reader] CRASH: " << e.what() << "\n";
+    std::cerr << "[resulthandler] CRASH: " << e.what() << "\n";
     std::abort();
   }
 
-  std::cout << "[reader] Thread exiting\n";
+  std::cout << "[resulthandler] Thread exiting\n";
 }
 // iam use threading for simplisity , case if i fork them , i need to have
 // shared memory and stuff to share the urlManager between this two method

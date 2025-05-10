@@ -43,7 +43,7 @@ public:
       initiateMap();
     return collection_map;
   }
-  void newMapReaded() { map_updated = true; }
+  void newMapReaded() { map_updated = false; }
   ~UrlManager() {}
   bool map_initiated = false;
   bool map_updated = false;

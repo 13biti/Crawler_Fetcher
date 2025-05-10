@@ -6,7 +6,6 @@
 #include "../include/Mongo.h"
 #include "../include/Politeness.h"
 #include "../include/UrlManager.h"
-#include <algorithm> // For std::find
 #include <cerrno>
 #include <chrono>
 #include <cstdio>
@@ -14,6 +13,8 @@
 #include <cstring>
 #include <future>
 #include <iostream>
+#include <mongocxx/instance.hpp>
+#include <mongocxx/pool.hpp>
 #include <mutex>
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
@@ -113,7 +114,7 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
       if (!urlManager->map_initiated || urlManager->map_updated) {
         _urlMap = urlManager->getBaseMap();
         if (!_urlMap.empty()) {
-          urlManager->UpdatedMapReaded();
+          urlManager->newMapReaded();
           politeness->addJobs(_urlMap);
           std::cout << "new politeness- is \n";
           politeness->displayStrHeap();
@@ -267,18 +268,25 @@ void threadDownloadResultHandler(DownloadResultStorage *storage,
 // am using same username and pass for them all , but what if thy start to
 // change each other token and stuff ?
 int main() {
+  // Print configuration values
   std::cout << Config::mongoUrlsDb << Config::mongoUrlsClient
             << Config::mongoHandlerClient << Config::mongoUrlsUri
             << Config::downloadedQueueName << Config::queueBaseUrl << std::endl;
-  auto &mongoInstance = MongoDB::getInstance(); // Now correctly static
+
+  // MongoDB instance (must be created before any other MongoDB operations)
+  auto &mongoInstance = MongoDB::getInstance();
   (void)mongoInstance;
-  std::vector<mongocxx::client> clients;
+
+  // Create connection pool
+  mongocxx::pool pool{mongocxx::uri{Config::mongoUrlsUri}};
+
+  // Function to validate a client connection
   auto validate_client = [](mongocxx::client &client) {
     try {
       auto admin_db = client["admin"];
       auto ping_cmd = bsoncxx::builder::stream::document{}
                       << "ping" << 1 << bsoncxx::builder::stream::finalize;
-      admin_db.run_command(ping_cmd.view()); // Throws if connection fails
+      admin_db.run_command(ping_cmd.view());
       std::cout << "MongoDB connection successful." << std::endl;
       return true;
     } catch (const mongocxx::exception &e) {
@@ -286,25 +294,32 @@ int main() {
       return false;
     }
   };
-  for (int i = 0; i < 3; ++i) {
-    clients.emplace_back(mongocxx::uri{Config::mongoUrlsUri});
-    if (!validate_client(clients.back())) {
-      std::cerr << "Failed to initialize MongoDB client " << i << std::endl;
+
+  // Test the pool by getting and validating a client
+  {
+    auto client = pool.acquire();
+    if (!validate_client(*client)) {
+      std::cerr << "Failed to initialize MongoDB connection pool" << std::endl;
       return EXIT_FAILURE;
     }
   }
-  UrlManager urlManager(std::move(clients[0]), Config::mongoUrlsDb, "urls");
-  DownloadResultStorage storage(std::move(clients[2]), Config::mongoUrlsDb,
-                                "DownloadedContent");
+
+  // Create managers with the connection pool
+  UrlManager urlManager(pool, Config::mongoUrlsDb, "urls");
+  DownloadResultStorage storage(pool, Config::mongoUrlsDb, "DownloadedContent");
   Politeness politeness;
 
+  // Start threads
   std::thread reader(threadRead, &urlManager);
   std::thread writer(threadWrite, &urlManager, &politeness);
   std::thread handler([&storage, &politeness] {
     threadDownloadResultHandler(&storage, politeness);
   });
+
+  // Wait for threads to complete
   writer.join();
   reader.join();
   handler.join();
+
   return EXIT_SUCCESS;
 }

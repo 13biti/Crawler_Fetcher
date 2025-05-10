@@ -22,13 +22,15 @@
 // ofter changin schema , this map is useless , i change it to set
 // std::unordered_map<std::string, std::string> collection_map;
 bool UrlManager::sortingUrls(const std::string &url) {
-  if (!connectionValidator()) {
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
+  if (!connectionValidator(*client)) {
     std::cerr << "--Connection is not established!" << std::endl;
     return false;
   }
 
   auto [resolverSuccess, resolverGroupId] =
-      resolverHelper.processDomain(database_, url);
+      resolverHelper.processDomain(database, url);
   if (!resolverSuccess) { // Fixed condition
     std::cerr << "Domain processing failed for URL: " << url << std::endl;
     return false;
@@ -36,7 +38,7 @@ bool UrlManager::sortingUrls(const std::string &url) {
 
   try {
     std::unique_lock<std::mutex> lock(_mutex);
-    auto collection = database_["urls"];
+    auto collection = getCollection();
 
     // Check for duplicate URL (simplified)
     auto duplicate_filter = bsoncxx::builder::stream::document{}
@@ -91,8 +93,10 @@ bool UrlManager::sortingUrls(const std::string &url) {
   }
 }
 bool UrlManager::sortingUrls(std::vector<std::string> urls) {
-  if (!connectionValidator()) {
-    std::cerr << "connection is not established !" << std::endl;
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
+  if (!connectionValidator(*client)) {
+    std::cerr << "--Connection is not established!" << std::endl;
     return false;
   }
   bool all_success = true;
@@ -108,13 +112,15 @@ bool UrlManager::sortingUrls(std::vector<std::string> urls) {
   return all_success;
 }
 Result_read UrlManager::getUrl(std::string domain) {
-  if (!connectionValidator()) {
-    std::cerr << "--Connection is not established!B" << std::endl;
-    return Result_read{false, "--Connection is not established!C"};
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
+  if (!connectionValidator(*client)) {
+    std::cerr << "--Connection is not established!" << std::endl;
+    return Result_read{false, "database connectoin failed" + domain};
   }
   try {
     std::unique_lock<std::mutex> lock(_mutex);
-    auto collection = database_["urls"];
+    auto collection = database["urls"];
 
     // Find the unread URL with the lowest batch_id (earliest batches first)
     auto filter = bsoncxx::builder::stream::document{}
@@ -164,10 +170,11 @@ Result_read UrlManager::getUrl(std::string domain) {
 std::vector<Result_read> UrlManager::getUrl(std::vector<std::string> domains) {
   std::vector<Result_read> results;
 
-  if (!connectionValidator()) {
-    std::cerr << "--Connection is not established!D" << std::endl;
-    results.push_back(Result_read{false, "--Connection is not established!E"});
-    return results;
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
+  if (!connectionValidator(*client)) {
+    std::cerr << "--Connection is not established!" << std::endl;
+    return std::vector<Result_read>();
   }
 
   bool all_success = true;
@@ -198,10 +205,12 @@ void UrlManager::updateMap(std::set<std::string> &target, std::string key) {
 }
 // if i return back to map
 std::set<std::string> UrlManager::getBaseUrls() {
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
   std::set<std::string> temp_map;
   try {
     std::unique_lock<std::mutex> lock(_mutex);
-    auto collection = database_["urls"];
+    auto collection = database["urls"];
 
     bsoncxx::builder::stream::document filter_builder;
     auto filter = filter_builder << bsoncxx::builder::stream::finalize;
@@ -250,8 +259,10 @@ std::set<std::string> UrlManager::getBaseUrls() {
 }
 std::unordered_map<std::string, std::string> UrlManager::getCollectionNames() {
   std::unordered_map<std::string, std::string> collection_map;
+  auto client = pool_.acquire();
+  auto database = (*client)[database_name_];
   try {
-    auto collection = database_["urls"];
+    auto collection = database["urls"];
     auto cursor = collection.distinct("base_url", bsoncxx::document::view{});
 
     for (const auto &doc : cursor) {

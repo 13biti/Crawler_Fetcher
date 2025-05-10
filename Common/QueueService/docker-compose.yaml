@@ -1,25 +1,25 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  rabbitmq: 
+  rabbitmq:
     image: rabbitmq:3-management
-    container_name: rabbitmq_service 
-    restart: always 
+    container_name: rabbitmq_service
+    restart: always
     environment:
       RABBITMQ_DEFAULT_USER: test1
       RABBITMQ_DEFAULT_PASS: 123123
     ports:
       - "5672:5672"
       - "15672:15672"
-    networks: 
+    networks:
       - app_network
     volumes:
       - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
 
-
-
   rabbitmq_manager:
-    build: .
+    build:
+      context: ./
+      network: host
     container_name: rabbitmq_manager
     restart: always
     depends_on:
@@ -29,10 +29,6 @@ services:
     networks:
       - app_network
 
-
 networks:
   app_network:
     driver: bridge
-
-
-

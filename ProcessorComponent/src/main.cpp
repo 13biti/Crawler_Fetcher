@@ -16,6 +16,7 @@
 #include <iostream>
 #include <mutex>
 #include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -26,6 +27,7 @@
 
 #define NEW_LINK_PEER_SORT 10
 
+using json = nlohmann::json;
 UrlManager *urlManager;
 Politeness *politeness;
 std::mutex UrlManagerMutex;
@@ -96,22 +98,27 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
                             Config::queuePassword, Config::apiLogin);
     auto token = newLinksQueue->returnToken();
 
-    auto sendLink = [newLinksQueue, token](std::string downloadbleUrl) -> void {
-      newLinksQueue->sendMessage(Config::downloadLinksQueueName, downloadbleUrl,
+    auto sendLink = [newLinksQueue, token](std::string downloadbleUrl,
+                                           int jobId) -> void {
+      json jsonPayload;
+      jsonPayload["Url"] = downloadbleUrl;
+      jsonPayload["jobId"] = jobId;
+      std::string jsonString = jsonPayload.dump();
+      newLinksQueue->sendMessage(Config::downloadLinksQueueName, jsonString,
                                  token, Config::apiSend);
     };
     // you mayfor  ask why i have this conditions ? for not reading database
     // every time someting happen there !!
     auto updateCollectionMap = [&]() -> bool {
-      std::cout << "-------------------------------if" << std::endl;
       if (!urlManager->map_initiated || urlManager->map_updated) {
-        std::cout << "-------------------------------if" << std::endl;
         _urlMap = urlManager->getBaseMap();
-        if (!_urlMap.empty())
+        if (!_urlMap.empty()) {
+          urlManager->UpdatedMapReaded();
           politeness->addJobs(_urlMap);
-        else
+          std::cout << "new politeness- is \n";
+          politeness->displayStrHeap();
+        } else
           return false;
-
         return true;
       }
       return false;
@@ -135,27 +142,23 @@ void threadWrite(UrlManager *urlManager, Politeness *politeness) {
           break;
         sleep(1);
       }
-      std::cout << "[wait] polit giving ..." << newjob.base_url << std::endl;
       auto downloadbleUrl = urlManager->getUrl(newjob.base_url);
-      std::cout << "[wait] db giving ..." << downloadbleUrl.message
-                << std::endl;
       if (downloadbleUrl.status) {
-        std::cout << "[wait] db giving ..." << downloadbleUrl.message
-                  << std::endl;
-        politeness->AckJob(newjob.id);
-        sendLink(downloadbleUrl.message);
+        politeness->SuspendJob(newjob.id);
+        sendLink(downloadbleUrl.message, newjob.id);
       } else {
         politeness->NAckJob(newjob.id);
         counter++;
       }
     }
   } catch (const std::exception &e) {
-    std::cerr << "[reader] CRASH: " << e.what() << std::endl;
+    std::cerr << "[writer] CRASH: " << e.what() << std::endl;
     std::abort(); // Force core dump
   }
-  std::cout << "[reader] Thread exiting\n";
+  std::cout << "[writer] Thread exiting\n";
 }
-void threadDownloadResltHandler(DownloadResultStorage *storage) {
+void threadDownloadResultHandler(DownloadResultStorage *storage,
+                                 Politeness &politeness) {
   std::cout << "threadDownloadResltHandler is initiated\n";
 
   try {
@@ -169,8 +172,8 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
         newLinksQueue.getToken(Config::processorWriteUsername,
                                Config::queuePassword, Config::apiLogin);
 
-    auto getResult = [&newLinksQueue,
-                      &readToken]() -> DownloadResultStorage::result {
+    auto getResult = [&newLinksQueue, &readToken,
+                      &politeness]() -> DownloadResultStorage::result {
       auto msg = newLinksQueue.receiveMessage(Config::downloadedQueueName,
                                               readToken, Config::apiReceive);
       if (!msg.status) {
@@ -179,6 +182,8 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
       try {
         auto j = json::parse(msg.message);
         DownloadResult res = DownloadResult::from_json(j);
+        // update job anyway
+        politeness.AckJob(res.JobId);
         if (res.http_code == 200) {
           std::string decoded_html;
           try {
@@ -190,8 +195,8 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
           }
 
           return DownloadResultStorage::result{
-              res.url,       "",  res.html_content_base64, decoded_html,
-              res.timestamp, true};
+              res.url,      res.JobId,     "",  res.html_content_base64,
+              decoded_html, res.timestamp, true};
         }
       } catch (const json::exception &e) {
         std::cerr << "JSON parsing error: " << e.what()
@@ -224,7 +229,6 @@ void threadDownloadResltHandler(DownloadResultStorage *storage) {
 
       if (res.status) {
         errorCounter = 0; // Reset error counter on success
-
         try {
           auto baseurl = linkExtractor.GetBaseUrl(res.url);
           auto rawLinks =
@@ -296,7 +300,9 @@ int main() {
 
   std::thread reader(threadRead, &urlManager);
   std::thread writer(threadWrite, &urlManager, &politeness);
-  std::thread handler([&storage] { threadDownloadResltHandler(&storage); });
+  std::thread handler([&storage, &politeness] {
+    threadDownloadResultHandler(&storage, politeness);
+  });
   writer.join();
   reader.join();
   handler.join();

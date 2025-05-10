@@ -35,6 +35,8 @@ DownloadResult Downloader::DownloadSingle(const std::string &url) {
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
   curl_easy_setopt(curl, CURLOPT_USERAGENT, "HTML-Downloader/1.0");
+  curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10L);
+  curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);
 
   result.result = curl_easy_perform(curl);
   if (result.result == CURLE_OK) {

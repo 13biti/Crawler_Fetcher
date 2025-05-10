@@ -81,15 +81,30 @@ public:
                                   boost::heap::compare<Comparator<StrJob>>>;
   using StrHandle = StrHeap::handle_type;
   void setTimerVal(int sec) { timerVal = sec; }
+
+  // there are tree main stage , ether link is downloaded ,which ack the job ,
+  // or there is no link for this domainGroup which nack happen , and suspend
+  // happening when domainGroup represent is in the queue
+  // assuming the each entity in queue last of 10 min , ( but still dont know
+  // how to setpu this )
   void AckJob(int jobId) {
     std::cout << "updatingthis fucking shit" << jobId << std::endl;
-    updateStrJob(jobId, getCurrentTimestampInMilliseconds());
+    updateStrJob(jobId, getCurrentTimestampInMilliseconds() +
+                            secondsToMilliseconds(timerVal));
   }
-
+  void SuspendJob(int jobId) {
+    std::cout << "updatingthis fucking shit" << jobId << std::endl;
+    updateStrJob(jobId, getCurrentTimestampInMilliseconds() +
+                            secondsToMilliseconds(600));
+  }
   void NAckJob(int jobId) {
-    std::cout << "naking this " << jobId << std::endl;
-    updateStrJob(jobId, (getCurrentTimestampInMilliseconds() +
-                         secondsToMilliseconds(timerVal)));
+    uint64_t currentTime = getCurrentTimestampInMilliseconds();
+    uint64_t delay = secondsToMilliseconds(timerVal * 5);
+    uint64_t newTime = currentTime + delay;
+    std::cout << "NAckJob - ID: " << jobId << " | Current Time: " << currentTime
+              << " | New Time: " << newTime << " | Delay: " << delay
+              << std::endl;
+    updateStrJob(jobId, newTime);
   }
 
 private:

@@ -37,6 +37,7 @@ public:
       initiateMap();
     return collection_map;
   }
+  void UpdatedMapReaded() { map_updated = false; }
   ~UrlManager() {}
   bool map_initiated = false;
   bool map_updated = false;

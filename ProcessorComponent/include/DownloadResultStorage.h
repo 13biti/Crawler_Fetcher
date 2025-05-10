@@ -12,6 +12,7 @@ class DownloadResultStorage {
 public:
   struct result {
     std::string url;
+    int JobId;
     std::string base_url;
     std::string html_content_base64;
     std::string html_content;

@@ -155,6 +155,7 @@ class RabbitMQService:
                 return False
 
         try:
+            self.create_queue(queue_name)
             self.channel.basic_publish(
                 exchange="",
                 routing_key=queue_name,
@@ -167,28 +168,29 @@ class RabbitMQService:
         except Exception as e:
             logging.error("Failed to add item to queue: %s", e)
 
-    def remove_item_from_queue(self, queue_name, auto_ack=True):
+    def remove_item_from_queue(self, queue_name):
         """
-        Remove a single item from the specified queue.
-        :param queue_name: Name of the queue.
-        :param auto_ack: If True, the message will be automatically acknowledged.
-        :return: The item removed from the queue, or None if the queue is empty.
+        Removes an item from the specified queue.
         """
-        if not self.ensure_connection():
-            return False
+        if not self.channel:
+            logger.error("No active channel. Attempting connection recovery.")
+            if not self.connectionRecovery():
+                return None
+
+        # Ensure the queue exists before trying to consume
+        self.create_queue(queue_name)
+
         try:
             method_frame, header_frame, body = self.channel.basic_get(
-                queue=queue_name, auto_ack=auto_ack
+                queue=queue_name, auto_ack=True
             )
             if method_frame:
-                item = json.loads(body)
-                logger.info("Item removed from queue '%s': %s", queue_name, item)
-                return item
+                logger.info("Item removed from queue '%s': %s", queue_name, body)
+                return json.loads(body)
             else:
-                logger.info("No items in queue '%s'.", queue_name)
+                logger.info("No messages in queue '%s'", queue_name)
                 return None
         except Exception as e:
-            logger.exception(
-                "Failed to remove item from queue due to unexpected error."
-            )
+            logger.error("Failed to remove item from queue due to unexpected error.")
+            logger.exception(e)
             return None

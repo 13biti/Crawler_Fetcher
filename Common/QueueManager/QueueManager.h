@@ -19,6 +19,10 @@ public:
     bool status = false;
     std::string message = "";
   };
+  struct UrlPack {
+    int JobId;
+    std::string Url;
+  };
   QueueManager(const std::string &queue_manager_base_url)
       : Queue_Manager_Server_Base_Url(queue_manager_base_url) {};
 

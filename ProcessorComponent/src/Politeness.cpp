@@ -35,15 +35,16 @@ void Politeness::deleteStrJob(int id) {
     throw std::runtime_error("StrJob not found");
   }
 }
-
 void Politeness::updateStrJob(int id, uint64_t newTimestamp) {
   auto it = strJobHandles.find(id);
   if (it != strJobHandles.end()) {
-    StrJob updatedJob = *(it->second);
-    updatedJob.timestamp = newTimestamp;
-    strHeap.update(it->second, updatedJob);
+    // Remove and reinsert to force heap reorder
+    StrJob job = *(it->second);
+    strHeap.erase(it->second);             // Remove old entry
+    job.timestamp = newTimestamp;          // Update time
+    strJobHandles[id] = strHeap.push(job); // Reinsert
   } else {
-    throw std::runtime_error("StrJob not found");
+    throw std::runtime_error("Job not found");
   }
 }
 Politeness::JotDto Politeness::getReadyJobStr() {
@@ -51,8 +52,7 @@ Politeness::JotDto Politeness::getReadyJobStr() {
     throw std::runtime_error("Heap is empty");
   }
   StrJob readyOne = strHeap.top();
-  bool isWaited = getCurrentTimestampInMilliseconds() - readyOne.timestamp >=
-                  +secondsToMilliseconds(timerVal);
+  bool isWaited = getCurrentTimestampInMilliseconds() >= readyOne.timestamp;
 
   if (isWaited)
     return Politeness::JotDto{readyOne.id, readyOne.nodeName, true};

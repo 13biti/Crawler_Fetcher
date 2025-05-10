@@ -6,13 +6,14 @@
 
 std::vector<std::string>
 DomainResolver::getIPv4Addresses(const std::string &domain) {
+  std::cout << "iam here " << domain << std::endl;
   std::vector<std::string> ipAddresses;
   struct addrinfo hints{}, *res, *p;
   hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_flags = AI_CANONNAME;
 
-  int status = getaddrinfo(domain_.c_str(), nullptr, &hints, &res);
+  int status = getaddrinfo(domain.c_str(), nullptr, &hints, &res);
   if (status != 0) {
     std::cerr << "getaddrinfo error: " << gai_strerror(status) << std::endl;
     return ipAddresses;
@@ -26,6 +27,9 @@ DomainResolver::getIPv4Addresses(const std::string &domain) {
     ipAddresses.emplace_back(std::string(ipstr));
   }
 
+  for (const auto &ip : ipAddresses) {
+    std::cout << "iam here -- here is ips " << ip << std::endl;
+  }
   freeaddrinfo(res);
   return ipAddresses;
 }

@@ -9,7 +9,7 @@ std::string ResolverHelper::toLower(const std::string &input) {
   std::transform(result.begin(), result.end(), result.begin(), ::tolower);
   return result;
 }
-std::string stripWWW(const std::string &domain) {
+std::string ResolverHelper::stripWWW(const std::string &domain) {
   if (domain.substr(0, 4) == "www.") {
     return domain.substr(4);
   }
@@ -78,23 +78,31 @@ DomainInfo ResolverHelper::extractDomainInfo(const std::string &url) {
   return info;
 }
 
-// Method 1: Create new domain group document
 bool ResolverHelper::createNewDomainGroup(mongocxx::database &db,
                                           const DomainInfo &info) {
   try {
     auto collection = db["domain_groups"];
 
-    document group_doc;
-    group_doc << "primary_domain" << info.primary_domain << "ips" <<
-        [&info](bsoncxx::builder::stream::array_context<> arr) {
-          for (const auto &ip : info.ips) {
-            arr << ip;
-          }
-        } << "domains"
-              << bsoncxx::builder::stream::open_array << info.base_url
-              << bsoncxx::builder::stream::close_array << "last_updated"
-              << bsoncxx::types::b_date{std::chrono::system_clock::now()}
-              << "request_count" << 0;
+    // Build IP array separately
+    auto ips_array = bsoncxx::builder::basic::array{};
+    for (const auto &ip : info.ips) {
+      ips_array.append(ip);
+    }
+
+    // Build domains array
+    auto domains_array = bsoncxx::builder::basic::array{};
+    domains_array.append(info.base_url);
+
+    // Build the complete document
+    auto group_doc = bsoncxx::builder::basic::document{};
+    group_doc.append(
+        bsoncxx::builder::basic::kvp("primary_domain", info.primary_domain),
+        bsoncxx::builder::basic::kvp("ips", ips_array),
+        bsoncxx::builder::basic::kvp("domains", domains_array),
+        bsoncxx::builder::basic::kvp(
+            "last_updated",
+            bsoncxx::types::b_date{std::chrono::system_clock::now()}),
+        bsoncxx::builder::basic::kvp("request_count", 0));
 
     auto result = collection.insert_one(group_doc.view());
     return result && result->inserted_id().type() == bsoncxx::type::k_oid;
@@ -138,27 +146,48 @@ bool ResolverHelper::updateDomainGroup(mongocxx::database &db,
   try {
     auto collection = db["domain_groups"];
 
+    // Check if domain exists
     auto domains_array = group_doc["domains"].get_array().value;
     for (const auto &domain : domains_array) {
       if (domain.get_string().value == info.base_url) {
-        return true; // Already exists
+        return true;
       }
     }
 
-    auto filter = document{} << "_id" << group_doc["_id"].get_oid().value
-                             << finalize;
+    // Build IP array for update
+    auto ips_array = bsoncxx::builder::basic::array{};
+    for (const auto &ip : info.ips) {
+      ips_array.append(ip);
+    }
 
-    document update;
-    update << "$addToSet" << open_document << "domains" << info.base_url
-           << "ips" <<
-        [&info](bsoncxx::builder::stream::array_context<> arr) {
-          for (const auto &ip : info.ips) {
-            arr << ip;
-          }
-        } << close_document
-           << "$set" << open_document << "last_updated"
-           << bsoncxx::types::b_date{std::chrono::system_clock::now()}
-           << close_document;
+    auto filter = bsoncxx::builder::basic::document{};
+    filter.append(
+        bsoncxx::builder::basic::kvp("_id", group_doc["_id"].get_oid().value));
+
+    auto update = bsoncxx::builder::basic::document{};
+    update.append(
+        bsoncxx::builder::basic::kvp(
+            "$addToSet",
+            [&info](bsoncxx::builder::basic::sub_document subdoc) {
+              subdoc.append(
+                  bsoncxx::builder::basic::kvp("domains", info.base_url));
+            }),
+        bsoncxx::builder::basic::kvp(
+            "$push",
+            [&ips_array](bsoncxx::builder::basic::sub_document subdoc) {
+              subdoc.append(bsoncxx::builder::basic::kvp(
+                  "ips", [&ips_array](
+                             bsoncxx::builder::basic::sub_document subsubdoc) {
+                    subsubdoc.append(
+                        bsoncxx::builder::basic::kvp("$each", ips_array));
+                  }));
+            }),
+        bsoncxx::builder::basic::kvp(
+            "$set", [](bsoncxx::builder::basic::sub_document subdoc) {
+              subdoc.append(bsoncxx::builder::basic::kvp(
+                  "last_updated",
+                  bsoncxx::types::b_date{std::chrono::system_clock::now()}));
+            }));
 
     auto result = collection.update_one(filter.view(), update.view());
     return result && result->modified_count() > 0;

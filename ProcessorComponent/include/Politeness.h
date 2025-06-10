@@ -111,7 +111,7 @@ public:
   }
 
 private:
-  uint64_t timerVal = 10;
+  uint64_t timerVal = 5;
   Heap heap;
   StrHeap strHeap;
   std::unordered_map<int, Handle> jobHandles;
